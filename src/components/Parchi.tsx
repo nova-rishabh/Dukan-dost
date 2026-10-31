@@ -305,10 +305,10 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
 
             {!preview && phase !== "stamped" ? (
               <div className="mt-4 flex flex-wrap gap-3">
-                <button type="button" className="btn btn-primary" onClick={likhDo} disabled={!ready || phase === "writing" || phase === "stamped"} data-testid="likh-do">
+                <button type="button" className="btn btn-primary" onClick={likhDo} disabled={!ready || phase === "writing"} data-testid="likh-do">
                   {phase === "second" ? `Pakka ${formatINR((amount ?? 0) * 100)}?` : "Likh do"}
                 </button>
-                <button type="button" className="btn" onClick={() => (editing ? setEditing(false) : startEdit())} disabled={phase === "writing" || phase === "stamped"}>
+                <button type="button" className="btn" onClick={() => (editing ? setEditing(false) : startEdit())} disabled={phase === "writing"}>
                   {editing ? "Theek hai" : "Badlo"}
                 </button>
               </div>
