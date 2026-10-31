@@ -48,4 +48,6 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - Core logic was written test first (money, numbers, 20 fixtures, ledger, remind, pay, adapters with mocked HTTP). Final counts are in `docs/06_TEST_PLAN.md` section 10.
 - Vendor facts checked against official docs by a separate agent: `docs/14_API_FACTS.md`.
 - Blocked or not done: see section "Not verified" in `docs/13_SELF_REVIEW.md`.
+- Independent reviews (agents that did not write the code) are in `docs/reviews/`. They found and the build fixed: proposals not binding the written values, a spoofable rate-limit IP, stale pay-link amounts, a UPI id that could route to a real account, layout defects, stale deck numbers, and a red `check:secrets`/`verify:assets`. Accepted gaps are listed in ADR-022.
+- Closeout: `pnpm verify` and every definition-of-done command were re-run fresh in one dedicated turn; the output is quoted in the final report of the run.
 
