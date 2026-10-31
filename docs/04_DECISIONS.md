@@ -1,0 +1,114 @@
+# Decision log (ADRs)
+
+Format: Context, decision, alternatives, consequences, status. Add new entries at the bottom; never rewrite history, mark old ones Superseded.
+
+---
+
+## ADR-001: Build Dukaan Dost
+- **Date:** 2026-11-01. **Status:** Accepted.
+- **Context:** Five ideas were judged by Gemini, ChatGPT and Grok on the challenge rubric (see 05_LOG.md). Averages were within 1-2 points: Scam Dojo about 77, Dukaan Dost about 77, Ghar Ki Awaaz about 76 (planned). Kagaz was dropped as the weakest on the "why not ChatGPT" test. Scam Dojo and Ghar Ki Awaaz had unverified close competitors.
+- **Decision:** Build Dukaan Dost. Reasons: highest "Product works" average (the largest rubric line, 25 points), lowest stage risk (typed fallback), clear buyer, and the owner's stated preference.
+- **Alternatives:** Scam Dojo (best ad, most consistent 2nd place), Ghar Ki Awaaz (best ad, riskiest and most crowded), Kagaz (dropped).
+- **Consequences:** We must beat "another khata app" with a sharper wedge (ADR-002) and demonstrate it, because judges flagged crowded competition as the main weakness.
+
+## ADR-002: Wedge is "voice to collection", not bookkeeping
+- **Status:** Accepted.
+- **Context:** Khatabook, OkCredit and Vyapar own the ledger. Voice ledgers reportedly exist too (unverified).
+- **Decision:** Position as "the ledger you talk to" whose payoff is collecting the money: voice entry, confirm, reminder with pay link. Poster is secondary (P1).
+- **Consequences:** The demo ends on a sent reminder with a pay page, not on a ledger screen.
+
+## ADR-003: Mobile-first web app (PWA), not native
+- **Status:** Accepted.
+- **Decision:** Next.js web app optimised for a phone browser, installable, with a juror-friendly desktop landing.
+- **Alternatives:** Expo/React Native (more setup, store friction), WhatsApp-only bot (approvals, no confirm card).
+- **Consequences:** One link works for owner, juror and AI juror. Mic access depends on browser permission; typed and sample paths cover it.
+
+## ADR-004: ElevenLabs Scribe for speech to text
+- **Status:** Proposed (verify with the 20-sentence test).
+- **Context:** We already have ElevenLabs. Hindi and English supported; Bengali to verify.
+- **Decision:** Use Scribe in batch mode (record, upload, transcribe), not streaming, for reliability.
+- **Alternatives:** Browser Web Speech API (inconsistent for Hindi and unavailable on some browsers), Whisper, Gemini audio input.
+- **Consequences:** If accuracy on noisy Hinglish fails the test, switch to Gemini audio input behind the same `transcribe` interface.
+
+## ADR-005: A fast LLM with strict JSON, plus deterministic checks
+- **Status:** Proposed (needs an API key decision; open question 4).
+- **Decision:** Gemini Flash-class model via AI Studio for extraction, validated by Zod; amounts cross-checked by a deterministic number parser. Claude Haiku 5.5 (`claude-haiku-5-5`) as the swap.
+- **Rationale:** The model proposes, deterministic code disposes, the human confirms (TRD section 1).
+- **Consequences:** Prompt and fixtures are versioned; any prompt change must keep the fixture pass-rate.
+
+## ADR-006: WhatsApp click-to-send (`wa.me`), not the API, for v1
+- **Status:** Accepted (confirm with owner, open question 6).
+- **Context:** The WhatsApp Cloud API needs approved templates and has delivery windows; failure on stage is costly.
+- **Decision:** Open WhatsApp with the message prefilled; the owner presses Send.
+- **Consequences:** Honest and safe (owner approves every reminder). We do not claim auto-sending. API sending is P2.
+
+## ADR-007: UPI pay via an HTTPS page with QR and deep link
+- **Status:** Accepted.
+- **Decision:** `/pay/[token]` builds `upi://pay?...` for the button and a QR. Payment status is never inferred.
+- **Rationale:** Messaging apps do not reliably make `upi://` clickable. A page also lets us show a demo banner.
+- **Alternatives:** Razorpay payment links (test mode available, reconciliation is P2).
+
+## ADR-008: Supabase Postgres, money in paise
+- **Status:** Accepted.
+- **Decision:** Supabase with `pg_trgm` for fuzzy names; integer paise; append-only entries with void instead of delete; audit events.
+- **Consequences:** Balances come from a view and are always explainable from entries.
+
+## ADR-009: Confirm before every write
+- **Status:** Accepted, non-negotiable.
+- **Decision:** No model output writes to the database. Confirm card shows amount in digits and words and the direction in words. Big amounts need a second tap.
+- **Rationale:** Every judge named a wrong financial entry as the worst failure.
+
+## ADR-010: Deterministic poster rendering
+- **Status:** Accepted for P1.
+- **Decision:** Fixed HTML templates; the LLM chooses wording and items only. No image model for text.
+- **Rationale:** Image models garble Hindi text.
+
+## ADR-011: Design direction "bahi, parchi, stamp"
+- **Status:** Accepted pending visual approval.
+- **Decision:** See 03_DESIGN_SYSTEM.md. Bright flat colour, hard-offset shadows, handwriting for entries, one signature stamp moment.
+- **Alternatives rejected:** fintech green and white; cream plus serif editorial; dark plus neon; glassmorphism.
+
+## ADR-012: Fonts are Yatra One, Hind and Kalam; never Inter
+- **Status:** Accepted.
+- **Rationale:** Owner's rule; all three have true Devanagari, confirmed from the Google Fonts CSS.
+
+## ADR-013: React Bits through the shadcn registry, used sparingly
+- **Status:** Accepted.
+- **Decision:** Install individual components (`@react-bits/<Name>-TS-TW`) and restyle to tokens. Shortlist in 03_DESIGN_SYSTEM.md section 9; backgrounds banned.
+
+## ADR-014: Demo tenant without login
+- **Status:** Accepted for the challenge.
+- **Decision:** One fictional shop, server-side service role behind API routes, per-IP rate limits. Real shop data only with consent and a delete button.
+- **Consequences:** Auth is v2.
+
+## ADR-015: Language scope
+- **Status:** Proposed.
+- **Decision:** Hindi, Hinglish and English at launch. Bengali is a stretch pending a decision on which language local shopkeepers actually speak (open question 2).
+
+## ADR-016: No numbers for stock
+- **Status:** Accepted.
+- **Decision:** "Atta kam hai" creates a flag only. We do not invent quantities, reorder amounts or prices.
+
+---
+
+## ADR-017: Clips are AI-made (ElevenLabs Flows plus HyperFrames); no real shopkeeper
+- **Date:** 2026-11-01. **Status:** Accepted (owner decision).
+- **Context:** Owner will make video clips with ElevenLabs Flows (ElevenCreative's node-based canvas for image, video, voice and sound) and HyperFrames. No real shopkeeper test is planned.
+- **Decision:** The ad mixes (a) real footage of our own product (Playwright captures of the running app), (b) AI-generated counter scenes made in Flows, and (c) HyperFrames motion graphics. AI-generated people are labelled "dramatisation". We never present AI footage as a real customer or testimonial.
+- **Consequences:** The "real-user proof" lever in the PRD is replaced by honest measured evidence: the 20-fixture results, simulated-session notes, and a stated plan to test with ten shops. Pitch wording changes accordingly (07, section 10).
+
+## ADR-018: Provider adapters and a keyless mode
+- **Status:** Accepted.
+- **Context:** The build must run unattended without API keys; the owner adds keys afterwards.
+- **Decision:** Every external service (ElevenLabs STT/TTS, Gemini, Supabase) sits behind an interface with a real adapter and a local adapter (in-memory or file store, canned STT for sample clips, rules-only interpretation). Tests run against the local adapters. `pnpm verify:live` exercises the real adapters once keys exist.
+- **Consequences:** The app works end to end with no keys (typed input and sample clips). Live accuracy is unmeasured until `verify:live` runs.
+
+## ADR-019: Gemini is the LLM; Bengali is out
+- **Status:** Accepted (owner decision). Resolves ADR-005 and ADR-015.
+- **Decision:** Gemini through the `@google/genai` SDK. Model id from the Gemini models page at the time of writing: `gemini-3.8-flash` (stable Flash class); verify at build time and keep the id in one config constant. No Bengali.
+
+## ADR-020: Hybrid interpretation, rules first
+- **Status:** Accepted.
+- **Context:** The 20 fixtures must be testable offline, and latency matters on stage.
+- **Decision:** A deterministic Hinglish/Hindi/English rules interpreter (verbs, particles, number words, names) runs first. If it returns a confident proposal, use it; otherwise call Gemini for a strict-JSON proposal. Both go through the same deterministic checks and the same confirm card.
+- **Consequences:** Common phrases are instant and offline; open-ended speech still works with a key. Adds one module and its tests.

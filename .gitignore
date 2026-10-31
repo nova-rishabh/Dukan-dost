@@ -1,0 +1,13 @@
+node_modules
+.next
+.env*
+!.env.example
+.goal/
+out/
+test-results/
+playwright-report/
+deliverables/ad/node_modules
+.data/
+*.log
+next-env.d.ts
+tsconfig.tsbuildinfo
