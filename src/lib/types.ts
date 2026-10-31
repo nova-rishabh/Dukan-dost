@@ -103,6 +103,8 @@ export interface ProposalIntent extends RawIntent {
   needsSecondConfirm?: boolean;
   duplicateWarning?: boolean;
   undoTarget?: UndoTarget;
+  /** filled by the API layer for query_balance */
+  balancePaise?: number;
   /** true only when nothing is ambiguous and the owner may press Likh do */
   writable: boolean;
 }

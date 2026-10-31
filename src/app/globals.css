@@ -1,0 +1,433 @@
+@import "tailwindcss";
+
+/* Tokens: 03_DESIGN_SYSTEM section 13. Three tiers: reference, semantic, component. */
+:root {
+  /* reference */
+  --haldi: #FFC400;
+  --sindoor: #FF3B2F;
+  --neel: #2D46FF;
+  --pista: #00C26A;
+  --gulabi: #FF5CA8;
+  --syahi: #16123A;
+  --safed: #FFFFFF;
+  --bahi-page: #FFE98A;
+
+  /* semantic */
+  --color-canvas: var(--haldi);
+  --color-surface: var(--safed);
+  --color-text: var(--syahi);
+  --color-action: var(--neel);
+  --color-on-action: var(--safed);
+  --color-owed: var(--sindoor);
+  --color-received: var(--pista);
+  --color-reminder: var(--gulabi);
+  --color-ledger-page: var(--bahi-page);
+  --color-outline: var(--syahi);
+
+  /* component */
+  --parchi-bg: var(--color-surface);
+  --btn-primary-bg: var(--color-action);
+  --btn-primary-fg: var(--color-on-action);
+  --shadow-hard: 4px 4px 0 var(--color-outline);
+  --border-card: 2px solid var(--color-outline);
+
+  /* type */
+  --font-display: "Yatra One", "Noto Sans Devanagari", serif;
+  --font-ui: "Hind", "Noto Sans Devanagari", sans-serif;
+  --font-hand: "Kalam", "Noto Sans Devanagari", cursive;
+
+  /* space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+
+  /* motion */
+  --dur-micro: 120ms;
+  --dur-std: 200ms;
+  --dur-stamp: 280ms;
+  --ease-settle: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-micro: 0ms;
+    --dur-std: 0ms;
+    --dur-stamp: 0ms;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@theme inline {
+  --color-haldi: var(--haldi);
+  --color-sindoor: var(--sindoor);
+  --color-neel: var(--neel);
+  --color-pista: var(--pista);
+  --color-gulabi: var(--gulabi);
+  --color-syahi: var(--syahi);
+  --color-safed: var(--safed);
+  --color-bahi: var(--bahi-page);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-ui);
+  --font-hand: var(--font-hand);
+  --default-font-family: var(--font-ui);
+}
+
+html {
+  background: var(--color-canvas);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-size: 18px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--color-canvas);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.money {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+:focus-visible {
+  outline: 3px solid var(--neel);
+  outline-offset: 2px;
+}
+
+/* Sticker feel: 2px ink outline + hard offset shadow, never a blur. */
+.sticker {
+  border: var(--border-card);
+  box-shadow: var(--shadow-hard);
+  background: var(--safed);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 0 var(--space-5);
+  border: var(--border-card);
+  border-radius: 999px;
+  box-shadow: var(--shadow-hard);
+  background: var(--safed);
+  color: var(--syahi);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-settle), box-shadow var(--dur-micro) var(--ease-settle);
+}
+.btn:hover:not(:disabled) {
+  background: var(--bahi-page);
+}
+.btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--color-outline);
+}
+.btn:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--neel);
+  filter: none;
+  box-shadow: 6px 6px 0 var(--color-outline);
+}
+.btn-reminder {
+  background: var(--gulabi);
+}
+.btn-reminder:hover:not(:disabled) {
+  background: var(--gulabi);
+  box-shadow: 6px 6px 0 var(--color-outline);
+}
+.btn-danger {
+  background: var(--sindoor);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--sindoor);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 var(--space-4);
+  border: var(--border-card);
+  border-radius: 999px;
+  background: var(--safed);
+  font-weight: 600;
+  cursor: pointer;
+}
+.chip[aria-pressed="true"] {
+  background: var(--syahi);
+  color: var(--safed);
+}
+
+.input {
+  min-height: 48px;
+  width: 100%;
+  padding: 0 var(--space-4);
+  border: var(--border-card);
+  border-radius: 999px;
+  background: var(--safed);
+  color: var(--syahi);
+  font-size: 1rem;
+}
+.input::placeholder {
+  color: var(--syahi);
+  opacity: 0.65;
+}
+
+/* Parchi: the confirm slip with a torn top edge. The wrapper draws the hard outline and shadow (clip-path would cut a box-shadow). */
+.parchi-wrap {
+  filter: drop-shadow(0 -2px 0 var(--syahi)) drop-shadow(4px 4px 0 var(--syahi));
+}
+.parchi {
+  position: relative;
+  background: var(--parchi-bg);
+  border: 2px solid var(--color-outline);
+  border-top: 0;
+  padding: var(--space-5);
+  padding-top: calc(var(--space-5) + 10px);
+  clip-path: polygon(0 8px, 4% 0, 8% 8px, 12% 0, 16% 8px, 20% 0, 24% 8px, 28% 0, 32% 8px, 36% 0, 40% 8px, 44% 0, 48% 8px, 52% 0, 56% 8px, 60% 0, 64% 8px, 68% 0, 72% 8px, 76% 0, 80% 8px, 84% 0, 88% 8px, 92% 0, 96% 8px, 100% 0, 100% 100%, 0 100%);
+}
+.hand {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.ribbon {
+  display: inline-block;
+  padding: 2px var(--space-4);
+  border: var(--border-card);
+  border-radius: 999px;
+  font-weight: 700;
+}
+.ribbon-owed {
+  background: var(--sindoor);
+  color: var(--syahi);
+}
+.ribbon-received {
+  background: var(--pista);
+  color: var(--syahi);
+}
+
+/* The one memorable moment: a rubber stamp lands on the parchi. */
+.stamp {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border: 4px solid var(--sindoor);
+  border-radius: 8px;
+  color: var(--sindoor);
+  background: var(--safed);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1.2;
+  transform: rotate(-8deg);
+  animation: stamp-land var(--dur-stamp) var(--ease-settle) both;
+  pointer-events: none;
+}
+.stamp::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 14px;
+  border: 2px solid var(--sindoor);
+  opacity: 0.35;
+  animation: ink-spread calc(var(--dur-stamp) * 1.6) var(--ease-settle) both;
+}
+@keyframes stamp-land {
+  0% {
+    transform: rotate(-22deg) scale(2.1);
+    opacity: 0;
+  }
+  70% {
+    transform: rotate(-6deg) scale(0.94);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-8deg) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes ink-spread {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stamp {
+    animation: none;
+    transform: rotate(-8deg);
+  }
+  .stamp::after {
+    animation: none;
+  }
+}
+
+/* Bahi page: red cloth edge with stitches on the left, ruled page body. */
+.bahi {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  border: var(--border-card);
+  box-shadow: var(--shadow-hard);
+  background: var(--bahi-page);
+}
+.bahi-cloth {
+  background: var(--sindoor);
+  border-right: var(--border-card);
+  position: relative;
+}
+.bahi-cloth::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  border-left: 3px dashed var(--syahi);
+}
+.bahi-body {
+  padding: var(--space-4);
+}
+.bahi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  min-height: 36px;
+  border-bottom: 2px dashed color-mix(in srgb, var(--syahi) 30%, transparent);
+  padding: var(--space-2) 0;
+}
+.voided {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* Bolo button level ring */
+.bolo {
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  border: var(--border-card);
+  box-shadow: var(--shadow-hard);
+  background: var(--neel);
+  color: var(--safed);
+  font-weight: 700;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  position: relative;
+}
+.bolo[data-state="recording"] {
+  background: var(--sindoor);
+  color: var(--syahi);
+}
+.bolo[data-state="recording"]::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 999px;
+  border: 3px solid var(--syahi);
+  transform: scale(calc(1 + var(--level, 0) * 0.25));
+  transition: transform 80ms linear;
+}
+.bolo[data-state="processing"] {
+  background: var(--haldi);
+  color: var(--syahi);
+}
+.bolo:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--color-outline);
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 3px solid var(--syahi);
+  border-top-color: transparent;
+  animation: spin 800ms linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 120px;
+  transform: translateX(-50%);
+  z-index: 50;
+  max-width: calc(100vw - 32px);
+}
+
+.perforation {
+  border: 0;
+  border-top: 2px dashed color-mix(in srgb, var(--syahi) 30%, transparent);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+}
+.skip-link:focus {
+  left: 16px;
+  top: 16px;
+  z-index: 100;
+  background: var(--safed);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-card);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
