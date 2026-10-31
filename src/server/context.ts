@@ -30,13 +30,18 @@ function build(): AppContext {
       ? new SupabaseStore(env.SUPABASE_URL!, env.SUPABASE_SERVICE_ROLE_KEY!)
       : new LocalStore({ file: env.DUKAAN_MEMORY_ONLY === "1" ? null : (env.DUKAAN_DATA_FILE ?? ".data/ledger.json") });
   if (env.DEMO_RESET_ON_BOOT === "1" && store.kind === "local") void store.reset();
+  // Real data needs a real signing secret. The keyless demo shop may use a fixed one (its tokens guard nothing private).
+  if (status.store === "supabase" && !env.PROPOSAL_SECRET) {
+    throw new Error("PROPOSAL_SECRET is required when Supabase is active. Set a long random string.");
+  }
+  const secret = env.PROPOSAL_SECRET || "dukaan-dost-local-demo-secret";
   return {
     store,
     stt: status.stt === "elevenlabs" ? createElevenLabsStt(env.ELEVENLABS_API_KEY!) : localStt,
     tts: status.tts === "elevenlabs" ? createElevenLabsTts(env.ELEVENLABS_API_KEY!) : localTts,
     llm: status.llm === "gemini" ? createGeminiLlm(env.GEMINI_API_KEY!) : null,
     shopId: env.DEMO_SHOP_ID || SEED_SHOP_ID,
-    secret: env.PROPOSAL_SECRET || env.SUPABASE_SERVICE_ROLE_KEY || "dukaan-dost-local-proposal-secret",
+    secret,
     status,
     upiVpa: env.DEMO_UPI_VPA || "demoshop@upi",
   };

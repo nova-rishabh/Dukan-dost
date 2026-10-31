@@ -16,6 +16,7 @@ export interface ProposalPayload {
   intents: Array<{
     kind: IntentKind;
     resolvedCustomerId?: string;
+    candidateIds?: string[];
     amountRupees?: number;
     item?: string;
     clarifications: Clarification[];
@@ -32,6 +33,11 @@ interface Opts {
 const b64 = (b: Buffer | string) => Buffer.from(b).toString("base64url");
 const mac = (body: string, secret: string) => createHmac("sha256", secret).update(body).digest();
 
+/** Stable id of one intent of one signed proposal; used as the server-side idempotency key. */
+export function proposalIntentKey(token: string, intentIndex: number): string {
+  return `p:${token.split(".")[1] ?? ""}:${intentIndex}`;
+}
+
 export function signProposal(p: Proposal, o: Opts): string {
   const payload: ProposalPayload = {
     v: 1,
@@ -41,6 +47,7 @@ export function signProposal(p: Proposal, o: Opts): string {
     intents: p.intents.map((i) => ({
       kind: i.kind,
       resolvedCustomerId: i.resolvedCustomerId,
+      candidateIds: i.candidates?.map((c) => c.customerId),
       amountRupees: i.amountRupees,
       item: i.item,
       clarifications: i.clarifications,

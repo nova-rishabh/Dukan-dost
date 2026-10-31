@@ -42,3 +42,10 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - ElevenLabs docs: Scribe v2 supports Hindi (high-accuracy tier); the exact API model id string was not on the page, so the build run must read it from the API reference. ElevenCreative Flows is a node-based canvas for image, video, speech, sound and music.
 - Gemini docs list `gemini-3.8-flash` as a stable Flash-class model; free-tier status was not on the page.
 - Autonomous build brief prepared with goalify (see `.goal/`).
+
+## 2026-11-01: autonomous build run
+- Built the app, API, adapters, UI, tests, quality gates, social posts, deck, ad and setup guide in one run (goal file `.goal/dukaan-dost-build-20261101.md`). Local git only; nothing pushed or deployed; no paid API called; no keys present.
+- Core logic was written test first (money, numbers, 20 fixtures, ledger, remind, pay, adapters with mocked HTTP). Final counts are in `docs/06_TEST_PLAN.md` section 10.
+- Vendor facts checked against official docs by a separate agent: `docs/14_API_FACTS.md`.
+- Blocked or not done: see section "Not verified" in `docs/13_SELF_REVIEW.md`.
+

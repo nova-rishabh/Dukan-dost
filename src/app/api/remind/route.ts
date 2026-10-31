@@ -22,5 +22,5 @@ export const POST = route("remind", async (req) => {
   const payUrl = `${await appUrl(req)}/pay/${token.token}`;
   const text = buildReminderText({ customerName: customer.name, shopName: shop.name, amountPaise: balance, payUrl });
   await ctx.store.appendAudit(ctx.shopId, "reminder_opened", { customerId: customer.id, amountPaise: balance }, now.toISOString());
-  return { text, waUrl: buildWaUrl({ text, phone: body.phone }), payUrl, amountPaise: balance, expiresAt: token.expiresAt };
+  return { text, waUrl: buildWaUrl({ text }), payUrl, amountPaise: balance, expiresAt: token.expiresAt };
 });

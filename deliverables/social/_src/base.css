@@ -1,0 +1,15 @@
+@import url("../../_fonts/fonts.css");
+:root{--haldi:#FFC400;--sindoor:#FF3B2F;--neel:#2D46FF;--pista:#00C26A;--gulabi:#FF5CA8;--syahi:#16123A;--safed:#FFFFFF;--bahi-page:#FFE98A;
+--font-display:"Yatra One","Hind",serif;--font-ui:"Hind",sans-serif;--font-hand:"Kalam","Hind",cursive;
+--shadow-hard:4px 4px 0 var(--syahi);--border-card:2px solid var(--syahi);}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1350px;overflow:hidden;background:var(--haldi);color:var(--syahi);font-family:var(--font-ui);font-size:30px;line-height:1.4}
+.post{width:1080px;height:1350px;padding:64px 64px 0;position:relative;display:flex;flex-direction:column}
+h1{font-family:var(--font-display);font-weight:400;line-height:1.2}
+.brand{font-family:var(--font-display);font-size:34px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.pill{display:inline-block;border:var(--border-card);border-radius:999px;background:var(--safed);box-shadow:var(--shadow-hard);padding:4px 22px;font-weight:600;font-size:26px}
+.tag{display:inline-block;font-weight:700;font-size:28px;border:var(--border-card);border-radius:999px;padding:2px 22px;background:var(--safed);box-shadow:var(--shadow-hard);margin-bottom:22px}
+.foot{position:absolute;left:0;right:0;bottom:0;height:112px;background:var(--syahi);color:var(--safed);display:flex;justify-content:space-between;align-items:center;padding:0 64px;font-size:30px}
+.foot b{font-family:var(--font-display);font-weight:400;font-size:34px;color:var(--haldi)}
+.foot .link{background:var(--neel);color:var(--safed);border:2px solid var(--safed);border-radius:999px;padding:6px 28px;font-weight:600}

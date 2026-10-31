@@ -7,7 +7,15 @@ A voice-first udhaar ledger for kirana shops. Say "Sharma ji ne 500 udhaar liye,
 Built for the AI Builder Challenge (Roobaroo AI Camp, with Developers' Society, IIT Kharagpur). Theme: Local business.
 
 ## Status
-Documentation draft v1, awaiting approval. No code yet.
+Built and verified locally (2026-11-01): the app runs with no API keys in Demo mode (typed input, five sample clips, local ledger, rules interpreter). Real ElevenLabs, Gemini and Supabase adapters are written and tested against mocked HTTP only; they have not been run with live keys. Not deployed. See [SETUP_FOR_RISHABH.md](SETUP_FOR_RISHABH.md).
+
+## Run it
+```bash
+pnpm install
+pnpm dev          # http://localhost:3000
+pnpm verify       # typecheck, lint, unit and fixtures, build, e2e with axe, slop, secrets, assets
+pnpm setup:check  # which adapters are active, which env names are missing
+```
 
 ## Read in this order
 1. [docs/00_INFO.md](docs/00_INFO.md): challenge facts, access, glossary

@@ -152,3 +152,46 @@ describe("summary and stock flags", () => {
     expect((await store.listStockFlags(SEED_SHOP_ID)).length).toBe(1);
   });
 });
+
+describe("review fixes: the proposal binds what may be written", () => {
+  it("rejects a customer, direction or amount that the proposal did not ask the owner to choose", async () => {
+    const { token } = await propose("Amit Sharma ne 500 udhaar liye");
+    const other = SEED_CUSTOMERS[2].id;
+    await expect(createEntry(store, baseReq(token, { customerId: other }), { now: NOW, secret: SECRET })).rejects.toMatchObject({ code: "proposal_mismatch" });
+    await expect(createEntry(store, baseReq(token, { type: "payment_received" }), { now: NOW, secret: SECRET })).rejects.toMatchObject({ code: "proposal_mismatch" });
+    await expect(createEntry(store, baseReq(token, { amountPaise: 90000 }), { now: NOW, secret: SECRET })).rejects.toMatchObject({ code: "proposal_mismatch" });
+    expect(await store.listEntries(SEED_SHOP_ID)).toHaveLength(11);
+  });
+  it("a high amount cannot be slipped past the second confirm by editing a small proposal", async () => {
+    const { token } = await propose("Amit Sharma ne 500 udhaar liye");
+    await expect(createEntry(store, baseReq(token, { amountPaise: 10000000, secondConfirmed: true }), { now: NOW, secret: SECRET })).rejects.toMatchObject({ code: "proposal_mismatch" });
+  });
+  it("one proposal writes at most once per intent, whatever idempotency key the client sends", async () => {
+    const { token } = await propose("Amit Sharma ne 500 udhaar liye");
+    const a = await createEntry(store, baseReq(token, { idempotencyKey: "first-key-123" }), { now: NOW, secret: SECRET });
+    const b = await createEntry(store, baseReq(token, { idempotencyKey: "second-key-456" }), { now: NOW, secret: SECRET });
+    expect(a.created).toBe(true);
+    expect(b.created).toBe(false);
+    expect(await store.listEntries(SEED_SHOP_ID)).toHaveLength(12);
+  });
+  it("refuses an identical entry within 60 seconds unless the owner acknowledged the warning", async () => {
+    const one = await propose("Amit Sharma ne 500 udhaar liye");
+    await createEntry(store, baseReq(one.token), { now: NOW, secret: SECRET });
+    const later = new Date(NOW.getTime() + 20_000);
+    const two = { token: signProposal(one.p, { shopId: SEED_SHOP_ID, now: later, secret: SECRET }) };
+    const req = baseReq(two.token);
+    await expect(createEntry(store, req, { now: later, secret: SECRET })).rejects.toMatchObject({ code: "duplicate_entry" });
+    const ok = await createEntry(store, { ...req, allowDuplicate: true }, { now: later, secret: SECRET });
+    expect(ok.created).toBe(true);
+  });
+  it("an undo token only voids the entry it named", async () => {
+    const entries = await store.listEntries(SEED_SHOP_ID);
+    const last = entries.reduce((a, b) => (a.confirmedAt >= b.confirmedAt ? a : b));
+    const customers = await store.listCustomers(SEED_SHOP_ID);
+    const p = await interpretText("Pichli entry hata do", { shopId: SEED_SHOP_ID, customers, llm: null, now: NOW, recentEntries: [], lastEntry: { entryId: last.id, customerName: "x", type: last.type, amountPaise: last.amountPaise } });
+    const token = signProposal(p, { shopId: SEED_SHOP_ID, now: NOW, secret: SECRET });
+    const wrong = entries.find((e) => e.id !== last.id)!;
+    await expect(voidEntry(store, { shopId: SEED_SHOP_ID, entryId: wrong.id, reason: "x", confirmed: true, proposalToken: token, intentIndex: 0 }, { now: NOW, secret: SECRET })).rejects.toMatchObject({ code: "proposal_mismatch" });
+    await voidEntry(store, { shopId: SEED_SHOP_ID, entryId: last.id, reason: "x", confirmed: true, proposalToken: token, intentIndex: 0 }, { now: NOW, secret: SECRET });
+  });
+});

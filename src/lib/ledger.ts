@@ -1,5 +1,5 @@
-import { CEILING_RUPEES, HIGH_AMOUNT_RUPEES } from "./checks";
-import { verifyProposal } from "./proposal";
+import { CEILING_RUPEES, DUPLICATE_WINDOW_MS, HIGH_AMOUNT_RUPEES } from "./checks";
+import { proposalIntentKey, verifyProposal } from "./proposal";
 import type { LedgerStore } from "./store/types";
 import type { Customer, Entry, EntrySource, EntryType, StockFlag, UndoTarget } from "./types";
 
@@ -10,7 +10,9 @@ export type LedgerErrorCode =
   | "needs_clarification"
   | "second_confirm_required"
   | "not_found"
-  | "already_voided";
+  | "already_voided"
+  | "proposal_mismatch"
+  | "duplicate_entry";
 
 export class LedgerError extends Error {
   constructor(
@@ -39,7 +41,10 @@ export interface CreateEntryRequest {
   type: EntryType;
   amountPaise: number;
   source: EntrySource;
+  /** client key for the double tap; the stored key is derived from the signed proposal */
   idempotencyKey: string;
+  /** owner saw the duplicate warning and still wants the entry */
+  allowDuplicate?: boolean;
   note?: string;
 }
 
@@ -65,24 +70,47 @@ export async function createEntry(store: LedgerStore, req: CreateEntryRequest, o
     throw new LedgerError("bad_request", "Intent is not a ledger entry", "Dobara bolo ya likho.");
   }
   if (req.type !== "credit_given" && req.type !== "payment_received") throw new LedgerError("bad_request", "Unknown entry type", "Udhaar diya ya Paise mile chuno.");
-  const unresolved = intent.clarifications.filter((c) => !req.resolutions.includes(c));
-  if (unresolved.length > 0) {
-    throw new LedgerError("needs_clarification", `Unresolved: ${unresolved.join(", ")}`, "Pehle card par jo poocha hai woh chuno.");
-  }
   if (!Number.isInteger(req.amountPaise) || req.amountPaise <= 0 || req.amountPaise % 100 !== 0) {
     throw new LedgerError("bad_request", "Amount must be a positive whole-rupee amount in integer paise", "Amount check karo.");
   }
   if (req.amountPaise > CEILING_RUPEES * 100) throw new LedgerError("bad_request", "Amount above the ceiling", "Itna bada amount galat sunai diya ho sakta hai. Dobara check karo.");
-  if (req.amountPaise >= HIGH_AMOUNT_RUPEES * 100 && req.secondConfirmed !== true) {
-    throw new LedgerError("second_confirm_required", "Large amount needs a second confirmation", "Bade amount par ek baar aur pakka karo.");
-  }
   const customers = await store.listCustomers(req.shopId);
   if (!customers.some((c) => c.id === req.customerId)) throw new LedgerError("not_found", "Customer not found", "Customer chuno ya naya banao.");
 
-  const edited =
-    intent.resolvedCustomerId !== req.customerId ||
-    intent.kind !== req.type ||
-    (intent.amountRupees ?? -1) * 100 !== req.amountPaise;
+  // The signed proposal decides what may be written. The owner can only fill in what the card asked.
+  const unresolved = intent.clarifications.filter((c) => !req.resolutions.includes(c));
+  if (unresolved.length > 0) {
+    throw new LedgerError("needs_clarification", `Unresolved: ${unresolved.join(", ")}`, "Pehle card par jo poocha hai woh chuno.");
+  }
+  const asked = (c: string) => (intent.clarifications as string[]).includes(c);
+  const customerOk = asked("which_customer") || asked("new_customer") || req.customerId === intent.resolvedCustomerId || (intent.candidateIds ?? []).includes(req.customerId);
+  const typeOk = asked("direction") || req.type === intent.kind;
+  const amountOk = asked("amount") || (intent.amountRupees ?? -1) * 100 === req.amountPaise;
+  if (!customerOk || !typeOk || !amountOk) {
+    throw new LedgerError("proposal_mismatch", "Entry does not match what was proposed", "Card se alag entry nahi likhi ja sakti. Badlo dabao, phir Likh do.");
+  }
+  if (req.amountPaise >= HIGH_AMOUNT_RUPEES * 100 && req.secondConfirmed !== true) {
+    throw new LedgerError("second_confirm_required", "Large amount needs a second confirmation", "Bade amount par ek baar aur pakka karo.");
+  }
+
+  const key = proposalIntentKey(req.proposalToken, req.intentIndex);
+  const all = await store.listEntries(req.shopId);
+  const existing = all.find((e) => e.idempotencyKey === key);
+  if (existing) {
+    if (existing.customerId !== req.customerId || existing.type !== req.type || existing.amountPaise !== req.amountPaise) {
+      throw new LedgerError("proposal_mismatch", "This proposal was already written differently", "Yeh parchi pehle likh chuki hai. Naya bolo ya Badlo.");
+    }
+    const balances = computeBalances(customers, all);
+    return { entry: existing, created: false, balancePaise: balances.get(req.customerId) ?? 0 };
+  }
+
+  if (!req.allowDuplicate) {
+    const dup = all.some((e) => {
+      const age = o.now.getTime() - new Date(e.confirmedAt).getTime();
+      return !e.voidedAt && e.customerId === req.customerId && e.type === req.type && e.amountPaise === req.amountPaise && age >= 0 && age <= DUPLICATE_WINDOW_MS;
+    });
+    if (dup) throw new LedgerError("duplicate_entry", "Same entry was written a moment ago", "Abhi abhi yahi entry likhi thi. Phir se likhni hai to dobara Likh do dabao.");
+  }
 
   const { entry, created } = await store.insertEntry({
     shopId: req.shopId,
@@ -92,18 +120,25 @@ export async function createEntry(store: LedgerStore, req: CreateEntryRequest, o
     note: req.note,
     sourceText: payload.sourceText,
     source: req.source,
-    idempotencyKey: req.idempotencyKey,
+    idempotencyKey: key,
     confirmedAt: o.now.toISOString(),
   });
   if (created) {
-    await store.appendAudit(req.shopId, "entry_confirmed", { entryId: entry.id, sourceText: payload.sourceText, edited, resolutions: req.resolutions, type: req.type, amountPaise: req.amountPaise }, o.now.toISOString());
+    await store.appendAudit(req.shopId, "entry_confirmed", { entryId: entry.id, sourceText: payload.sourceText, resolutions: req.resolutions, type: req.type, amountPaise: req.amountPaise, duplicateAcknowledged: !!req.allowDuplicate }, o.now.toISOString());
   }
   const balances = computeBalances(customers, await store.listEntries(req.shopId));
   return { entry, created, balancePaise: balances.get(req.customerId) ?? 0 };
 }
 
-export async function voidEntry(store: LedgerStore, req: { shopId: string; entryId: string; reason: string; confirmed: boolean }, o: { now: Date }) {
+export async function voidEntry(store: LedgerStore, req: { shopId: string; entryId: string; reason: string; confirmed: boolean; proposalToken?: string; intentIndex?: number }, o: { now: Date; secret?: string }) {
   if (req.confirmed !== true) throw new LedgerError("not_confirmed", "Void was not confirmed", "Void karne se pehle pakka karo.");
+  if (req.proposalToken) {
+    const payload = verify(req.proposalToken, req.shopId, { now: o.now, secret: o.secret ?? "" });
+    const intent = payload.intents[req.intentIndex ?? 0];
+    if (!intent || intent.kind !== "undo_last" || intent.undoEntryId !== req.entryId) {
+      throw new LedgerError("proposal_mismatch", "Void does not match the proposal", "Dobara bolo: pichli entry hata do.");
+    }
+  }
   const entries = await store.listEntries(req.shopId);
   const found = entries.find((e) => e.id === req.entryId);
   if (!found) throw new LedgerError("not_found", "Entry not found", "Entry nahi mili.");

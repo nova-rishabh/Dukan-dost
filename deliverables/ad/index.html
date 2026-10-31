@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #FFC400; }
+      #root { position: relative; width: 1080px; height: 1920px; background: #FFC400; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1080" data-height="1920">
+      <!-- Shots 1-2: typographic stand-ins for the AI clips (assets/clips/shot1.mp4, shot2.mp4) -->
+      <div id="shot1" class="clip" data-composition-id="shot1-hands" data-composition-src="compositions/shot1-hands.html" data-start="0" data-duration="4.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:1"></div>
+      <div id="shot2" class="clip" data-composition-id="shot2-speak" data-composition-src="compositions/shot2-speak.html" data-start="4" data-duration="5.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:2"></div>
+      <!-- Shots 3-6: real captures of the running app -->
+      <div id="shot3" class="clip" data-composition-id="shot3-parchi" data-composition-src="compositions/shot3-parchi.html" data-start="9" data-duration="6.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:3"></div>
+      <div id="shot4" class="clip" data-composition-id="shot4-stamp" data-composition-src="compositions/shot4-stamp.html" data-start="15" data-duration="3.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:4"></div>
+      <div id="shot5" class="clip" data-composition-id="shot5-balance" data-composition-src="compositions/shot5-balance.html" data-start="18" data-duration="6.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
+      <div id="shot6" class="clip" data-composition-id="shot6-logo" data-composition-src="compositions/shot6-logo.html" data-start="24" data-duration="6" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:6"></div>
+
+      <audio id="silence-bed" src="assets/silence.wav" data-start="0" data-duration="30" data-track-index="9" data-volume="1"></audio>
+      <!-- SFX:BEGIN (written by scripts/ad-sync-sounds.ts from assets/sounds/CREDITS.json) -->
+      <audio id="sfx-whoosh-into-app" src="assets/sounds/whoosh-into-app.mp3" data-start="8.941" data-duration="0.448" data-media-start="0.000" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="sfx-ui-tick-parchi" src="assets/sounds/ui-tick-parchi.mp3" data-start="12.043" data-duration="0.159" data-media-start="0.000" data-track-index="11" data-volume="3.98"></audio>
+      <audio id="sfx-ui-tick-tap" src="assets/sounds/ui-tick-tap.mp3" data-start="15.124" data-duration="0.123" data-media-start="0.000" data-track-index="12" data-volume="1.39"></audio>
+      <audio id="sfx-stamp-thunk" src="assets/sounds/stamp-thunk.mp3" data-start="15.381" data-duration="0.951" data-media-start="0.000" data-track-index="13" data-volume="3.93"></audio>
+      <audio id="sfx-whoosh-into-balance" src="assets/sounds/whoosh-into-balance.mp3" data-start="17.930" data-duration="0.490" data-media-start="0.000" data-track-index="14" data-volume="1.03"></audio>
+      <audio id="sfx-message-tick" src="assets/sounds/message-tick.mp3" data-start="22.614" data-duration="0.952" data-media-start="0.000" data-track-index="15" data-volume="2.21"></audio>
+      <audio id="sfx-logo-sting" src="assets/sounds/logo-sting.mp3" data-start="23.839" data-duration="0.761" data-media-start="0.000" data-track-index="16" data-volume="3.98"></audio>
+      <!-- SFX:END -->
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

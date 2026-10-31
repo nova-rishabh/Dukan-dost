@@ -40,6 +40,8 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
   const [phase, setPhase] = useState<"idle" | "second" | "writing" | "stamped">("idle");
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
+  const [touched, setTouched] = useState(false);
+  const [secondFor, setSecondFor] = useState<number | null>(null);
   const [all, setAll] = useState<CustomerListItem[] | null>(null);
   const [idem] = useState(() => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `k-${Date.now()}-${Math.random()}`));
 
@@ -91,24 +93,45 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
   async function likhDo() {
     if (!isEntry || !ready || phase === "writing" || phase === "stamped") return;
     const paise = amount! * 100;
-    if (paise >= HIGH_PAISE && phase !== "second") {
+    if (paise >= HIGH_PAISE && secondFor !== amount) {
+      setSecondFor(amount ?? null);
       setPhase("second");
       return;
     }
     setPhase("writing");
     setError(null);
     try {
+      let useToken = token;
+      let useIndex = index;
+      let useResolutions: Clarification[] = resolved;
+      let dup = !!intent.duplicateWarning;
+      if (touched) {
+        // An edited card is a new proposal: it goes through the same interpreter and the same checks.
+        const sentence = type === "credit_given" ? `${name} ko ${amount} udhaar diye` : `${name} ne ${amount} diye`;
+        const r = await api.interpret(sentence, "text");
+        const fresh = r.proposal.intents[0];
+        if (!fresh || !fresh.writable || fresh.resolvedCustomerId !== customerId || fresh.kind !== type || fresh.amountRupees !== amount) {
+          setPhase("idle");
+          setError("Badli hui entry samajh nahi aayi. Customer chuno ya naam sahi karke dobara likho.");
+          return;
+        }
+        useToken = r.proposal.token ?? "";
+        useIndex = 0;
+        useResolutions = [];
+        dup = !!fresh.duplicateWarning;
+      }
       const r = await api.createEntry({
-        proposalToken: token,
-        intentIndex: index,
+        proposalToken: useToken,
+        intentIndex: useIndex,
         confirmed: true,
         secondConfirmed: paise >= HIGH_PAISE,
-        resolutions: resolved,
+        resolutions: useResolutions,
         customerId,
         type,
         amountPaise: paise,
         source,
         idempotencyKey: idem,
+        allowDuplicate: dup,
       });
       setPhase("stamped");
       onWritten({ message: `Likh liya: ${customerName ?? "Customer"} ${formatINR(r.balancePaise)} baaki`, customerId });
@@ -137,7 +160,7 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
     setPhase("writing");
     setError(null);
     try {
-      await api.voidEntry(intent.undoTarget.entryId, "voice undo");
+      await api.voidEntry(intent.undoTarget.entryId, "voice undo", { token, index });
       setPhase("stamped");
       onWritten({ message: "Hata diya: pichli entry void ho gayi" });
     } catch (e) {
@@ -265,6 +288,9 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
                   onChange={(e) => {
                     const n = Number(e.target.value.replace(/\D/g, ""));
                     setAmount(Number.isFinite(n) && n > 0 ? n : undefined);
+                    setTouched(true);
+                    setSecondFor(null);
+                    setPhase("idle");
                     resolve("amount");
                   }}
                 />
@@ -280,6 +306,7 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
                     if (c) {
                       setCustomerId(c.id);
                       setCustomerName(c.name);
+                      setTouched(true);
                       resolve("which_customer");
                       resolve("new_customer");
                     }
@@ -293,10 +320,10 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
                   ))}
                 </select>
                 <div className="flex gap-2">
-                  <button type="button" className="chip" aria-pressed={type === "credit_given"} onClick={() => { setType("credit_given"); resolve("direction"); }}>
+                  <button type="button" className="chip" aria-pressed={type === "credit_given"} onClick={() => { setType("credit_given"); setTouched(true); resolve("direction"); }}>
                     Udhaar diya
                   </button>
-                  <button type="button" className="chip" aria-pressed={type === "payment_received"} onClick={() => { setType("payment_received"); resolve("direction"); }}>
+                  <button type="button" className="chip" aria-pressed={type === "payment_received"} onClick={() => { setType("payment_received"); setTouched(true); resolve("direction"); }}>
                     Paise mile
                   </button>
                 </div>
@@ -306,7 +333,7 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
             {!preview && phase !== "stamped" ? (
               <div className="mt-4 flex flex-wrap gap-3">
                 <button type="button" className="btn btn-primary" onClick={likhDo} disabled={!ready || phase === "writing"} data-testid="likh-do">
-                  {phase === "second" ? `Pakka ${formatINR((amount ?? 0) * 100)}?` : "Likh do"}
+                  {phase === "second" && secondFor === amount ? `Pakka ${formatINR((amount ?? 0) * 100)}?` : "Likh do"}
                 </button>
                 <button type="button" className="btn" onClick={() => (editing ? setEditing(false) : startEdit())} disabled={phase === "writing"}>
                   {editing ? "Theek hai" : "Badlo"}

@@ -85,6 +85,7 @@
 }
 
 html {
+  color-scheme: light;
   background: var(--color-canvas);
   color: var(--color-text);
   font-family: var(--font-ui);
@@ -98,6 +99,15 @@ body {
   background: var(--color-canvas);
   color: var(--color-text);
   font-family: var(--font-ui);
+}
+
+dialog {
+  color: var(--color-text);
+  background: var(--safed);
+}
+
+dialog::backdrop {
+  background: color-mix(in srgb, var(--syahi) 55%, transparent);
 }
 
 h1,

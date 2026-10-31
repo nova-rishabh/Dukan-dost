@@ -53,5 +53,9 @@ export async function interpretText(text: string, ctx: InterpretContext): Promis
   }
 
   const checkCtx: CheckContext = { customers: ctx.customers, recentEntries: ctx.recentEntries, lastEntry: ctx.lastEntry, now: ctx.now };
+  if (engine === "llm") {
+    // The model's direction is never trusted on its own: the owner always picks it on the card.
+    raw = raw.map((r) => ((r.kind === "credit_given" || r.kind === "payment_received") && !r.clarifications.includes("direction") ? { ...r, clarifications: [...r.clarifications, "direction" as const] } : r));
+  }
   return { sourceText, engine, intents: raw.map((r) => finalizeIntent(r, sourceText, checkCtx)) };
 }

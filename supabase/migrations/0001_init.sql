@@ -6,7 +6,7 @@ create table shops (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   upi_vpa text,
-  is_demo boolean not null default true,
+  is_demo boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -67,7 +67,7 @@ create table audit_events (
   created_at timestamptz not null default now()
 );
 
-create view customer_balances as
+create view customer_balances with (security_invoker = true) as
 select c.id as customer_id, c.shop_id,
   coalesce(sum(case when e.type = 'credit_given' then e.amount_paise
                     when e.type = 'payment_received' then -e.amount_paise end), 0) as balance_paise

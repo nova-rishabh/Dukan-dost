@@ -14,9 +14,15 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
   if (view.status !== "ok") {
     return (
       <div className="mx-auto grid max-w-md gap-4 px-4 py-10">
-        <h1 className="text-[40px] leading-tight">{view.status === "expired" ? "Yeh link purana ho gaya" : "Yeh link sahi nahi hai"}</h1>
+        <h1 className="text-[40px] leading-tight">
+          {view.status === "expired" ? "Yeh link purana ho gaya" : view.status === "settled" ? "Abhi kuch baaki nahi hai" : "Yeh link sahi nahi hai"}
+        </h1>
         <p className="text-xl">
-          {view.status === "expired" ? "Dukaandaar se naya link maango." : "Link dobara check karo ya dukaandaar se naya link maango."}
+          {view.status === "expired"
+            ? "Dukaandaar se naya link maango."
+            : view.status === "settled"
+              ? "Dukaandaar ke khate mein is naam par ab koi baaki nahi dikh raha."
+              : "Link dobara check karo ya dukaandaar se naya link maango."}
         </p>
       </div>
     );

@@ -112,3 +112,15 @@ Format: Context, decision, alternatives, consequences, status. Add new entries a
 - **Context:** The 20 fixtures must be testable offline, and latency matters on stage.
 - **Decision:** A deterministic Hinglish/Hindi/English rules interpreter (verbs, particles, number words, names) runs first. If it returns a confident proposal, use it; otherwise call Gemini for a strict-JSON proposal. Both go through the same deterministic checks and the same confirm card.
 - **Consequences:** Common phrases are instant and offline; open-ended speech still works with a key. Adds one module and its tests.
+
+## ADR-021: Build-time decisions (2026-11-01)
+- **Status:** Accepted.
+- **Stateless signed proposals.** `/api/interpret` returns an HMAC-signed proposal token (`src/lib/proposal.ts`). `createEntry` refuses anything without a valid, unexpired token for the same shop, `confirmed: true`, an idempotency key, and every clarification resolved. Chosen over a server-side proposal table so it works on serverless and with no database. Consequence: a token can be reused for several entries (each needs its own idempotency key) and the owner may edit amount and customer (Badlo) within the token's window; the edit is recorded as `edited` in the audit log.
+- **Flagged intents carry a provisional kind.** A sentence like "Sharma ji 200 diye" yields `credit_given` with the `direction` clarification; the owner must pick Udhaar diya or Paise mile before Likh do is enabled. Nothing is guessed.
+- **Mark as received uses the normal path.** "Mile mark karo" interprets "<name> ne <balance> diye" and shows the same parchi (P1-5, ADR-018).
+- **Own Count Up and no React Bits install.** The React Bits registry sits outside the network the build was allowed to use, so Count Up is a small own component (`CountUp.tsx`, reduced-motion aware). Text Type, Sticker Peel and the others on the shortlist are not used.
+- **Fonts via @fontsource.** Yatra One, Hind and Kalam ship as local woff2 from npm packages (Latin and Devanagari subsets); no runtime font requests.
+- **TypeScript 6.** `typescript-eslint` did not support TypeScript 7 at build time, so the project pins TypeScript 6.0.
+- **Poster wording is deterministic.** P1-2 parses item and price from the sentence; no model writes or draws any poster text, so Gemini is not involved.
+- **modern-web-guidance was not run.** The `npx` call to `modern-web-guidance` was blocked by the permission classifier during the build and was not retried or worked around. Mic capture, `<dialog>` and reduced-motion handling follow the TRD browser policy and MDN-level knowledge instead; this is unverified against that tool.
+

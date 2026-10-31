@@ -130,3 +130,19 @@ Pass criteria: 9 of 10 runs complete without fallback, 10 of 10 complete with fa
 ## 9. Exit criteria for submission
 
 All P0 acceptance criteria in 01_PRD.md pass; the 20-fixture gate passes; the rehearsal gate passes; the 5 links open without a login; the judge proxy re-run is at least 85 planned.
+
+## 10. Results of the 2026-11-01 build run (measured, local, keyless)
+
+| Gate | Result | How to re-run |
+|---|---|---|
+| 20 utterance fixtures, offline rules interpreter | 20 of 20 pass; plus a test that no flagged intent is ever writable (21 tests in the file) | `pnpm vitest run tests/fixtures` |
+| Unit tests (number table, money, resolve via fixtures, ledger, proposal tokens, remind, UPI, pay tokens, adapters with mocked HTTP, gates, contrast) | 119 tests in 8 files pass (includes the 21 fixture tests) | `pnpm test` |
+| End to end (Playwright, 390 px, keyless app) | 18 pass: the nine scripts in section 5 (script 8 split into three), Badlo edit, forged proposal and cross-site POST refused, plus axe on 5 pages | `pnpm test:e2e` |
+| axe (WCAG 2.2 A and AA tags) on landing, shop home, customer page, pay page, /try | no serious or critical violations | included above |
+| Design-token contrast | all pairs meet the minimums in 03 section 3 | `pnpm test` |
+| `pnpm check:slop`, `pnpm check:secrets` | pass; both are proven able to fail by `tests/unit/gates.test.ts` | `pnpm check:slop` |
+| `pnpm verify:assets` | see the final run in `docs/05_LOG.md` closeout | `pnpm verify:assets` |
+
+Not run here (need keys or a device): STT accuracy on clean and noisy audio (sections 1 and 4), live speakers, Lighthouse, real Android and iOS, 10-run rehearsal, judge proxy on live links. The expired-token page is covered by a unit test, not by an end-to-end test.
+
+The e2e script 3 (which Sharma) uses fixture 1 ("Sharma ji ne 500 rupaye udhaar liye"), because fixture 12 resolves both names exactly. Fixture 12 is covered by the fixture test.

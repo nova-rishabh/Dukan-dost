@@ -67,3 +67,16 @@ describe("pay tokens", () => {
     expect((await readPayToken(store, t.token, new Date(NOW.getTime() + 8 * 24 * 3600_000))).status).toBe("expired");
   });
 });
+
+describe("pay link follows the live balance", () => {
+  const NOW = new Date("2026-11-01T10:00:00Z");
+  it("never asks for more than is owed now, and says settled when nothing is owed", async () => {
+    const store = new LocalStore({ file: null });
+    const amit = SEED_CUSTOMERS[0].id; // owes 1,200 in the seed
+    const t = await createPayToken(store, { shopId: SEED_SHOP_ID, customerId: amit, amountPaise: 500000, now: NOW });
+    const v = await readPayToken(store, t.token, NOW);
+    expect(v.status === "ok" && v.amountPaise).toBe(120000);
+    await store.insertEntry({ shopId: SEED_SHOP_ID, customerId: amit, type: "payment_received", amountPaise: 120000, sourceText: "cash", source: "text", idempotencyKey: "cash-paid-1", confirmedAt: NOW.toISOString() });
+    expect((await readPayToken(store, t.token, NOW)).status).toBe("settled");
+  });
+});

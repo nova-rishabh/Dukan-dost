@@ -15,12 +15,19 @@ export class HttpError extends Error {
 }
 
 const windows = new Map<string, number[]>();
+const MAX_KEYS = 5000;
 
-/** Per-IP sliding window. Demo-grade; a shared limiter replaces it once the app is deployed with real users. */
-export function rateLimit(req: Request, bucket: string, limit: number, windowMs = 60_000) {
-  const ip = (req.headers.get("x-forwarded-for") ?? "local").split(",")[0].trim() || "local";
-  const key = `${bucket}:${ip}`;
-  const now = Date.now();
+/**
+ * Per-IP sliding window plus a per-route global ceiling (so spoofed addresses cannot buy unlimited calls).
+ * The client address is trusted only behind Vercel, which overwrites x-forwarded-for; anywhere else every
+ * caller shares one bucket. Demo-grade: per process, so a shared store replaces it for real traffic.
+ */
+function clientIp(req: Request): string {
+  if (process.env.VERCEL) return (req.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim() || "unknown";
+  return "local";
+}
+
+function hit(key: string, limit: number, windowMs: number, now: number) {
   const hits = (windows.get(key) ?? []).filter((t) => now - t < windowMs);
   if (hits.length >= limit) {
     windows.set(key, hits);
@@ -30,7 +37,26 @@ export function rateLimit(req: Request, bucket: string, limit: number, windowMs 
   windows.set(key, hits);
 }
 
+export function rateLimit(req: Request, bucket: string, limit: number, windowMs = 60_000) {
+  const now = Date.now();
+  if (windows.size > MAX_KEYS) {
+    for (const [k, v] of windows) if (!v.some((t) => now - t < windowMs)) windows.delete(k);
+    if (windows.size > MAX_KEYS) windows.clear();
+  }
+  hit(`${bucket}:${clientIp(req)}`, limit, windowMs, now);
+  hit(`${bucket}:*`, limit * 20, windowMs, now);
+}
+
+function checkLength(req: Request, maxBytes: number) {
+  const len = Number(req.headers.get("content-length") ?? "0");
+  if (len > maxBytes) throw new HttpError(413, "too_large", "Request too large", "Chhota sentence bolo ya likho.");
+}
+
 export async function readJson(req: Request, maxBytes = 16_000): Promise<unknown> {
+  checkLength(req, maxBytes);
+  if (!(req.headers.get("content-type") ?? "").toLowerCase().includes("application/json")) {
+    throw new HttpError(415, "bad_content_type", "Expected application/json", "Dobara try karo.");
+  }
   const text = await req.text();
   if (new TextEncoder().encode(text).length > maxBytes) throw new HttpError(413, "too_large", "Request too large", "Chhota sentence bolo ya likho.");
   try {
@@ -38,6 +64,26 @@ export async function readJson(req: Request, maxBytes = 16_000): Promise<unknown
   } catch {
     throw new HttpError(400, "bad_json", "Body is not valid JSON", "Dobara try karo.");
   }
+}
+
+export function assertAudioLength(req: Request, maxBytes: number) {
+  checkLength(req, maxBytes);
+}
+
+/** A browser on another site cannot make a state-changing call: an Origin header must match our own host. */
+function assertSameOrigin(req: Request) {
+  if (req.method === "GET" || req.method === "HEAD") return;
+  const origin = req.headers.get("origin");
+  if (!origin) return; // non-browser clients (curl, tests) send none
+  const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
+  const same = (() => {
+    try {
+      return new URL(origin).host === host;
+    } catch {
+      return false;
+    }
+  })();
+  if (!same) throw new HttpError(403, "bad_origin", "Cross-site request refused", "Yeh request is site se nahi aayi.");
 }
 
 type Handler = (req: Request, ctx: { requestId: string; params: Record<string, string> }) => Promise<Response | Record<string, unknown>>;
@@ -49,6 +95,7 @@ export function route(name: string, handler: Handler) {
     const started = Date.now();
     let status = 200;
     try {
+      assertSameOrigin(req);
       const params = (await routeCtx?.params) ?? {};
       const out = await handler(req, { requestId, params });
       if (out instanceof Response) {

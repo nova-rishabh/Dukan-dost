@@ -166,10 +166,26 @@ describe("adapter selection (keyless mode)", () => {
     expect(s).toMatchObject({ stt: "local", tts: "local", llm: "rules-only", store: "local", demoMode: true });
     expect(s.missing).toContain("ELEVENLABS_API_KEY");
     expect(s.missing).toContain("GEMINI_API_KEY");
-    expect(s.missing).toHaveLength(8);
+    expect(s.missing).toHaveLength(9);
   });
   it("selects real adapters when keys exist", () => {
     const s = adapterStatus({ ELEVENLABS_API_KEY: "a", GEMINI_API_KEY: "b", SUPABASE_URL: "c", SUPABASE_SERVICE_ROLE_KEY: "d" });
     expect(s).toMatchObject({ stt: "elevenlabs", llm: "gemini", store: "supabase", demoMode: false });
+  });
+});
+
+describe("review fixes in the interpreter", () => {
+  const base = { shopId: SEED_SHOP_ID, customers: SEED_CUSTOMERS, now: new Date("2026-11-01T10:00:00Z"), recentEntries: [] };
+  it("always asks the owner for the direction when the model supplied it", async () => {
+    const llm: LlmProvider = { name: "fake", async interpret() { return [{ kind: "payment_received", customer: "Gupta ji", amountRupees: 500, confidence: "medium", clarifications: [] }]; } };
+    const p = await interpretText("gupta ji ne sat so udhar", { ...base, llm });
+    expect(p.intents[0].clarifications).toContain("direction");
+    expect(p.intents[0].writable).toBe(false);
+  });
+  it("asks which amount when one clause holds two numbers", async () => {
+    const p = await interpretText("Ramesh ko 5 sabun 150 udhaar", { ...base, llm: null });
+    expect(p.intents[0].clarifications).toContain("amount");
+    expect(p.intents[0].amountReadings).toEqual([5, 150]);
+    expect(p.intents[0].writable).toBe(false);
   });
 });

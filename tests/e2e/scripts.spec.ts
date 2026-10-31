@@ -175,3 +175,29 @@ test("9 reduced motion: stamp lands without movement, same information", async (
   await expect(stamp).toHaveCSS("animation-name", "none");
   await expect(page.getByTestId("toast")).toContainText("Likh liya");
 });
+
+test("10 Badlo: an edited amount is re-checked and written once", async ({ page }) => {
+  await page.goto("/shop");
+  await say(page, "Gupta ji ne 500 rupaye udhaar liye");
+  await page.getByRole("button", { name: "Badlo" }).click();
+  await page.getByLabel("Amount (rupaye)").fill("700");
+  await expect(page.getByTestId("amount-digits")).toHaveText("₹700");
+  await page.getByTestId("likh-do").click();
+  await expect(page.getByTestId("stamp")).toBeVisible();
+  const id = await customerId(page, "Gupta ji");
+  const r = await (await page.request.get(`/api/customers/${id}`)).json();
+  expect(r.balancePaise).toBe((2200 - 1000 + 700) * 100);
+});
+
+test("11 the API refuses a forged proposal and a cross-site POST", async ({ request }) => {
+  const id = (await (await request.get("/api/customers")).json()).customers[0].id;
+  const forged = await request.post("/api/entries", {
+    data: { proposalToken: "forged.token.value", intentIndex: 0, confirmed: true, resolutions: [], customerId: id, type: "credit_given", amountPaise: 50000, source: "text", idempotencyKey: "forged-key-1" },
+  });
+  expect(forged.status()).toBe(400);
+  expect((await forged.json()).error.code).toBe("bad_proposal");
+  const cross = await request.post("/api/demo/reset", { headers: { origin: "https://evil.example" } });
+  expect(cross.status()).toBe(403);
+  const sameSiteJsonOnly = await request.post("/api/interpret", { headers: { "content-type": "text/plain" }, data: '{"text":"x"}' });
+  expect(sameSiteJsonOnly.status()).toBe(415);
+});

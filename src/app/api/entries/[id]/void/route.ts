@@ -9,6 +9,6 @@ export const POST = route("entries.void", async (req, { params }) => {
   rateLimit(req, "entries", 120);
   const ctx = getContext();
   const body = VoidBody.parse(await readJson(req));
-  await voidEntry(ctx.store, { shopId: ctx.shopId, entryId: params.id, reason: body.reason, confirmed: body.confirmed }, { now: new Date() });
+  await voidEntry(ctx.store, { shopId: ctx.shopId, entryId: params.id, reason: body.reason, confirmed: body.confirmed, proposalToken: body.proposalToken, intentIndex: body.intentIndex }, { now: new Date(), secret: ctx.secret });
   return { entryId: params.id, summary: await getSummary(ctx.store, ctx.shopId) };
 });

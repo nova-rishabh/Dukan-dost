@@ -58,6 +58,7 @@ export function finalizeIntent(raw: RawIntent, sourceText: string, ctx: CheckCon
         add("amount");
         out.amountReadings = readings;
       }
+      if (raw.clarifications.includes("amount")) out.amountReadings = readings;
       if (amount > CEILING_RUPEES) {
         add("amount");
         out.reason = "Itna bada amount galat sunai diya ho sakta hai. Dobara check karo.";

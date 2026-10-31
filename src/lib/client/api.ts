@@ -73,11 +73,11 @@ export const api = {
     post<{ proposal: Proposal; demoMode: boolean; interpretMs: number }>("/api/interpret", { text, source }),
   createEntry: (body: Record<string, unknown>) =>
     post<{ entryId: string; created: boolean; balancePaise: number; summary: Summary }>("/api/entries", body),
-  voidEntry: (id: string, reason: string) => post<{ summary: Summary }>(`/api/entries/${id}/void`, { reason, confirmed: true }),
+  voidEntry: (id: string, reason: string, proposal?: { token: string; index: number }) =>
+    post<{ summary: Summary }>(`/api/entries/${id}/void`, { reason, confirmed: true, proposalToken: proposal?.token, intentIndex: proposal?.index }),
   createStock: (body: Record<string, unknown>) => post<{ flag: StockFlag; created: boolean; summary: Summary }>("/api/stock", body),
   resolveStock: (id: string) => post<{ summary: Summary }>(`/api/stock/${id}/resolve`, {}),
-  remind: (customerId: string, phone?: string) =>
-    post<{ text: string; waUrl: string; payUrl: string; amountPaise: number }>("/api/remind", { customerId, phone }),
+  remind: (customerId: string) => post<{ text: string; waUrl: string; payUrl: string; amountPaise: number }>("/api/remind", { customerId }),
   poster: (text: string, validUntil?: string) =>
     post<{ poster: import("../poster").PosterSpec }>("/api/poster", { text, validUntil }),
   resetDemo: () => post<{ reset: boolean }>("/api/demo/reset", {}),

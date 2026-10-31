@@ -1,7 +1,7 @@
 import { sampleById } from "@/lib/samples";
 import { TranscribeJson } from "@/lib/schemas";
 import { getContext } from "@/server/context";
-import { HttpError, rateLimit, readJson, route } from "@/server/http";
+import { assertAudioLength, HttpError, rateLimit, readJson, route } from "@/server/http";
 
 export const runtime = "nodejs";
 const MAX_AUDIO_BYTES = 5 * 1024 * 1024;
@@ -16,6 +16,7 @@ export const POST = route("transcribe", async (req) => {
     if (!clip) throw new HttpError(404, "sample_not_found", "Unknown sample clip", "Sample clip chuno.");
     return { text: clip.transcript, language: "hi", engine: "sample" };
   }
+  assertAudioLength(req, MAX_AUDIO_BYTES);
   const data = await req.arrayBuffer();
   if (data.byteLength === 0) throw new HttpError(400, "empty_audio", "No audio received", "Dobara bolo.");
   if (data.byteLength > MAX_AUDIO_BYTES) throw new HttpError(413, "audio_too_large", "Audio too large", "Chhota sentence bolo.");

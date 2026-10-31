@@ -1,0 +1,44 @@
+[
+  {
+    "role": "whoosh-into-app",
+    "query": "whoosh",
+    "hitTimeMs": 9000,
+    "note": "cut from shot 2 into the app capture (first frame of shot 3)"
+  },
+  {
+    "role": "ui-tick-parchi",
+    "query": "ui click",
+    "hitTimeMs": 12100,
+    "note": "parchi appears in the capture (capture mark parchiShown 3.942 s minus window start 0.839 s, plus 9 s = 12.103 s, frame 363)"
+  },
+  {
+    "role": "ui-tick-tap",
+    "query": "ui click",
+    "hitTimeMs": 15133,
+    "note": "Likh do tap ring starts (shot 4 local 0.14 s)"
+  },
+  {
+    "role": "stamp-thunk",
+    "query": "stamp thud",
+    "hitTimeMs": 15600,
+    "note": "HERO: stamp contact, shot 4 local 0.60 s = frame 468"
+  },
+  {
+    "role": "whoosh-into-balance",
+    "query": "whoosh",
+    "hitTimeMs": 18000,
+    "note": "cut from the stamp into the balance shot"
+  },
+  {
+    "role": "message-tick",
+    "query": "notification",
+    "hitTimeMs": 22967,
+    "note": "ticks draw on the sent message (shot 5 local 4.95 s)"
+  },
+  {
+    "role": "logo-sting",
+    "query": "logo sting",
+    "hitTimeMs": 24300,
+    "note": "logo mark lands (shot 6 local 0.30 s)"
+  }
+]

@@ -1,0 +1,36 @@
+@import url("../_fonts/fonts.css");
+:root{--haldi:#FFC400;--sindoor:#FF3B2F;--neel:#2D46FF;--pista:#00C26A;--gulabi:#FF5CA8;--syahi:#16123A;--safed:#FFFFFF;--bahi-page:#FFE98A;
+--font-display:"Yatra One","Hind",serif;--font-ui:"Hind",sans-serif;--font-hand:"Kalam","Hind",cursive;
+--shadow-hard:6px 6px 0 var(--syahi);--border-card:3px solid var(--syahi);}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--syahi);font-family:var(--font-ui);color:var(--syahi);font-size:36px;line-height:1.4}
+.slide{width:1920px;height:1080px;position:relative;overflow:hidden;padding:90px 110px;background:var(--haldi);display:none}
+.slide[data-active]{display:block}
+.slide.neel{background:var(--neel);color:var(--safed)}
+.slide.sindoor{background:var(--sindoor)}
+.slide.pista{background:var(--pista)}
+.notes{display:none !important}
+h1,h2{font-family:var(--font-display);font-weight:400;line-height:1.15}
+h1{font-size:200px}
+h2{font-size:96px;max-width:1500px}
+.brand{font-family:var(--font-display);font-size:40px}
+.pg{position:absolute;right:110px;bottom:60px;font-size:28px;font-weight:600}
+.pill{display:inline-block;border:var(--border-card);border-radius:999px;background:var(--safed);color:var(--syahi);box-shadow:var(--shadow-hard);padding:4px 30px;font-weight:600;font-size:34px}
+.card{background:var(--safed);color:var(--syahi);border:var(--border-card);box-shadow:var(--shadow-hard);padding:30px 36px}
+.hand{font-family:var(--font-hand)}
+.lead{font-size:46px;max-width:1400px;margin-top:28px}
+.row{display:flex;gap:48px}
+.shot{border:var(--border-card);box-shadow:var(--shadow-hard);overflow:hidden;background:var(--haldi)}
+.shot img{display:block}
+.small{font-size:30px}
+.tagline{font-family:var(--font-display);font-size:150px;line-height:1.2}
+.stamp{display:inline-block;border:8px solid var(--sindoor);color:var(--sindoor);border-radius:22px;padding:4px 40px;font-family:var(--font-display);font-size:84px;background:var(--safed);transform:rotate(-7deg)}
+.hyp{display:inline-block;border:var(--border-card);border-radius:999px;background:var(--gulabi);color:var(--syahi);padding:2px 26px;font-weight:700;font-size:30px}
+.n{font-family:var(--font-display);font-size:120px;line-height:1}
+@media print{
+ @page{size:1920px 1080px;margin:0}
+ html,body{background:var(--haldi)}
+ .slide{display:block;page-break-after:always;break-after:page}
+ .slide:last-of-type{page-break-after:auto;break-after:auto}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important}}

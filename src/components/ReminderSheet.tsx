@@ -54,7 +54,7 @@ export function ReminderSheet({ customerId, customerName, onClose }: { customerI
           <label className="mt-3 block font-semibold" htmlFor="remind-phone">
             WhatsApp number (zaroori nahi)
           </label>
-          <input id="remind-phone" className="input mt-1" type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Sirf is link ke liye, save nahi hota" autoComplete="off" />
+          <input id="remind-phone" className="input mt-1" type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Desh code ke saath (91...). Save nahi hota" autoComplete="off" />
           <p className="mt-3 text-base">Pay link: {payUrl}</p>
           <p className="mt-1 text-base">Hum khud kuch nahi bhejte. WhatsApp khulega, Send aap dabaoge.</p>
           <div className="mt-4 flex flex-wrap gap-3">

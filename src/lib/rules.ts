@@ -222,6 +222,11 @@ export function interpretRules(text: string): RulesResult {
         clarifications.push("which_customer");
         confidence = "low";
       }
+      if (clause.filter((w) => w.amount).length > 1) {
+        // "Sharma ko 5 sabun 150 udhaar": more than one number, so the owner picks the rupee amount
+        clarifications.push("amount");
+        confidence = "low";
+      }
       intents.push({
         kind,
         customer: name,
