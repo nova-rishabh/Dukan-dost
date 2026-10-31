@@ -1,0 +1,55 @@
+[
+  { "id": 1, "text": "Sharma ji ne 500 rupaye udhaar liye",
+    "intents": [{ "kind": "credit_given", "customer": "Sharma ji", "amountRupees": 500, "clarifications": ["which_customer"], "chips": ["Amit Sharma", "R K Sharma"] }] },
+  { "id": 2, "text": "शर्मा जी ने पाँच सौ उधार लिए, आटा कम है",
+    "intents": [
+      { "kind": "credit_given", "customer": "Sharma ji", "amountRupees": 500, "clarifications": ["which_customer"], "chips": ["Amit Sharma", "R K Sharma"] },
+      { "kind": "stock_low", "item": "atta" }
+    ] },
+  { "id": 3, "text": "Gupta ji ne 1200 wapas kar diye",
+    "intents": [{ "kind": "payment_received", "customer": "Gupta ji", "amountRupees": 1200, "clarifications": [], "resolvedName": "Gupta ji" }] },
+  { "id": 4, "text": "Sharma ji ne 500 diye", "note": "direction trap A",
+    "intents": [{ "kind": "payment_received", "customer": "Sharma ji", "amountRupees": 500, "clarifications": ["which_customer"] }] },
+  { "id": 5, "text": "Sharma ji ko 500 diye", "note": "direction trap B",
+    "intents": [{ "kind": "credit_given", "customer": "Sharma ji", "amountRupees": 500, "clarifications": ["which_customer"] }] },
+  { "id": 6, "text": "Dedh sau ka saman Pinky didi ko udhaar",
+    "intents": [{ "kind": "credit_given", "customer": "Pinky didi", "amountRupees": 150, "clarifications": [], "resolvedName": "Pinky didi" }] },
+  { "id": 7, "text": "Dhai sau Verma ji ke naam likh do",
+    "intents": [{ "kind": "credit_given", "customer": "Verma ji", "amountRupees": 250, "confidence": "medium", "clarifications": [], "resolvedName": "Suresh Verma" }] },
+  { "id": 8, "text": "Sadhe teen sau Banerjee babu ne diye",
+    "intents": [{ "kind": "payment_received", "customer": "Banerjee babu", "amountRupees": 350, "clarifications": [], "resolvedName": "Tapan Banerjee" }] },
+  { "id": 9, "text": "Chini khatam ho rahi hai",
+    "intents": [{ "kind": "stock_low", "item": "chini", "noAmount": true, "noCustomer": true }] },
+  { "id": 10, "text": "Sharma ji ka kitna baaki hai?",
+    "intents": [{ "kind": "query_balance", "customer": "Sharma ji", "clarifications": ["which_customer"], "noAmount": true }] },
+  { "id": 11, "text": "Sharma ji ne 5000 udhaar liye",
+    "intents": [{ "kind": "credit_given", "customer": "Sharma ji", "amountRupees": 5000, "needsSecondConfirm": true, "clarifications": ["which_customer"] }] },
+  { "id": 12, "text": "Amit Sharma ko 300, R K Sharma ne 200 diye",
+    "intents": [
+      { "kind": "credit_given", "customer": "Amit Sharma", "amountRupees": 300, "clarifications": [], "resolvedName": "Amit Sharma" },
+      { "kind": "payment_received", "customer": "R K Sharma", "amountRupees": 200, "clarifications": [], "resolvedName": "R K Sharma" }
+    ] },
+  { "id": 13, "text": "Add 250 credit for Mrs Banerjee",
+    "intents": [{ "kind": "credit_given", "customer": "Mrs Banerjee", "amountRupees": 250, "clarifications": [], "resolvedName": "Tapan Banerjee" }] },
+  { "id": 14, "text": "Pichli entry hata do",
+    "intents": [{ "kind": "undo_last" }] },
+  { "id": 15, "text": "Naya customer Raju, 100 udhaar",
+    "intents": [{ "kind": "credit_given", "customer": "Raju", "amountRupees": 100, "clarifications": ["new_customer"] }] },
+  { "id": 16, "text": "Sharma ji ne kal ke 500 diye aur Ramesh ke 200 baaki hain", "note": "second part is a balance statement, flagged, not written",
+    "intents": [
+      { "kind": "payment_received", "customer": "Sharma ji", "amountRupees": 500, "clarifications": ["which_customer"] },
+      { "customer": "Ramesh", "amountRupees": 200, "clarifications": ["direction"] }
+    ] },
+  { "id": 17, "text": "Sharma ji 200 diye, Ramesh ko 350 ka saman udhaar, chini kam hai",
+    "intents": [
+      { "customer": "Sharma ji", "amountRupees": 200, "clarifications": ["direction", "which_customer"] },
+      { "kind": "credit_given", "customer": "Ramesh", "amountRupees": 350, "clarifications": [], "resolvedName": "Ramesh Yadav" },
+      { "kind": "stock_low", "item": "chini" }
+    ] },
+  { "id": 18, "text": "Verma ji teen sau (noise)", "note": "amount read, direction missing",
+    "intents": [{ "customer": "Verma ji", "amountRupees": 300, "clarifications": ["direction"] }] },
+  { "id": 19, "text": "Chai pilao bhai",
+    "intents": [{ "kind": "unknown" }] },
+  { "id": 20, "text": "Ramesh ko pachaas rupaye ka udhaar, do kilo chini", "note": "2 kilo is not an amount; no stock note",
+    "intents": [{ "kind": "credit_given", "customer": "Ramesh", "amountRupees": 50, "clarifications": [], "resolvedName": "Ramesh Yadav" }] }
+]
