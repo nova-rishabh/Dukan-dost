@@ -161,7 +161,9 @@ h3 {
   box-shadow: 2px 2px 0 var(--color-outline);
 }
 .btn:disabled {
-  opacity: 0.5;
+  background: var(--safed);
+  color: color-mix(in srgb, var(--syahi) 60%, var(--safed));
+  border-color: color-mix(in srgb, var(--syahi) 60%, var(--safed));
   box-shadow: none;
   cursor: not-allowed;
 }
@@ -409,7 +411,7 @@ h3 {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 120px;
+  top: 16px;
   transform: translateX(-50%);
   z-index: 50;
   max-width: calc(100vw - 32px);

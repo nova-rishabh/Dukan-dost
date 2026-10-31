@@ -1,6 +1,6 @@
 -- Fictional demo shop. No real names, phone numbers or UPI ids.
 insert into shops (id, name, upi_vpa, is_demo)
-values ('00000000-0000-4000-8000-000000000001', 'Shree Ganesh Kirana', 'demoshop@upi', true)
+values ('00000000-0000-4000-8000-000000000001', 'Shree Ganesh Kirana', 'demo.shop@invalid', true)
 on conflict (id) do nothing;
 
 insert into customers (id, shop_id, display_name, area, name_roman, name_devanagari, aliases) values

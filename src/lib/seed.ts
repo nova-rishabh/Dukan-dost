@@ -6,7 +6,7 @@ export const SEED_SHOP_ID = "00000000-0000-4000-8000-000000000001";
 export const SEED_SHOP: Shop = {
   id: SEED_SHOP_ID,
   name: "Shree Ganesh Kirana",
-  upiVpa: "demoshop@upi",
+  upiVpa: "demo.shop@invalid",
   isDemo: true,
 };
 

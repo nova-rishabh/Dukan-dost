@@ -163,7 +163,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
       ) : null}
 
       <div
-        className={sticky ? "sticky bottom-0 z-10 -mx-4 grid gap-3 border-t-2 border-syahi bg-haldi px-4 pb-4 pt-3" : "grid gap-3"}
+        className={sticky ? "fixed inset-x-0 bottom-0 z-10 mx-auto grid max-w-5xl gap-3 border-t-2 border-syahi bg-haldi px-4 pb-4 pt-3 md:px-8" : "grid gap-3"}
         data-testid="controls"
       >
         <div className="flex items-center gap-3">
@@ -180,8 +180,9 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
             ))}
           </div>
         ) : null}
-        {showSamples ? <SampleClips onPick={(id) => void onSample(id)} disabled={busy} showNotes={variant === "try"} /> : null}
+        {showSamples && !sticky ? <SampleClips onPick={(id) => void onSample(id)} disabled={busy} showNotes={variant === "try"} /> : null}
       </div>
+      {showSamples && sticky ? <SampleClips onPick={(id) => void onSample(id)} disabled={busy} /> : null}
 
       <Toast message={toast} onGone={() => setToast(null)} />
     </div>

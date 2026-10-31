@@ -49,3 +49,7 @@ Installed version 2.118.0 (postgrest-js 2.118.0, auth-js 2.118.0).
 Source: https://api.openverse.org/v1/audio/?q=stamp&license=cc0 (attempted)
 - UNVERIFIED. Requests from this environment returned HTTP 504 (twice), HTTP 500 (Cloudflare-fronted error page) and a WebFetch timeout at 60s. A first attempt with a custom User-Agent was blocked by the permission classifier and was not retried. No JSON was obtained, so field names, whether `url` is a directly downloadable audio file, and the 5 candidates per query (rubber stamp, stamp thud, ui click, notification, whoosh) are all UNVERIFIED.
 - Expected (from Openverse docs knowledge, UNVERIFIED): result fields include `id`, `title`, `creator`, `license`, `url`, `foreign_landing_url`, `filetype`, `duration` (ms). Retry later with plain `curl` and no auth; always check `license == "cc0"` per result.
+
+
+## Update 2026-11-01 (verifier)
+Openverse item 5 above was UNVERIFIED when first written because the API returned 500/504. A later independent check fetched all seven ids used in the ad and each returned `license: cc0` with the creator and title recorded in `deliverables/ad/assets/sounds/CREDITS.json`.

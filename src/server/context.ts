@@ -43,7 +43,7 @@ function build(): AppContext {
     shopId: env.DEMO_SHOP_ID || SEED_SHOP_ID,
     secret,
     status,
-    upiVpa: env.DEMO_UPI_VPA || "demoshop@upi",
+    upiVpa: env.DEMO_UPI_VPA || "demo.shop@invalid",
   };
 }
 

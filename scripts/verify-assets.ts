@@ -74,8 +74,8 @@ check("ad sounds CREDITS.json (cc0 only, stamp peak-aligned)", () => {
     for (const k of ["title", "creator", "openverseId", "landingUrl", "file"]) if (!e[k]) throw new Error(`entry missing ${k}`);
     need(`deliverables/ad/assets/sounds/${String(e.file)}`);
   }
-  const stamp = list.find((e) => e.role === "stamp");
-  if (!stamp) throw new Error("no entry with role 'stamp'");
+  const stamp = list.find((e) => typeof e.role === "string" && e.role.startsWith("stamp"));
+  if (!stamp) throw new Error("no entry whose role starts with 'stamp'");
   for (const k of ["hitTimeMs", "peakOffsetMs", "startMs"]) if (typeof stamp[k] !== "number") throw new Error(`stamp.${k} is not a computed number`);
   const expected = Math.max(0, (stamp.hitTimeMs as number) - (stamp.peakOffsetMs as number));
   if (Math.abs(expected - (stamp.startMs as number)) > 1) throw new Error(`stamp startMs ${stamp.startMs} != hit - peak (${expected})`);

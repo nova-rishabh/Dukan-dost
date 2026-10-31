@@ -3,12 +3,12 @@ import { DemoTag } from "./DemoTag";
 
 export function Header() {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-8">
+    <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3 md:px-8">
       <Link href="/" className="font-display text-2xl text-syahi no-underline" aria-label="Dukaan Dost, home">
         Dukaan Dost
       </Link>
-      <nav aria-label="Main" className="flex flex-wrap items-center gap-2">
-        <DemoTag />
+      <DemoTag />
+      <nav aria-label="Main" className="flex w-full flex-wrap items-center gap-2 md:w-auto">
         <Link href="/try" className="btn">
           Sample dukaan
         </Link>

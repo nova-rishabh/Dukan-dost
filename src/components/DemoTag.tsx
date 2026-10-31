@@ -14,7 +14,7 @@ export function DemoTag() {
   }, []);
   if (demo === false) return null;
   return (
-    <span className="inline-flex min-h-[48px] items-center rounded-full border-2 border-syahi bg-syahi px-4 text-sm font-semibold text-safed" data-testid="demo-tag">
+    <span className="inline-flex min-h-[48px] items-center rounded-md border-2 border-syahi bg-syahi px-3 text-sm font-semibold text-safed" data-testid="demo-tag">
       Demo mode
     </span>
   );

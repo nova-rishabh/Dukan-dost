@@ -31,10 +31,10 @@ describe("wa.me url", () => {
 
 describe("upi uri", () => {
   it("formats amount with 2 decimals and encodes pn and tn", () => {
-    const uri = buildUpiUri({ vpa: "demoshop@upi", shopName: "Shree Ganesh Kirana", amountPaise: 120050, note: "Udhaar jama & baaki" });
+    const uri = buildUpiUri({ vpa: "demo.shop@invalid", shopName: "Shree Ganesh Kirana", amountPaise: 120050, note: "Udhaar jama & baaki" });
     const q = new URL(uri.replace("upi://pay", "https://x.test/pay")).searchParams;
     expect(uri.startsWith("upi://pay?")).toBe(true);
-    expect(q.get("pa")).toBe("demoshop@upi");
+    expect(q.get("pa")).toBe("demo.shop@invalid");
     expect(q.get("pn")).toBe("Shree Ganesh Kirana");
     expect(q.get("am")).toBe("1200.50");
     expect(q.get("cu")).toBe("INR");

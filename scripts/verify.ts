@@ -9,7 +9,7 @@ const steps: Array<[string, string[]]> = [
   ["lint", ["run", "lint"]],
   ["test (unit + 20 fixtures)", ["run", "test"]],
   ["build", ["run", "build"]],
-  ["test:e2e (9 scripts + axe)", ["run", "test:e2e"]],
+  ["test:e2e (scripts + axe)", ["run", "test:e2e"]],
   ["check:slop", ["run", "check:slop"]],
   ["check:secrets", ["run", "check:secrets"]],
   ["verify:assets", ["run", "verify:assets"]],

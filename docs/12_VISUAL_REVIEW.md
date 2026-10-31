@@ -25,8 +25,8 @@ Result key: pass, or a finding with what was done.
 
 1. Yatra One draws the letter z like a 3 ("awaa3"). Display headings were reworded to avoid z ("Teen kaam, ek bol mein", "Sabse jyada baaki"). Body text uses Hind, which is unaffected.
 2. After Likh do, the stamp covered the Badlo button. Actions are now removed once the entry is stamped.
-3. The comparison table scrolls sideways at 390 px. It is a labelled, keyboard-focusable region (axe: no serious or critical issues). Left as is.
-4. The header wraps to three rows at 390 px (wordmark, tag, two buttons). Acceptable but not elegant; logged for the owner as a polish item.
+3. (Changed after the independent design review, `docs/reviews/02_design_slop.md`.) The comparison table used to clip at 390 px; it now uses fixed columns that wrap. The header is two rows at 390 px with the Demo mode label top right.
+4. Shop home: the result card now sits under the summary, and Bolo plus the typed box are fixed at the bottom. The toast moved to the top so it never covers Bolo or the sample clips. Disabled buttons use palette colours with readable text. The demo shop's UPI id is now a non-routable placeholder so a scanned demo QR cannot pay a real account. The pay page says plainly that demo links move no money.
 5. Full-page screenshots show the toast overlapping the sample clip buttons because the toast is fixed to the viewport. In a real viewport it sits above the sticky Bolo bar. Not a defect.
 
 ## Not verified here

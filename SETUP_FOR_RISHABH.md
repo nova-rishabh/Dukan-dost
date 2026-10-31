@@ -17,6 +17,7 @@ Open `.env.local` in an editor. Never paste keys into chat or commit this file (
 - `ELEVENLABS_API_KEY`: ElevenLabs, Profile, API keys.
 - `GEMINI_API_KEY`: Google AI Studio, Get API key.
 - `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`: Supabase project, Project settings, API. The service role key stays server-side only.
+- `PROPOSAL_SECRET`: any long random string you make up (for example 40 random characters). **Required once Supabase is on**: the app refuses to start without it, because it signs the confirm cards with it. Set it in Vercel too (step 9).
 - `DEMO_UPI_VPA`: leave empty for the fake demo id, or a UPI id you own for the later test.
 - `DEMO_SHOP_ID`: leave empty (uses the seeded shop id).
 - `NEXT_PUBLIC_APP_URL`: after step 9.
@@ -61,15 +62,15 @@ pnpm ad:vo
 pnpm ad:render
 ```
 
-`ad:vo` makes the Hindi line with ElevenLabs (no cloning). The ad already renders without it. **[done]** a render exists at `deliverables/ad/out/dukaan-dost-ad-vertical.mp4`.
+`ad:vo` makes the Hindi line with ElevenLabs (no cloning) into `deliverables/ad/assets/vo/`. Adding that audio to the composition is a manual edit (ask Claude). The ad already renders without it. **[done]** a render exists at `deliverables/ad/out/dukaan-dost-ad-vertical.mp4`.
 
 ## Step 8 [you]: make shots 1 and 2 in ElevenLabs Flows
 
-Open `deliverables/ad/FLOWS_PROMPTS.md`, paste each shot's prompts into the node chain it suggests, and save the results as `deliverables/ad/assets/clips/shot1.mp4` and `shot2.mp4`. Then run `pnpm ad:render` again. Keep the small "dramatisation" tag. Do not present AI footage as a real customer.
+Open `deliverables/ad/FLOWS_PROMPTS.md`, paste each shot's prompts into the node chain it suggests, and save the results as `deliverables/ad/assets/clips/shot1.mp4` and `shot2.mp4`. **Dropping the files in is not enough yet:** the composition (`deliverables/ad/index.html`, shots 1 and 2) still uses typographic stand-ins and does not read `assets/clips/` automatically. Ask Claude to wire the two clips into the composition, then run `pnpm ad:render`. Keep the small "dramatisation" tag. Do not present AI footage as a real customer.
 
 ## Step 9 [you]: connect GitHub and Vercel, deploy
 
-Create the GitHub repo and push (nothing was pushed by the build). In Vercel import it, set the env vars from step 2, deploy, then set `NEXT_PUBLIC_APP_URL` to the live URL and redeploy. Replace `{{APP_URL}}` in `deliverables/social/captions.md`, the post images and `deliverables/deck/index.html` (re-export `deck.pdf`).
+Create the GitHub repo and push (nothing was pushed by the build). In Vercel import it, set the env vars from step 2, deploy, then set `NEXT_PUBLIC_APP_URL` to the live URL and redeploy. Replace `{{APP_URL}}` in `deliverables/social/captions.md`, the post sources (`deliverables/social/_src/*.html`, then `node deliverables/social/_src/render.mjs`), the deck (`deliverables/deck/index.html`, then `node deliverables/deck/export.mjs`) and the ad end card. Until you do, the five links show the literal `{{APP_URL}}`.
 
 ## Step 10 [you]: test on a real Android phone
 

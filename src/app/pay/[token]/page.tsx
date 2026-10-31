@@ -50,7 +50,11 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
       <a href={view.upiUri} className="btn btn-primary no-underline" data-testid="pay-button">
         Kisi bhi UPI app se bharo
       </a>
-      <p className="text-base">Paise aapke UPI app se seedhe dukaan ko jaate hain. Is page par bharne ka matlab “paid” nahi hai; dukaandaar khud mark karte hain.</p>
+      {view.isDemo ? (
+        <p className="text-base">Yeh demo hai: is link par paise kisi ko nahi jaate. Asli dukaan mein paise seedhe dukaan ke UPI par jaate hain, aur dukaandaar khud “mile” mark karte hain.</p>
+      ) : (
+        <p className="text-base">Paise aapke UPI app se seedhe dukaan ko jaate hain. Is page par bharne ka matlab “paid” nahi hai; dukaandaar khud mark karte hain.</p>
+      )}
     </div>
   );
 }

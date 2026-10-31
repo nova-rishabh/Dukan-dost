@@ -4,7 +4,7 @@ import { projectFiles } from "./lib/util";
 /** Fails on key-like strings, tracked env files and phone-number patterns. */
 const files = projectFiles().filter((f) => existsSync(f));
 const BINARY = /\.(png|jpe?g|gif|webp|mp3|mp4|wav|ogg|woff2?|pdf|ico|zip|lock)$/i;
-const SKIP = /(^|\/)(pnpm-lock\.yaml|package-lock\.json)$/;
+const SKIP = /(^|\/)(pnpm-lock\.yaml|package-lock\.json)$|(^|\/)\.hyperframes\//; // generated render state holds hashes in file paths
 
 const KEY_PATTERNS: Array<[string, RegExp]> = [
   ["Google API key", /AIza[0-9A-Za-z_-]{35}/],

@@ -34,8 +34,8 @@ Say once: "Noisy room, so I'll type it." Move on.
 | Why would a shopkeeper trust an AI with money records? | "The owner stays the source of truth: nothing saves without a tap, nothing is deleted, and reminders are drafts the owner sends." |
 | How do you reach shopkeepers? | "Through wholesalers and distributors who visit weekly, plus shop-to-shop referrals. We have not run this yet." |
 | Is the payment real? | "The pay page builds a UPI link and QR for the shop's own UPI. We do not process payments or mark anything paid on our own." |
-| Does the AI image make the posters? | "No. Posters use fixed templates so Hindi text is never garbled. AI only picks wording and items." (if P1 is built) |
-| What about privacy? | "Demo data is fictional. Real shop data only with consent, with a delete button. Pay pages show name and amount only." |
+| Does the AI image make the posters? | "No. Posters use fixed templates so Hindi text is never garbled. AI only picks wording and items." (the poster is deterministic: item and price are parsed from the sentence and no model writes any poster text) |
+| What about privacy? | "Demo data is fictional. Real shop data only with consent, with a delete button (not built yet: say so if asked, and do not store real shop data until it exists). Pay pages show name and amount only." |
 
 ## 4. Five submission links (AI-juror readiness)
 

@@ -69,7 +69,7 @@ export default function Landing() {
               <span className="font-semibold">Disha shabdon mein.</span> “Sharma ji ne 500 diye” aur “Sharma ji ko 500 diye” ulti disha ke hain. Dono alag dikhte hain.
             </li>
             <li>
-              <span className="font-semibold">Entry hatti nahi, void hoti hai.</span> History mein kati hui dikhti hai.
+              <span className="font-semibold">Entry mitati nahi, hata di jaati hai.</span> Khate mein kati hui dikhti rehti hai.
             </li>
             <li>
               <span className="font-semibold">Do Sharma ho to poochta hai.</span> Andaza nahi lagata.
@@ -86,8 +86,8 @@ export default function Landing() {
           <h2 id="tulna" className="text-[28px]">
             Purane khate se kya badla
           </h2>
-          <div className="mt-5 overflow-x-auto" role="region" aria-label="Tulna table" tabIndex={0}>
-            <table className="w-full min-w-[480px] border-2 border-syahi bg-safed text-left">
+          <div className="mt-5">
+            <table className="w-full table-fixed border-2 border-syahi bg-safed text-left text-base md:text-lg">
               <thead>
                 <tr className="border-b-2 border-syahi">
                   <th scope="col" className="p-3"></th>
@@ -104,7 +104,7 @@ export default function Landing() {
                 <tr className="border-b-2 border-dashed border-syahi">
                   <th scope="row" className="p-3">Galti</th>
                   <td className="p-3">Kaat-chaant</td>
-                  <td className="p-3">Void, history mein dikhta rehta hai</td>
+                  <td className="p-3">Hata di jaati hai, khate mein kati hui dikhti hai</td>
                 </tr>
                 <tr className="border-b-2 border-dashed border-syahi">
                   <th scope="row" className="p-3">Vasooli</th>

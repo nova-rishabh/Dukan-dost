@@ -30,7 +30,7 @@ export function ShopHome() {
   }, [load]);
 
   return (
-    <div className="mx-auto grid max-w-5xl gap-5 px-4 pb-4 pt-2 md:px-8">
+    <div className="mx-auto grid max-w-5xl gap-5 px-4 pb-40 pt-2 md:px-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-[40px] leading-tight">{shopName || "Meri dukaan"}</h1>
         <Link href="/shop/poster" className="btn btn-reminder">
@@ -46,6 +46,8 @@ export function ShopHome() {
 
       {summary ? <SummaryStrip summary={summary} onChanged={load} /> : <div className="sticker h-40 p-4" aria-busy="true">Hisaab khul raha hai…</div>}
 
+      <Assistant variant="shop" showSamples onChange={() => void load()} />
+
       <section aria-label="Customer">
         <h2 className="mb-2 text-[28px]">Khata</h2>
         {customers ? (
@@ -59,7 +61,6 @@ export function ShopHome() {
         )}
       </section>
 
-      <Assistant variant="shop" showSamples onChange={() => void load()} />
     </div>
   );
 }

@@ -141,8 +141,8 @@ All P0 acceptance criteria in 01_PRD.md pass; the 20-fixture gate passes; the re
 | axe (WCAG 2.2 A and AA tags) on landing, shop home, customer page, pay page, /try | no serious or critical violations | included above |
 | Design-token contrast | all pairs meet the minimums in 03 section 3 | `pnpm test` |
 | `pnpm check:slop`, `pnpm check:secrets` | pass; both are proven able to fail by `tests/unit/gates.test.ts` | `pnpm check:slop` |
-| `pnpm verify:assets` | see the final run in `docs/05_LOG.md` closeout | `pnpm verify:assets` |
+| `pnpm verify:assets` | 24 checks (posts, captions, deck and PDF, ad via ffprobe, CC0 credits with computed stamp offset, screenshots, setup files); the final run is quoted in `docs/05_LOG.md` | `pnpm verify:assets` |
 
-Not run here (need keys or a device): STT accuracy on clean and noisy audio (sections 1 and 4), live speakers, Lighthouse, real Android and iOS, 10-run rehearsal, judge proxy on live links. The expired-token page is covered by a unit test, not by an end-to-end test.
+Not run here (need keys or a device): STT accuracy on clean and noisy audio (sections 1 and 4), live speakers, Lighthouse, real Android and iOS, 10-run rehearsal, judge proxy on live links. The expired-token page, a forced speech-to-text failure and an LLM timeout are covered by unit tests with mocks; the end-to-end fallbacks are: mic blocked (8a), keyless speech-to-text message (8b) and a sample clip (8c).
 
 The e2e script 3 (which Sharma) uses fixture 1 ("Sharma ji ne 500 rupaye udhaar liye"), because fixture 12 resolves both names exactly. Fixture 12 is covered by the fixture test.

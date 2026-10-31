@@ -46,7 +46,7 @@ export function SampleClips({ onPick, disabled, showNotes }: { onPick: (id: stri
       <p className="mt-3 text-base" data-testid="clip-note">
         {anyAudio
           ? "Sample clips AI se banayi gayi awaaz hain (dramatisation), asli dukaandaar nahi."
-          : "Abhi sirf transcript chalta hai. Awaaz wali clip ke liye pnpm samples:generate chalao."}
+          : "Abhi clips mein sirf likha hua sentence chalta hai, awaaz nahi."}
       </p>
     </div>
   );

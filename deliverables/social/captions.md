@@ -1,6 +1,6 @@
 # Captions
 
-Replace {{APP_URL}} with the deployed link before posting. Demo shop and customers are fictional. Product screens are real captures of the running app.
+Replace {{APP_URL}} with the deployed link before posting. Demo shop and customers are fictional. Product screens are captures of the running demo app; post 1 recreates the parchi in HTML from the same design.
 
 ## Post 1: Ne ya ko (post-1-ne-ya-ko.png)
 

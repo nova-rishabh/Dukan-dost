@@ -17,6 +17,8 @@ pnpm verify       # typecheck, lint, unit and fixtures, build, e2e with axe, slo
 pnpm setup:check  # which adapters are active, which env names are missing
 ```
 
+Environment variable names are in `.env.example`. Beyond the eight in the brief there is `PROPOSAL_SECRET` (required when Supabase is active), and optional `ELEVENLABS_VOICE_ID`, `DUKAAN_DATA_FILE`, `DUKAAN_MEMORY_ONLY` and `DEMO_RESET_ON_BOOT`.
+
 ## Read in this order
 1. [docs/00_INFO.md](docs/00_INFO.md): challenge facts, access, glossary
 2. [docs/01_PRD.md](docs/01_PRD.md): what and why
@@ -29,5 +31,7 @@ pnpm setup:check  # which adapters are active, which env names are missing
 9. [docs/08_SKILLS_AND_TOOLS.md](docs/08_SKILLS_AND_TOOLS.md): skills audit and connections to add
 10. [docs/09_RISKS_AND_OPEN_QUESTIONS.md](docs/09_RISKS_AND_OPEN_QUESTIONS.md): risks and questions
 11. [docs/10_BUILD_PLAN.md](docs/10_BUILD_PLAN.md): schedule and cut lines
+12. [docs/11_IMPLEMENTATION_PLAN.md](docs/11_IMPLEMENTATION_PLAN.md), [12_VISUAL_REVIEW.md](docs/12_VISUAL_REVIEW.md), [13_SELF_REVIEW.md](docs/13_SELF_REVIEW.md), [14_API_FACTS.md](docs/14_API_FACTS.md): build plan, visual review, honest self-score, vendor API facts
+13. [docs/reviews/](docs/reviews/): independent reviews (money and privacy, design, docs versus code, security, verification)
 
 Also in the Workshop folder: [ai_judge_prompt_v2.md](../ai_judge_prompt_v2.md), the prompt we use to score ideas against the challenge rubric.
