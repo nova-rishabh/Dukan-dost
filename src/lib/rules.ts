@@ -202,7 +202,7 @@ export function interpretRules(text: string): RulesResult {
       const hasPay = has(PAY);
       const hasGive = has(GIVE);
       const hasTake = has(TAKE);
-      let direction: "credit" | "payment" | null = null;
+      let direction: "credit" | "payment" | null;
 
       if (has(STATEMENT)) direction = null;
       else if (hasPay) direction = particle === "ko" ? null : "payment";

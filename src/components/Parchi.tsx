@@ -303,7 +303,7 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
               </div>
             ) : null}
 
-            {!preview ? (
+            {!preview && phase !== "stamped" ? (
               <div className="mt-4 flex flex-wrap gap-3">
                 <button type="button" className="btn btn-primary" onClick={likhDo} disabled={!ready || phase === "writing" || phase === "stamped"} data-testid="likh-do">
                   {phase === "second" ? `Pakka ${formatINR((amount ?? 0) * 100)}?` : "Likh do"}
@@ -322,11 +322,13 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
             <p className="mt-2 text-xl font-semibold" data-testid="stock-line">
               {intent.item} kam hai, yaad rakha
             </p>
-            <div className="mt-4">
-              <button type="button" className="btn btn-primary" onClick={likhStock} disabled={phase === "writing" || phase === "stamped"} data-testid="likh-do">
-                Likh do
-              </button>
-            </div>
+            {phase !== "stamped" ? (
+              <div className="mt-4">
+                <button type="button" className="btn btn-primary" onClick={likhStock} disabled={phase === "writing"} data-testid="likh-do">
+                  Likh do
+                </button>
+              </div>
+            ) : null}
           </>
         ) : null}
 
@@ -342,9 +344,9 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
                 {intent.reason ?? "Hatane ke liye koi entry nahi mili."}
               </p>
             )}
-            {intent.undoTarget ? (
+            {intent.undoTarget && phase !== "stamped" ? (
               <div className="mt-4">
-                <button type="button" className="btn btn-danger" onClick={hataDo} disabled={phase === "writing" || phase === "stamped"} data-testid="hata-do">
+                <button type="button" className="btn btn-danger" onClick={hataDo} disabled={phase === "writing"} data-testid="hata-do">
                   Hata do
                 </button>
               </div>

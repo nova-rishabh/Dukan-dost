@@ -39,7 +39,6 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
         {formatINR(view.amountPaise)}
       </p>
       <div className="sticker grid justify-items-center p-4">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={qr} width={280} height={280} alt={`UPI QR, ${formatINR(view.amountPaise)}`} data-testid="pay-qr" />
       </div>
       <a href={view.upiUri} className="btn btn-primary no-underline" data-testid="pay-button">

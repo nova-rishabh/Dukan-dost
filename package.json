@@ -14,6 +14,7 @@
     "test:e2e": "playwright test",
     "check:slop": "tsx scripts/check-slop.ts",
     "check:secrets": "tsx scripts/check-secrets.ts",
+    "shots": "playwright test -c playwright.shots.config.ts",
     "verify:assets": "tsx scripts/verify-assets.ts",
     "verify": "tsx scripts/verify.ts",
     "verify:live": "tsx scripts/verify-live.ts",
@@ -51,7 +52,7 @@
     "postcss": "^8.5.32",
     "tailwindcss": "4.3.3",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
     "vitest": "5.0.5"
   }

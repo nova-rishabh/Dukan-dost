@@ -34,7 +34,7 @@ export default function Landing() {
       <section className="bg-neel px-4 py-10 text-safed md:px-8" aria-labelledby="teen-kaam">
         <div className="mx-auto max-w-6xl">
           <h2 id="teen-kaam" className="text-[28px]">
-            Teen kaam, ek awaaz mein
+            Teen kaam, ek bol mein
           </h2>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             <div>
@@ -84,7 +84,7 @@ export default function Landing() {
       <section className="bg-sindoor px-4 py-10 md:px-8" aria-labelledby="tulna">
         <div className="mx-auto max-w-6xl">
           <h2 id="tulna" className="text-[28px]">
-            Kaagaz ke khate se kya badla
+            Purane khate se kya badla
           </h2>
           <div className="mt-5 overflow-x-auto" role="region" aria-label="Tulna table" tabIndex={0}>
             <table className="w-full min-w-[480px] border-2 border-syahi bg-safed text-left">

@@ -13,7 +13,7 @@ export function SummaryStrip({ summary, onChanged }: { summary: Summary; onChang
         <p className="text-base">{summary.customerCount} customer</p>
       </div>
       <div className="sticker p-4">
-        <h2 className="text-xl">Sabse zyada baaki</h2>
+        <h2 className="text-xl">Sabse jyada baaki</h2>
         {summary.topDebtors.length === 0 ? (
           <p>Kisi ka baaki nahi.</p>
         ) : (
