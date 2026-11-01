@@ -56,3 +56,42 @@ export const PosterBody = z.object({
 });
 
 export const TranscribeJson = z.object({ sampleId: z.string().max(40) });
+
+
+export const SetupBody = z.object({
+  setupCode: z.string().min(1).max(64),
+  shopName: z.string().trim().min(1).max(80),
+  name: z.string().trim().min(1).max(60),
+  mobile: z.string().trim().min(8).max(24),
+  passcode: z.string().min(1).max(128),
+  upiVpa: z.string().trim().max(80).optional(),
+});
+
+export const LoginBody = z.object({
+  mobile: z.string().trim().min(1).max(24),
+  passcode: z.string().min(1).max(128),
+});
+
+export const PasscodeBody = z.object({
+  current: z.string().max(128).optional(),
+  next: z.string().min(1).max(128),
+});
+
+export const WaSendBody = z.object({
+  mobile: z.string().trim().min(1).max(24),
+  captchaId: z.string().min(1).max(80),
+  captchaCode: z.string().min(1).max(12),
+});
+
+export const WaVerifyBody = z.object({
+  mobile: z.string().trim().min(1).max(24),
+  code: z.string().min(1).max(12),
+});
+
+export const SendReminderBody = z.object({
+  confirmed: z.boolean(),
+  customerId: z.string().min(1).max(64),
+  phone: z.string().trim().min(8).max(24),
+  text: z.string().trim().min(1).max(1000),
+  payUrl: z.string().url().max(300),
+});

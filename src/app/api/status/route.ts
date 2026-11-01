@@ -7,4 +7,4 @@ export const runtime = "nodejs";
 export const GET = route("status", async () => {
   const { status } = getContext();
   return { adapters: { stt: status.stt, tts: status.tts, llm: status.llm, store: status.store }, demoMode: status.demoMode };
-});
+}, { public: true });

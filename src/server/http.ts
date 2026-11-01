@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { ZodError } from "zod";
+import { AuthError, type SessionPayload } from "@/lib/auth";
 import { LedgerError } from "@/lib/ledger";
 import { ProviderError } from "@/lib/providers/types";
+import { requireOwner } from "./auth";
+import { getContext } from "./context";
 
 export class HttpError extends Error {
   constructor(
@@ -22,7 +25,7 @@ const MAX_KEYS = 5000;
  * The client address is trusted only behind Vercel, which overwrites x-forwarded-for; anywhere else every
  * caller shares one bucket. Demo-grade: per process, so a shared store replaces it for real traffic.
  */
-function clientIp(req: Request): string {
+export function clientIp(req: Request): string {
   if (process.env.VERCEL) return (req.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim() || "unknown";
   return "local";
 }
@@ -35,6 +38,11 @@ function hit(key: string, limit: number, windowMs: number, now: number) {
   }
   hits.push(now);
   windows.set(key, hits);
+}
+
+/** Test helper: forget all counted requests. */
+export function resetRateLimits() {
+  windows.clear();
 }
 
 export function rateLimit(req: Request, bucket: string, limit: number, windowMs = 60_000) {
@@ -86,18 +94,20 @@ function assertSameOrigin(req: Request) {
   if (!same) throw new HttpError(403, "bad_origin", "Cross-site request refused", "Yeh request is site se nahi aayi.");
 }
 
-type Handler = (req: Request, ctx: { requestId: string; params: Record<string, string> }) => Promise<Response | Record<string, unknown>>;
+type Handler = (req: Request, ctx: { requestId: string; params: Record<string, string>; session: SessionPayload | null }) => Promise<Response | Record<string, unknown>>;
 
 /** Wraps a route: request id, stage timing log, typed errors with a recovery hint. */
-export function route(name: string, handler: Handler) {
+export function route(name: string, handler: Handler, opts: { public?: boolean } = {}) {
   return async (req: Request, routeCtx?: { params?: Promise<Record<string, string>> }): Promise<Response> => {
     const requestId = randomUUID().slice(0, 8);
     const started = Date.now();
     let status = 200;
     try {
       assertSameOrigin(req);
+      // a real shop needs the owner's login on every route except the ones marked public
+      const session = opts.public ? null : await requireOwner(req, getContext());
       const params = (await routeCtx?.params) ?? {};
-      const out = await handler(req, { requestId, params });
+      const out = await handler(req, { requestId, params, session });
       if (out instanceof Response) {
         status = out.status;
         out.headers.set("x-request-id", requestId);
@@ -112,6 +122,11 @@ export function route(name: string, handler: Handler) {
       if (err instanceof HttpError) ({ status, code, message, hint } = err);
       else if (err instanceof LedgerError) {
         status = err.code === "not_found" ? 404 : err.code === "already_voided" ? 409 : 400;
+        code = err.code;
+        message = err.message;
+        hint = err.hint;
+      } else if (err instanceof AuthError) {
+        status = err.status;
         code = err.code;
         message = err.message;
         hint = err.hint;

@@ -11,7 +11,9 @@ export const ENV_NAMES = [
   "GEMINI_API_KEY",
   "PROPOSAL_SECRET",
   "DUKAAN_DB_FILE",
-  "DUKAAN_SHOP_NAME",
+  "WA_SERVICE_URL",
+  "WA_APP_KEY",
+  "WA_APP_SECRET",
   "NEXT_PUBLIC_APP_URL",
   "DEMO_SHOP_ID",
   "DEMO_UPI_VPA",
@@ -24,8 +26,10 @@ export interface AdapterStatus {
   stt: "elevenlabs" | "local";
   tts: "elevenlabs" | "local";
   llm: "gemini" | "rules-only";
-  /** "sqlite" is a real database file; "local" is the in-memory demo store with a JSON file */
+  /** "sqlite" is a real database file with a login; "local" is the in-memory demo store with a JSON file */
   store: "sqlite" | "local";
+  /** the WhatsApp daemon (services/wa-userauth): login codes and sending */
+  wa: "daemon" | "none";
   demoMode: boolean;
   missing: string[];
 }
@@ -34,11 +38,13 @@ export function adapterStatus(env: Env): AdapterStatus {
   const stt = has(env, "ELEVENLABS_API_KEY") ? "elevenlabs" : "local";
   const llm = has(env, "GEMINI_API_KEY") ? "gemini" : "rules-only";
   const store = has(env, "DUKAAN_DB_FILE") ? "sqlite" : "local";
+  const wa = has(env, "WA_SERVICE_URL") && has(env, "WA_APP_KEY") && has(env, "WA_APP_SECRET") ? "daemon" : "none";
   return {
     stt,
     tts: stt,
     llm,
     store,
+    wa,
     demoMode: stt === "local" || llm === "rules-only" || store === "local",
     missing: ENV_NAMES.filter((n) => !has(env, n)),
   };
