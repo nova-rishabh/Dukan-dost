@@ -12,7 +12,9 @@ export interface WaConfig {
 }
 
 export function waConfigFromEnv(env: Record<string, string | undefined>): WaConfig | null {
-  const baseUrl = env.WA_SERVICE_URL?.trim().replace(/\/$/, "");
+  const raw = env.WA_SERVICE_URL?.trim().replace(/\/$/, "");
+  // Render hands over "host:port" for a private service, so add the scheme when it is missing
+  const baseUrl = raw && !/^https?:\/\//.test(raw) ? `http://${raw}` : raw;
   const appKey = env.WA_APP_KEY?.trim();
   const appSecret = env.WA_APP_SECRET?.trim();
   return baseUrl && appKey && appSecret ? { baseUrl, appKey, appSecret } : null;
