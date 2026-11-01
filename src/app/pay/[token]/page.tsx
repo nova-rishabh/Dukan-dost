@@ -4,6 +4,8 @@ import QRCode from "qrcode";
 import { formatINR } from "@/lib/money";
 import { readPayToken } from "@/lib/pay";
 import { getContext } from "@/server/context";
+import { cookies } from "next/headers";
+import { demoContext } from "@/server/demo";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Bharo", robots: { index: false, follow: false } };
@@ -12,7 +14,9 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
   const locale = await getServerLocale();
   const L = (en: string, hi: string) => locale === "en" ? en : hi;
   const { token } = await params;
-  const view = await readPayToken(getContext().store, token, new Date());
+  const ctx = getContext();
+  const visitor = demoContext(ctx, (await cookies()).toString());
+  const view = await readPayToken((visitor ?? ctx).store, token, new Date());
 
   if (view.status !== "ok") {
     return (

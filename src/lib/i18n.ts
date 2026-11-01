@@ -112,6 +112,14 @@ export function errorHint(locale: Locale, error: unknown, fallback: MessageKey):
 
 
 const domainErrors: Record<string, string> = {
+  reauth_required: "Enter your current password or sign in again with WhatsApp before confirming this sensitive action.",
+  invalid_import: "This export file is invalid or unsupported. No records were imported.",
+  import_conflict: "Shop records changed after the preview. Preview the import again before confirming.",
+  import_preview_expired: "The import preview expired. Review the file again before confirming.",
+  invalid_mobile_change: "This number-change verification expired or belongs to a different session. Start again.",
+  mobile_unavailable: "This number cannot be used for this shop. Choose another verified number.",
+  demo_expired: "Your private sample session expired. Start a new sample shop, or sign in to your own shop.",
+  invalid_amount: "Enter a positive amount with up to two decimal places, up to ₹1,00,000.",
   invalid_registration: "Your verification expired or is unavailable. Verify your WhatsApp number again.",
   stale_registration: "Your signup verification expired or changed. Request a fresh code and try again.",
   verification_in_progress: "Verification is already in progress. Wait for its result before requesting another code.",

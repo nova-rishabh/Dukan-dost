@@ -2,14 +2,10 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
 
-/**
- * Content Security Policy. Next.js hydrates with inline scripts and this app has no nonce plumbing yet,
- * so script-src keeps 'unsafe-inline'. That limits the benefit (it still blocks foreign script hosts,
- * framing, plugins, form posts to other sites and base-tag tricks); a nonce-based policy is the next step.
- */
+/** Baseline for static/API responses; HTML gets a request nonce from src/proxy.ts. */
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "media-src 'self' blob:",

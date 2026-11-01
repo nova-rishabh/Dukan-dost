@@ -15,6 +15,8 @@ import type { LlmProvider } from "@/lib/types";
 import { waConfigFromEnv, type WaConfig } from "@/lib/waService";
 
 export interface AppContext {
+  /** A visitor's isolated fictional workspace, never a real account session. */
+  visitorDemo?: boolean;
   store: LedgerStore;
   stt: SttProvider;
   tts: TtsProvider;
@@ -87,7 +89,9 @@ export function getContext(): AppContext {
 
 /** Public base URL for links the owner shares (pay pages). */
 export async function appUrl(req: Request): Promise<string> {
-  const fromEnv = process.env.NEXT_PUBLIC_APP_URL;
+  // Access through the runtime env object: NEXT_PUBLIC direct access is frozen by Next at build time.
+  const runtimeEnv = process.env;
+  const fromEnv = runtimeEnv.APP_PUBLIC_URL || runtimeEnv.NEXT_PUBLIC_APP_URL;
   if (fromEnv) return fromEnv.replace(/\/$/, "");
   return new URL(req.url).origin;
 }

@@ -1,11 +1,14 @@
 import { test, expect } from "@playwright/test";
 
-test.beforeEach(async ({ request, context }) => {
+test.beforeEach(async ({ page, context }) => {
+  const request = page.request;
+  await request.post("/api/demo/start", { data: {} });
   await request.post("/api/demo/reset");
   await context.addCookies([{ name: "dukaan-locale", value: "en", domain: "localhost", path: "/" }]);
 });
 
-test("customers require review, separate people deliberately, and retain archived ledgers", async ({ page, request }) => {
+test("customers require review, separate people deliberately, and retain archived ledgers", async ({ page }) => {
+  const request = page.request;
   await page.goto("/shop/customers");
   await page.getByLabel("Language / Bhasha").selectOption("en");
   await page.getByLabel("Name", { exact: true }).fill("Counter customer");
@@ -28,7 +31,8 @@ test("customers require review, separate people deliberately, and retain archive
   expect((await request.get(`/api/customers/${ledger!.split("/").pop()}`)).ok()).toBe(true);
 });
 
-test("inventory uses measured counts and reverses an out movement without erasing it", async ({ page, request }) => {
+test("inventory uses measured counts and reverses an out movement without erasing it", async ({ page }) => {
+  const request = page.request;
   await page.goto("/shop/inventory");
   await page.getByLabel("Language / Bhasha").selectOption("en");
   await page.getByLabel("Item name", { exact: true }).fill("Measured rice");

@@ -1,3 +1,4 @@
+import { businessSnapshot, remapSnapshot, snapshotDigest, type BusinessSnapshot } from "../shop-transfer";
 import { randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import path from "node:path";
@@ -5,7 +6,7 @@ import type { DatabaseSync } from "node:sqlite";
 import { SEED_CUSTOMERS, SEED_ENTRIES, SEED_SHOP, SEED_STOCK } from "../seed";
 import type { AuditEvent, Product, StockMovement, RegistrationChallenge, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
 import { retentionCutoff, UNCONFIRMED_AUDIT_KIND } from "./retention";
-import { completeProof, movementResult, normalizedMobile, ownerByMobile, validateProduct } from "./operations";
+import { mobileChangeResult, completeProof, movementResult, normalizedMobile, ownerByMobile, validateProduct } from "./operations";
 import type { CompleteRegistrationInput, CustomerPatch, MovementInput, ProductPatch, EraseCounts, LedgerStore } from "./types";
 
 /**
@@ -178,6 +179,9 @@ export class SqliteStore implements LedgerStore {
       unique(shop_id, idempotency_key), unique(shop_id, reversal_of)
     );
     create index if not exists movements_shop on stock_movements(shop_id, product_id);
+    create table if not exists rate_limit_hits (key text not null, at integer not null);
+    create index if not exists rate_limit_key on rate_limit_hits(key, at);
+    create table if not exists shop_imports (shop_id text not null references shops(id) on delete cascade, digest text not null, primary key(shop_id,digest));
     create table if not exists registration_challenges (id text primary key, payload text not null);`);
     const any = this.db.prepare("select count(*) as n from shops").get() as { n: number };
     if (any.n === 0) {
@@ -221,9 +225,12 @@ export class SqliteStore implements LedgerStore {
     return r ? toShop(r) : null;
   }
 
-  async updateShop(shopId: string, patch: { name: string; upiVpa: string }) {
-    this.db.prepare("update shops set name = ?, upi_vpa = ? where id = ?").run(patch.name, patch.upiVpa, shopId);
-    return this.getShop(shopId);
+  async updateShop(shopId: string, patch: { name: string; upiVpa: string }, expectedAuthVersion?: number) {
+    return this.tx(() => {
+      if (expectedAuthVersion !== undefined && Number((this.db.prepare("select auth_version from owners where shop_id=?").get(shopId) as Row | undefined)?.auth_version) !== expectedAuthVersion) throw new Error("stale_owner");
+      this.db.prepare("update shops set name = ?, upi_vpa = ? where id = ?").run(patch.name, patch.upiVpa, shopId);
+      const row = this.db.prepare("select * from shops where id=?").get(shopId) as Row | undefined; return row ? toShop(row) : null;
+    });
   }
 
   async listCustomers(shopId: string) {
@@ -311,9 +318,10 @@ export class SqliteStore implements LedgerStore {
     return rows.map((r) => ({ id: Number(r.id), shopId: r.shop_id as string, kind: r.kind as string, payload: JSON.parse(r.payload as string) as Record<string, unknown>, createdAt: r.created_at as string }));
   }
 
-  async eraseShop(shopId: string): Promise<EraseCounts> {
+  async eraseShop(shopId: string, expectedAuthVersion?: number): Promise<EraseCounts> {
     const n = (sql: string) => Number((this.db.prepare(sql).get(shopId) as { n: number }).n);
     return this.tx(() => {
+      if (expectedAuthVersion !== undefined && (this.db.prepare("select auth_version from owners where shop_id = ?").get(shopId) as Row | undefined)?.auth_version !== expectedAuthVersion) throw new Error("stale_owner");
       const counts = {
         customers: n("select count(*) as n from customers where shop_id = ?"),
         entries: n("select count(*) as n from entries where shop_id = ?"),
@@ -321,8 +329,8 @@ export class SqliteStore implements LedgerStore {
         payTokens: n("select count(*) as n from pay_tokens where shop_id = ?"),
         auditEvents: n("select count(*) as n from audit_events where shop_id = ?"),
       };
-      for (const t of ["stock_movements", "products", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers"]) this.db.prepare(`delete from ${t} where shop_id = ?`).run(shopId);
-      this.db.prepare("delete from registration_challenges where json_extract(payload, '$.resultShopId') = ? or json_extract(payload, '$.mobile') = (select mobile from owners where shop_id = ?)").run(shopId, shopId);
+      for (const t of ["shop_imports", "stock_movements", "products", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers"]) this.db.prepare(`delete from ${t} where shop_id = ?`).run(shopId);
+      this.db.prepare("delete from registration_challenges where json_extract(payload, '$.resultShopId') = ? or json_extract(payload, '$.ownerShopId') = ? or json_extract(payload, '$.mobile') = (select mobile from owners where shop_id = ?)").run(shopId, shopId, shopId);
       return counts;
     });
   }
@@ -451,9 +459,56 @@ export class SqliteStore implements LedgerStore {
     });
   }
 
+  async consumeRateLimit(key: string, limit: number, windowMs: number, now: number) {
+    return this.tx(() => {
+      this.db.prepare("delete from rate_limit_hits where at <= ?").run(now - 86400000);
+      const row = this.db.prepare("select count(*) as n,min(at) as oldest from rate_limit_hits where key = ? and at > ?").get(key, now - windowMs) as Row;
+      if (Number(row.n) >= limit) return { allowed: false, retryAfterMs: Math.max(1, Number(row.oldest) + windowMs - now) };
+      this.db.prepare("insert into rate_limit_hits (key,at) values (?,?)").run(key,now); return { allowed: true, retryAfterMs: 0 };
+    });
+  }
+  private snapshot(shopId: string) {
+    const shop = this.db.prepare("select * from shops where id = ?").get(shopId) as Row | undefined; if (!shop) throw new Error("shop_not_found");
+    return businessSnapshot(String(shop.name), { customers: (this.db.prepare("select * from customers where shop_id = ? order by rowid").all(shopId) as Row[]).map(toCustomer), entries: (this.db.prepare("select * from entries where shop_id = ? order by rowid").all(shopId) as Row[]).map(toEntry), products: this.products(shopId), movements: this.movements(shopId), stockFlags: (this.db.prepare("select * from stock_flags where shop_id = ? order by rowid").all(shopId) as Row[]).map(toFlag) });
+  }
+  async exportBusiness(shopId: string) { return this.tx(() => this.snapshot(shopId)); }
+  async importBusiness(shopId: string, input: BusinessSnapshot, expectedFingerprint: string, expectedAuthVersion?: number) {
+    const digest = snapshotDigest(input); const records = remapSnapshot(input, shopId, digest);
+    return this.tx(() => {
+      if (expectedAuthVersion !== undefined && Number((this.db.prepare("select auth_version from owners where shop_id=?").get(shopId) as Row | undefined)?.auth_version) !== expectedAuthVersion) throw new Error("stale_owner");
+      if (this.db.prepare("select 1 from shop_imports where shop_id=? and digest=?").get(shopId,digest)) return { created: false, customers: 0, entries: 0, products: 0 };
+      if (snapshotDigest(this.snapshot(shopId)) !== expectedFingerprint) throw new Error("import_conflict");
+      for (const c of records.customers) this.db.prepare("insert into customers (id,shop_id,display_name,area,name_roman,name_devanagari,aliases,archived_at) values (?,?,?,?,?,?,?,?)").run(c.id,shopId,c.name,c.area ?? null,c.nameRoman,c.nameDevanagari ?? null,JSON.stringify(c.aliases),c.archivedAt ?? null);
+      for (const e of records.entries) this.db.prepare("insert into entries (id,shop_id,customer_id,type,amount_paise,note,source_text,source,idempotency_key,confirmed_at,voided_at,void_reason) values (?,?,?,?,?,?,?,?,?,?,?,?)").run(e.id,shopId,e.customerId,e.type,e.amountPaise,e.note ?? null,e.sourceText,e.source,e.idempotencyKey,e.confirmedAt,e.voidedAt ?? null,e.voidReason ?? null);
+      for (const p of records.products) this.db.prepare("insert into products (id,shop_id,payload) values (?,?,?)").run(p.id,shopId,JSON.stringify(p));
+      for (const m of records.movements) this.db.prepare("insert into stock_movements (id,shop_id,product_id,idempotency_key,reversal_of,payload) values (?,?,?,?,?,?)").run(m.id,shopId,m.productId,m.idempotencyKey,m.reversalOf ?? null,JSON.stringify(m));
+      for (const f of records.stockFlags) this.db.prepare("insert into stock_flags (id,shop_id,item_name,level,source_text,created_at,resolved_at) values (?,?,?,?,?,?,?)").run(f.id,shopId,f.itemName,f.level,f.sourceText ?? null,f.createdAt,f.resolvedAt ?? null);
+      this.db.prepare("insert into shop_imports (shop_id,digest) values (?,?)").run(shopId,digest);
+      return { created: true, customers: records.customers.length, entries: records.entries.length, products: records.products.length };
+    });
+  }
+  async completeMobileChange(input: { id: string; browserHash: string; shopId: string; expectedAuthVersion: number; now: string }) {
+    return this.tx(() => {
+      const challenge = this.registration(input.id); const owners = this.allOwners(); const owner = mobileChangeResult(challenge,owners,input); const old = owners.find((r) => r.shopId === input.shopId)!;
+      this.db.prepare("update owners set mobile=?,mobile_key=?,auth_version=? where shop_id=? and auth_version=?").run(owner.mobile,owner.mobile,owner.authVersion,input.shopId,input.expectedAuthVersion);
+      this.db.prepare("delete from registration_challenges where id != ? and (json_extract(payload,'$.mobile') = ? or json_extract(payload,'$.ownerShopId') = ? or json_extract(payload,'$.resultShopId') = ?)").run(input.id,old.mobile,input.shopId,input.shopId);
+      Object.assign(challenge!, { state: "completed", resultShopId: input.shopId, resultAuthVersion: owner.authVersion }); this.db.prepare("update registration_challenges set payload=? where id=?").run(JSON.stringify(challenge),input.id); this.db.prepare("insert into audit_events (shop_id,kind,payload,created_at) values (?,?,?,?)").run(input.shopId,"owner_mobile_changed","{}",input.now); return owner;
+    });
+  }
+  async closeShop(shopId: string, expectedAuthVersion: number) {
+    this.tx(() => {
+      const owner = this.allOwners().find((r) => r.shopId === shopId); if (!owner || owner.authVersion !== expectedAuthVersion) throw new Error("stale_owner");
+      this.db.prepare("delete from registration_challenges where json_extract(payload, '$.resultShopId') = ? or json_extract(payload, '$.ownerShopId') = ? or json_extract(payload, '$.mobile') = (select mobile from owners where shop_id = ?)").run(shopId,shopId,shopId);
+      for (const table of ["shop_imports", "stock_movements", "products", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers", "owners", "shops"]) this.db.prepare(`delete from ${table} where ${table === "shops" ? "id" : "shop_id"} = ?`).run(shopId);
+    });
+  }
+  async listReminderHistory(shopId: string, limit: number) {
+    return (this.db.prepare("select d.status,d.created_at,d.simulated,t.customer_id,t.amount_paise from reminder_deliveries d join pay_tokens t on t.token=d.token and t.shop_id=d.shop_id where d.shop_id = ? order by d.created_at desc limit ?").all(shopId,limit) as Row[]).map((r) => ({ customerId: String(r.customer_id), amountPaise: Number(r.amount_paise), status: String(r.status), createdAt: String(r.created_at), simulated: r.simulated == null ? undefined : Boolean(r.simulated) }));
+  }
+
   async reset() {
     this.tx(() => {
-      for (const t of ["registration_challenges", "stock_movements", "products", "owners", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers", "shops"]) this.db.exec(`delete from ${t}`);
+      for (const t of ["rate_limit_hits", "shop_imports", "registration_challenges", "stock_movements", "products", "owners", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers", "shops"]) this.db.exec(`delete from ${t}`);
     });
     if (this.seedDemo) this.seed();
   }

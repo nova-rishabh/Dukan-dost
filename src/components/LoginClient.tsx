@@ -32,7 +32,7 @@ export function LoginClient() {
     try {
       const m = await api.me();
       setMe(m);
-      if (m.loggedIn || !m.authRequired) window.location.assign("/shop");
+      if (!m.authRequired || (m.loggedIn && new URLSearchParams(window.location.search).get("reauth") !== "1")) window.location.assign("/shop");
     } catch (e) {
       setLoadError(hint(e, "loginLoadFailed"));
     }

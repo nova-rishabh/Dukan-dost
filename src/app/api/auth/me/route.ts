@@ -20,6 +20,7 @@ export const GET = route(
       owner: session && owner ? { name: owner.name } : null,
       waLogin: ctx.authRequired && !!ctx.wa,
       isDemoShop: shop?.isDemo ?? !ctx.authRequired,
+      visitorDemo: ctx.visitorDemo === true,
       shopName: session || !ctx.authRequired ? shop?.name ?? null : null,
     };
   },

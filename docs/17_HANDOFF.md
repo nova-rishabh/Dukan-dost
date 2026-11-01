@@ -1,6 +1,6 @@
 # Handoff: read this first if you are an AI agent continuing the work
 
-Latest implementation update: owner-approved items 2–7 are on `codex/shop-operations`; see `docs/24_SHOP_OPERATIONS.md` for public signup, tenant isolation, full English UI, customers, dashboard, measured stock and statements. Earlier deployment/one-shop descriptions below are historical; no production migration was performed in this change.
+Latest verified implementation (2026-11-01): items 2–7 plus remaining pilot workflows are implemented. Read `docs/25_PILOT_COMPLETION.md` and `docs/26_SUBMISSION.md` for current source, research and known boundaries. Final `pnpm verify`: **VERIFY-PASS** (282 unit/fixture,48 daemon,58 browser,26 asset checks). Includes isolated public trial, full English, exact paise, measured stock, JSON transfer, activity, verified mobile change, fresh-auth sensitive actions/closure, PWA/offline drafts, durable auth limits and nonce CSP. Earlier one-shop/no-English/undeployed descriptions below are historical. Production availability, actual-phone receipt and off-host backup scheduling are separate checks; no real message or production migration was manually performed during implementation. GitHub publication follows verification using the owner's earlier push instruction; consult git log/remote for the current commit.
 
 Written 2026-11-01. It says what exists, how to run it, what is live, what is not verified, and what to do next. Facts here were checked against the repo on that date. When this file and the code disagree, trust the code, then fix this file.
 

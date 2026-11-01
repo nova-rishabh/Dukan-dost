@@ -17,7 +17,7 @@ export function reportingPeriod(from?: string | null, to?: string | null) {
 
 export type Period = ReturnType<typeof reportingPeriod>;
 export const entryDelta = (entry: Entry) => entry.voidedAt ? 0 : entry.type === "credit_given" ? entry.amountPaise : -entry.amountPaise;
-export const inPeriod = (entry: Entry, period: Period) => {
+export const inPeriod = (entry: Pick<Entry, "confirmedAt">, period: Period) => {
   const at = Date.parse(entry.confirmedAt);
   return (period.start === undefined || at >= period.start) && (period.end === undefined || at < period.end);
 };

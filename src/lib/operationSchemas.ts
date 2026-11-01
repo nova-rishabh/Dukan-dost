@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const CustomerManageBody = z.object({
   name: z.string().trim().min(1).max(60), area: z.string().trim().max(40).optional(),
+  aliases: z.array(z.string().trim().min(1).max(60)).max(20).optional(),
   phoneE164: z.string().regex(/^\+[1-9]\d{7,14}$/).or(z.literal("")).optional(),
   phoneConsent: z.boolean().optional(), separate: z.boolean().optional(), confirmed: z.literal(true),
   archived: z.boolean().optional(),

@@ -1,5 +1,6 @@
 # Dukaan Dost: Product Requirements Document
 
+> Current scope update (2026-11-01): owner-authorized pilot additions are implemented and verified in [completion/research report](25_PILOT_COMPLETION.md). Treat older gap/status and non-goal descriptions below as historical where superseded; broader accounting/staff modules and external release evidence remain explicitly separate.
 Status: Built 2026-11-01 (P0-1 to P0-9 and P1-1 to P1-3, P1-5 as Mark as received; P1-4 removed). Live accuracy with real speech-to-text and Gemini is unmeasured. Owner: Rishabh. Last updated: 2026-11-01.
 Challenge: AI Builder Challenge (Roobaroo AI Camp, with Developers' Society, IIT Kharagpur). Theme: Local business, with Money as a second fit.
 

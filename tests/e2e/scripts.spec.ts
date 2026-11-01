@@ -206,6 +206,10 @@ test("12 the CSP header is sent and no page breaks under it", async ({ page, req
   const head = (await request.get("/")).headers();
   expect(head["content-security-policy"]).toContain("frame-ancestors 'none'");
   expect(head["content-security-policy"]).toContain("object-src 'none'");
+  expect(head["content-security-policy"]).toContain("'nonce-");
+  expect(head["content-security-policy"].split(";").find((part) => part.trim().startsWith("script-src"))).not.toContain("'unsafe-inline'");
+  const secondPolicy = (await request.get("/")).headers()["content-security-policy"];
+  expect(secondPolicy).not.toBe(head["content-security-policy"]);
   expect(head["strict-transport-security"]).toContain("max-age=");
 
   const problems: string[] = [];

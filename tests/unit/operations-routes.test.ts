@@ -23,7 +23,7 @@ beforeAll(async () => {
     const mobile = "+91" + ["70000", `0030${i}`].join("");
     await ctx.store.createShop({ id: shopId, name: shopId, upiVpa: "", isDemo: false });
     await ctx.store.createOwner({ shopId, mobile, name: "Fictional owner", passcodeHash: "", authVersion: 0, createdAt: new Date().toISOString() });
-    const cookie = `dd_session=${signSession({ shopId, mobile, authVersion: 0 }, { secret: ctx.secret, now: new Date() })}`;
+    const cookie = `dd_session=${signSession({ shopId, mobile, authVersion: 0, method: "otp" }, { secret: ctx.secret, now: new Date() })}`;
     if (i === 0) cookieA = cookie; else cookieB = cookie;
   }
 });

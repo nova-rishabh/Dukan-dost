@@ -17,7 +17,7 @@ export const GET = route("customers.list", async (req) => {
   const ids = q ? new Set(resolveCustomerIds(q, customers)) : null;
   const list = customers
     .filter((c) => !ids || ids.has(c.id))
-    .map((c) => ({ id: c.id, name: c.name, area: c.area, archivedAt: c.archivedAt, phoneMasked: c.phoneE164 ? `•••• ${c.phoneE164.slice(-4)}` : undefined, balancePaise: balances.get(c.id) ?? 0 }))
+    .map((c) => ({ id: c.id, name: c.name, area: c.area, aliases: c.aliases, archivedAt: c.archivedAt, phoneMasked: c.phoneE164 ? `•••• ${c.phoneE164.slice(-4)}` : undefined, balancePaise: balances.get(c.id) ?? 0 }))
     .sort((a, b) => b.balancePaise - a.balancePaise || a.name.localeCompare(b.name));
   return { customers: list };
 });
@@ -49,7 +49,7 @@ export const POST = route("customers.create", async (req) => {
     area: body.area,
     nameRoman: roman,
     nameDevanagari: hasDevanagari(body.name) ? body.name : undefined,
-    aliases: [],
+    aliases: "aliases" in body && Array.isArray(body.aliases) ? [...new Set(body.aliases)] : [],
     phoneE164: "phoneE164" in body && typeof body.phoneE164 === "string" ? body.phoneE164 || undefined : undefined,
   });
   await ctx.store.appendAudit(ctx.shopId, "customer_created", { customerId: customer.id }, new Date().toISOString());

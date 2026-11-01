@@ -1,5 +1,6 @@
 # To do (kept as a note, 2026-11-01)
 
+> Current scope update (2026-11-01): owner-authorized pilot additions are implemented and verified in [completion/research report](25_PILOT_COMPLETION.md). Treat older gap/status and non-goal descriptions below as historical where superseded; broader accounting/staff modules and external release evidence remain explicitly separate.
 ## The ad (agreed: do it, but not yet)
 The 30 s vertical ad renders and passes `verify:assets`, but it is not finished.
 

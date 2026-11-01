@@ -18,11 +18,11 @@ export function LandingCtas() {
   const real = !!me?.authRequired;
   return (
     <div className="mt-6 flex min-h-[48px] flex-wrap gap-3">
-      {!real ? (
+      {(
         <Link href="/try" className="btn btn-primary" data-testid="try-sample">
           {L("Try sample shop", "Sample dukaan try karo")}
         </Link>
-      ) : null}
+      )}
       <Link href={real && !me?.loggedIn ? "/signup" : "/shop"} className={real ? "btn btn-primary" : "btn"} data-testid="landing-shop">
         {real && !me?.loggedIn ? L("Create account", "Naya account") : L("My shop", "Meri dukaan")}
       </Link>

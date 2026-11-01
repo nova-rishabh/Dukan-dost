@@ -1,13 +1,16 @@
+import { businessSnapshot, remapSnapshot, snapshotDigest, type BusinessSnapshot } from "../shop-transfer";
 import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { SEED_CUSTOMERS, SEED_ENTRIES, SEED_SHOP, SEED_STOCK } from "../seed";
 import { retentionCutoff, UNCONFIRMED_AUDIT_KIND } from "./retention";
 import type { AuditEvent, Product, StockMovement, RegistrationChallenge, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
-import { completeProof, movementResult, normalizedMobile, ownerByMobile, validateProduct } from "./operations";
+import { mobileChangeResult, completeProof, movementResult, normalizedMobile, ownerByMobile, validateProduct } from "./operations";
 import type { CompleteRegistrationInput, CustomerPatch, MovementInput, ProductPatch, LedgerStore } from "./types";
 
 interface State {
+  rateLimits: Record<string, number[]>;
+  imports: { shopId: string; digest: string }[];
   products: Product[];
   movements: StockMovement[];
   registrations: RegistrationChallenge[];
@@ -23,6 +26,7 @@ interface State {
 }
 
 const seedState = (): State => ({
+  rateLimits: {}, imports: [],
   products: [], movements: [], registrations: [],
   shops: [{ ...SEED_SHOP }],
   customers: SEED_CUSTOMERS.map((c) => ({ ...c, aliases: [...c.aliases] })),
@@ -56,6 +60,7 @@ export class LocalStore implements LedgerStore {
     if (this.file && existsSync(this.file)) {
       try {
         const loaded = JSON.parse(readFileSync(this.file, "utf8")) as State;
+        loaded.rateLimits ??= {}; loaded.imports ??= [];
         loaded.products ??= []; loaded.movements ??= []; loaded.registrations ??= [];
         loaded.owners ??= [];
         loaded.deliveries ??= [];
@@ -82,7 +87,8 @@ export class LocalStore implements LedgerStore {
     return this.state.shops.find((s) => s.id === shopId) ?? null;
   }
 
-  async updateShop(shopId: string, patch: { name: string; upiVpa: string }) {
+  async updateShop(shopId: string, patch: { name: string; upiVpa: string }, expectedAuthVersion?: number) {
+    if (expectedAuthVersion !== undefined && this.state.owners.find((o) => o.shopId === shopId)?.authVersion !== expectedAuthVersion) throw new Error("stale_owner");
     const row = this.state.shops.find((s) => s.id === shopId);
     if (!row) return null;
     Object.assign(row, patch); this.persist(); return { ...row };
@@ -176,8 +182,9 @@ export class LocalStore implements LedgerStore {
     this.persist();
   }
 
-  async eraseShop(shopId: string) {
+  async eraseShop(shopId: string, expectedAuthVersion?: number) {
     const s = this.state;
+    if (expectedAuthVersion !== undefined && s.owners.find((owner) => owner.shopId === shopId)?.authVersion !== expectedAuthVersion) throw new Error("stale_owner");
     const counts = {
       customers: s.customers.filter((x) => x.shopId === shopId).length,
       entries: s.entries.filter((x) => x.shopId === shopId).length,
@@ -188,7 +195,8 @@ export class LocalStore implements LedgerStore {
     s.products = s.products.filter((x) => x.shopId !== shopId);
     s.movements = s.movements.filter((x) => x.shopId !== shopId);
     const ownerMobile = s.owners.find((o) => o.shopId === shopId)?.mobile;
-    s.registrations = s.registrations.filter((x) => x.resultShopId !== shopId && (!ownerMobile || x.mobile !== ownerMobile));
+    s.imports = s.imports.filter((x) => x.shopId !== shopId);
+    s.registrations = s.registrations.filter((x) => x.resultShopId !== shopId && x.ownerShopId !== shopId && (!ownerMobile || x.mobile !== ownerMobile));
     s.customers = s.customers.filter((x) => x.shopId !== shopId);
     s.entries = s.entries.filter((x) => x.shopId !== shopId);
     s.stock = s.stock.filter((x) => x.shopId !== shopId);
@@ -305,6 +313,45 @@ export class LocalStore implements LedgerStore {
     const result = movementResult(this.state.products[index], this.state.movements, input);
     if (result.created) { this.state.products[index] = result.product; this.state.movements.push(result.movement); this.persist(); }
     return structuredClone(result);
+  }
+
+  async consumeRateLimit(key: string, limit: number, windowMs: number, now: number) {
+    const hits = (this.state.rateLimits[key] ?? []).filter((at) => at > now - windowMs);
+    if (hits.length >= limit) return { allowed: false, retryAfterMs: Math.max(1, hits[0] + windowMs - now) };
+    hits.push(now); this.state.rateLimits[key] = hits;
+    for (const [k, values] of Object.entries(this.state.rateLimits)) if (!values.some((at) => at > now - 86400000)) delete this.state.rateLimits[k];
+    this.persist(); return { allowed: true, retryAfterMs: 0 };
+  }
+  private snapshot(shopId: string) {
+    const shop = this.state.shops.find((row) => row.id === shopId); if (!shop) throw new Error("shop_not_found");
+    return businessSnapshot(shop.name, { customers: this.state.customers.filter((r) => r.shopId === shopId), entries: this.state.entries.filter((r) => r.shopId === shopId), products: this.state.products.filter((r) => r.shopId === shopId), movements: this.state.movements.filter((r) => r.shopId === shopId), stockFlags: this.state.stock.filter((r) => r.shopId === shopId) });
+  }
+  async exportBusiness(shopId: string) { return this.snapshot(shopId); }
+  async importBusiness(shopId: string, input: BusinessSnapshot, expectedFingerprint: string, expectedAuthVersion?: number) {
+    if (expectedAuthVersion !== undefined && this.state.owners.find((o) => o.shopId === shopId)?.authVersion !== expectedAuthVersion) throw new Error("stale_owner");
+    const records = remapSnapshot(input, shopId, snapshotDigest(input)); const digest = snapshotDigest(input);
+    if (this.state.imports.some((r) => r.shopId === shopId && r.digest === digest)) return { created: false, customers: 0, entries: 0, products: 0 };
+    if (snapshotDigest(this.snapshot(shopId)) !== expectedFingerprint) throw new Error("import_conflict");
+    this.state.customers.push(...records.customers); this.state.entries.push(...records.entries); this.state.products.push(...records.products); this.state.movements.push(...records.movements); this.state.stock.push(...records.stockFlags); this.state.imports.push({ shopId, digest }); this.persist();
+    return { created: true, customers: records.customers.length, entries: records.entries.length, products: records.products.length };
+  }
+  async completeMobileChange(input: { id: string; browserHash: string; shopId: string; expectedAuthVersion: number; now: string }) {
+    const challenge = this.state.registrations.find((r) => r.id === input.id) ?? null;
+    const owner = mobileChangeResult(challenge,this.state.owners,input);
+    const old = this.state.owners.find((r) => r.shopId === input.shopId)!;
+    this.state.registrations = this.state.registrations.filter((r) => r.id === input.id || (r.mobile !== old.mobile && r.ownerShopId !== input.shopId && r.resultShopId !== input.shopId));
+    Object.assign(challenge!, { state: "completed", resultShopId: input.shopId, resultAuthVersion: owner.authVersion });
+    this.state.owners[this.state.owners.indexOf(old)] = owner; this.state.audit.push({ id: this.state.nextAuditId++, shopId: input.shopId, kind: "owner_mobile_changed", payload: {}, createdAt: input.now }); this.persist(); return { ...owner };
+  }
+  async closeShop(shopId: string, expectedAuthVersion: number) {
+    const owner = this.state.owners.find((r) => r.shopId === shopId);
+    if (!owner || owner.authVersion !== expectedAuthVersion) throw new Error("stale_owner");
+    const s = this.state;
+    s.products = s.products.filter((r) => r.shopId !== shopId); s.movements = s.movements.filter((r) => r.shopId !== shopId); s.customers = s.customers.filter((r) => r.shopId !== shopId); s.entries = s.entries.filter((r) => r.shopId !== shopId); s.stock = s.stock.filter((r) => r.shopId !== shopId); s.deliveries = s.deliveries.filter((r) => r.shopId !== shopId); s.tokens = s.tokens.filter((r) => r.shopId !== shopId); s.audit = s.audit.filter((r) => r.shopId !== shopId); s.registrations = s.registrations.filter((r) => r.mobile !== owner.mobile && r.ownerShopId !== shopId && r.resultShopId !== shopId);
+    this.state.owners = this.state.owners.filter((r) => r.shopId !== shopId); this.state.shops = this.state.shops.filter((r) => r.id !== shopId); this.state.imports = this.state.imports.filter((r) => r.shopId !== shopId); this.persist();
+  }
+  async listReminderHistory(shopId: string, limit: number) {
+    return this.state.deliveries.filter((r) => r.shopId === shopId).sort((a,b) => b.createdAt.localeCompare(a.createdAt)).slice(0, limit).map((r) => { const token = this.state.tokens.find((t) => t.shopId === shopId && t.token === r.token); return { customerId: token?.customerId ?? "", amountPaise: token?.amountPaise ?? 0, status: r.status, createdAt: r.createdAt, simulated: r.simulated }; });
   }
 
   async reset() {

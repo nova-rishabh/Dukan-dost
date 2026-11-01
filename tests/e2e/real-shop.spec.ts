@@ -119,13 +119,14 @@ test("login with a WhatsApp code: CAPTCHA, code sent to the owner only, then in"
   await expect(page.getByTestId("logout")).toBeVisible();
 });
 
-test("a signed-in real shop keeps debug and demo reset closed, and /try goes to the shop", async ({ page }) => {
+test("a signed-in real shop keeps debug/reset closed and offers a separate public trial", async ({ page }) => {
   await signIn(page);
   await page.goto("/shop");
   expect((await page.request.get("/api/debug")).status()).toBe(403);
   expect((await page.request.post("/api/demo/reset")).status()).toBe(403);
   await page.goto("/try");
-  await expect(page).toHaveURL(/\/shop$/);
+  await expect(page).toHaveURL(/\/try$/);
+  await expect(page.getByRole("button", { name: "Alag sample dukaan kholo", exact: true })).toBeVisible();
 });
 
 test("delete-my-data erases the business data after the typed phrase and keeps the login", async ({ page }) => {
@@ -139,6 +140,7 @@ test("delete-my-data erases the business data after the typed phrase and keeps t
   await page.getByTestId("erase-phrase").fill("haan");
   await expect(confirm).toBeDisabled();
   await page.getByTestId("erase-phrase").fill("sab hata do");
+  await page.getByTestId("erase-password").fill(PASS);
   await confirm.click();
   await expect(page.getByText("Data hata diya.")).toBeVisible();
   await page.getByRole("link", { name: "Khata par wapas", exact: true }).click();

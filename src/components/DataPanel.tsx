@@ -5,6 +5,7 @@ import { useCopy, useLocale } from "./LocaleProvider";
 import { useRef, useState } from "react";
 import { api, ApiError } from "@/lib/client/api";
 import { ERASE_PHRASE } from "@/lib/erase-phrase";
+import Link from "next/link";
 
 /** Retention note plus delete-my-data. The shared demo shop shows the note and points to reset instead. */
 export function DataPanel({ isDemoShop, onErased }: { isDemoShop: boolean; onErased: () => void }) {
@@ -12,6 +13,7 @@ export function DataPanel({ isDemoShop, onErased }: { isDemoShop: boolean; onEra
   const { locale, hint } = useLocale();
   const ref = useRef<HTMLDialogElement>(null);
   const [phrase, setPhrase] = useState("");
+  const [passcode, setPasscode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -22,9 +24,10 @@ export function DataPanel({ isDemoShop, onErased }: { isDemoShop: boolean; onEra
     setBusy(true);
     setError(null);
     try {
-      await api.eraseMyData(phrase);
+      await api.eraseMyData(phrase, passcode || undefined);
       ref.current?.close();
       setPhrase("");
+      setPasscode("");
       setDone(true);
       onErased();
     } catch (e) {
@@ -57,7 +60,7 @@ export function DataPanel({ isDemoShop, onErased }: { isDemoShop: boolean; onEra
         </div>
       )}
 
-      <dialog ref={ref} className="sticker m-auto w-[min(92vw,520px)] p-5" aria-labelledby="erase-title" onClose={() => setPhrase("")}>
+      <dialog ref={ref} className="sticker m-auto w-[min(92vw,520px)] p-5" aria-labelledby="erase-title" onClose={() => { setPhrase(""); setPasscode(""); }}>
         <h2 id="erase-title" className="text-[28px]">
           {L("Erase all shop data?", "Pura data hata doon?")}
         </h2>
@@ -66,6 +69,10 @@ export function DataPanel({ isDemoShop, onErased }: { isDemoShop: boolean; onEra
           {L("To confirm, type", "Pakka karne ke liye likho")}: {ERASE_PHRASE}
         </label>
         <input id="erase-phrase" className="input mt-1" value={phrase} onChange={(e) => setPhrase(e.target.value)} autoComplete="off" data-testid="erase-phrase" />
+        <label className="mt-3 block font-semibold" htmlFor="erase-password">{L("Current password", "Abhi ka password")}</label>
+        <input id="erase-password" className="input mt-1" type="password" autoComplete="current-password" maxLength={128} value={passcode} onChange={(e) => setPasscode(e.target.value)} data-testid="erase-password" />
+        <p className="mt-2 text-base">{L("Confirm your password, or leave it blank if you signed in with a WhatsApp code within the last 15 minutes.", "Password do, ya pichhle 15 minute mein WhatsApp code se login kiya ho toh khali chhodo.")}</p>
+        <Link className="underline" href="/login?reauth=1">{L("Sign in again with WhatsApp", "WhatsApp se dobara login karo")}</Link>
         {error ? (
           <p className="mt-2 font-semibold" role="alert">
             {error}

@@ -45,9 +45,6 @@ export function Reports({ customerId }: { customerId?: string }) {
   const balance = (n: number) => `${formatINR(Math.abs(n))} · ${n < 0 ? copy("Customer advance", "Customer ka advance") : n > 0 ? copy("Customer owes", "Customer se lena hai") : copy("Settled", "Hisaab barabar")}`;
   return <div className="report mx-auto grid max-w-5xl gap-5 px-4 pb-12 md:px-8">
     <div className="flex items-center gap-4"><Munshi pose={data ? "welcome" : "empty"} /><div><h1 className="text-4xl">{customerId ? copy("Customer statement", "Customer ka hisaab") : copy("Shop dashboard", "Dukaan ka dashboard")}</h1><p className="text-xl">{data?.shopName}</p></div></div>
-    <nav className="flex flex-wrap gap-3 print:hidden" aria-label={copy("Shop screens", "Dukaan ke panne")}>
-      <Link className="chip" href="/shop">{copy("Ledger", "Bahi")}</Link><Link className="chip" href="/shop/customers">{copy("Customers", "Customers")}</Link><Link className="chip" href="/shop/inventory">{copy("Inventory", "Stock")}</Link>
-    </nav>
     <form className="sticker grid gap-3 p-4 print:hidden sm:grid-cols-3" onSubmit={(e) => { e.preventDefault(); if (from && to && from > to) { setError(copy("End date must follow start date.", "Aakhri tareekh pehli ke baad honi chahiye.")); return; } setQuery(new URLSearchParams({ ...(from ? { from } : {}), ...(to ? { to } : {}) }).toString()); }}>
       <label>{copy("From recorded date", "Is tareekh se")}<input className="input w-full" type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></label>
       <label>{copy("To recorded date", "Is tareekh tak")}<input className="input w-full" type="date" value={to} onChange={(e) => setTo(e.target.value)} /></label>

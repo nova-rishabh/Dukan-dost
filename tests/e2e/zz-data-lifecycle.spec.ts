@@ -1,0 +1,26 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
+test.use({ baseURL: "http://localhost:3102", viewport: { width: 390, height: 844 } });
+const WA="http://127.0.0.1:3201";
+test("owner previews and imports exact records, reviews activity, changes number and closes own account",async({page,context})=>{
+  await context.addCookies([{name:"dukaan-locale",value:"en",domain:"localhost",path:"/"}]);
+  const cap=await(await page.request.get("/api/auth/wa/captcha")).json();const answer=(await(await page.request.get(`${WA}/__test/captcha/${cap.captchaId}`)).json()).code;
+  const started=await page.request.post("/api/auth/register/start",{data:{mobile:["70000","01601"].join(""),purpose:"signup",captchaId:cap.captchaId,captchaCode:answer}});expect(started.ok()).toBe(true);
+  const code=(await(await page.request.get(`${WA}/__test/last-code`)).json()).code;expect((await page.request.post("/api/auth/register/verify",{data:{code}})).ok()).toBe(true);
+  expect((await page.request.post("/api/auth/register/complete",{data:{name:"Fictional lifecycle owner",shopName:"Fictional lifecycle shop",confirmed:true}})).ok()).toBe(true);
+  const exported=await(await page.request.get("/api/shop/export")).json();
+  const snapshot={...exported,customers:[{id:"import-customer",name:"Fictional imported customer",nameRoman:"fictional imported customer",aliases:["Counter name"]}],entries:[{id:"import-entry",customerId:"import-customer",type:"credit_given",amountPaise:12345,sourceText:"Reviewed export",source:"text",confirmedAt:new Date().toISOString()}]};
+  await page.goto("/shop/data");await expect(page.getByRole("heading",{name:"Export and import",exact:true})).toBeVisible();
+  await page.getByLabel("Business JSON file").setInputFiles({name:"business.json",mimeType:"application/json",buffer:Buffer.from(JSON.stringify(snapshot))});await page.getByRole("button",{name:"Preview file",exact:true}).click();
+  await expect(page.getByRole("heading",{name:"Review import",exact:true})).toBeVisible();await expect(page.getByText(/Credit given to customers: ₹123.45/)).toBeVisible();
+  expect((await(await page.request.get("/api/customers")).json()).customers).toHaveLength(0);
+  await page.getByLabel('Type "import records" to confirm').fill("import records");await page.getByRole("button",{name:"Confirm import",exact:true}).click();await expect(page.getByText("Import complete. Review your customer and stock lists.",{exact:true})).toBeVisible();
+  expect((await(await page.request.get("/api/customers")).json()).customers).toHaveLength(1);
+  await page.goto("/shop/activity");await expect(page.getByText("Business records imported",{exact:false})).toBeVisible();
+  const violations=(await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21aa"]).analyze()).violations.filter((v)=>v.impact==="serious"||v.impact==="critical");expect(violations.map((v)=>v.id)).toEqual([]);
+  await page.screenshot({path:".goal/screenshots/activity-390.png",fullPage:true});
+  const nextCaptcha=page.waitForResponse((r)=>r.url().includes("/api/auth/wa/captcha")&&r.ok());await page.goto("/shop/account/mobile");const mobileCap=await(await nextCaptcha).json();const solution=(await(await page.request.get(`${WA}/__test/captcha/${mobileCap.captchaId}`)).json()).code;
+  await page.getByLabel("New WhatsApp number",{exact:true}).fill(["70000","01602"].join(""));await page.getByLabel("Characters in image",{exact:true}).fill(solution);await page.getByRole("button",{name:"Send code to new number",exact:true}).click();
+  await expect(page.getByLabel("Code sent to new WhatsApp number",{exact:true})).toBeVisible();const newCode=(await(await page.request.get(`${WA}/__test/last-code`)).json()).code;await page.getByLabel("Code sent to new WhatsApp number",{exact:true}).fill(newCode);await page.getByRole("button",{name:"Verify new number",exact:true}).click();await expect(page.getByRole("heading",{name:"Review number change",exact:true})).toBeVisible();await page.getByRole("checkbox").check();await page.getByRole("button",{name:"Confirm number change",exact:true}).click();await expect(page).toHaveURL(/\/shop\/settings$/);
+  await page.goto("/shop/account");await page.getByRole("button",{name:"Review account closure",exact:true}).click();await page.getByLabel('Type "close my shop"',{exact:true}).fill("close my shop");await page.screenshot({path:".goal/screenshots/account-closure-390.png",fullPage:true});await page.getByRole("button",{name:"Confirm and close account",exact:true}).click();await expect(page).toHaveURL(/\/signup$/);expect((await page.request.get("/api/customers")).status()).toBe(401);
+});

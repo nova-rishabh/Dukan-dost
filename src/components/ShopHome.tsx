@@ -46,7 +46,7 @@ export function ShopHome() {
         </Link>
       </div>
 
-      <nav aria-label={L("Shop", "Dukaan")} className="flex flex-wrap gap-3"><Link href="/shop/dashboard" className="btn">{L("Dashboard", "Dashboard")}</Link><Link href="/shop/customers" className="btn">{L("Customers", "Customer sambhalo")}</Link><Link href="/shop/inventory" className="btn">{L("Inventory", "Stock sambhalo")}</Link><Link href="/shop/help" className="btn">{L("Help", "Madad")}</Link><Link href="/shop/settings" className="btn">Settings</Link></nav>
+      <div className="flex flex-wrap gap-3"><Link className="btn" href="/shop/entry">{L("Write exact amount", "Sahi rakam likho")}</Link><Link className="btn" href="/shop/ledger">{L("Browse entries", "Entries dekho")}</Link><Link className="btn" href="/shop/help">{L("Help", "Madad")}</Link></div>
       <div className="flex items-center gap-4"><Munshi /><p>{L("Welcome! Speak an entry or type below. Review the card and confirm it.", "Namaste! Entry bolo ya neeche likho. Main parchi dikhaunga, aap pakka karna.")}</p></div>
 
       {failed ? (

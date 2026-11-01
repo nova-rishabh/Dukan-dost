@@ -3,6 +3,7 @@ import { z } from "zod";
 import { AuthError, hashPasscode, isWeakPasscode, normalizeMobile } from "@/lib/auth";
 import type { RegistrationChallenge } from "@/lib/types";
 import { waResultVerify, waSendOtp, waVerifyOtp } from "@/lib/waService";
+import { durableRateLimit } from "./abuse";
 import { sessionCookie } from "./auth";
 import { getContext } from "./context";
 import { clientIp, HttpError, rateLimit, readJson } from "./http";
@@ -31,16 +32,14 @@ function requireWhatsApp() {
 }
 
 export async function startRegistration(req: Request) {
-  rateLimit(req, "register-start", 10, 15 * 60_000);
+
   const ctx = requireWhatsApp();
   await ctx.store.pruneRegistrations(new Date().toISOString());
   const body = z.object({ mobile: z.string().max(30), purpose: z.enum(["signup", "recovery"]), captchaId: z.string().min(1).max(200), captchaCode: z.string().min(1).max(20) }).parse(await readJson(req));
   const mobile = normalizeMobile(body.mobile);
   if (!mobile) throw new AuthError("bad_mobile", "Mobile number is not valid", "Enter your WhatsApp number.");
-  const key = `registration:${hash(mobile)}`;
+  await durableRateLimit(req, "otp-send", { identity: mobile });
   const now = new Date();
-  if (ctx.loginLimiter.count(key, now) >= 5) throw new AuthError("rate_limited", "Too many verification requests", "Wait 15 minutes before requesting another code.", 429);
-  ctx.loginLimiter.fail(key, now);
   const secret = randomBytes(32).toString("base64url");
   const challenge: RegistrationChallenge = { id: randomUUID(), browserHash: hash(secret), mobile, purpose: body.purpose, state: "requested", expiresAt: new Date(now.getTime() + TTL).toISOString() };
   await ctx.store.createRegistration(challenge);

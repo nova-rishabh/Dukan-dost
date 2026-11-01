@@ -58,9 +58,10 @@ export function BahiPage({ rows, balancePaise, onChanged }: { rows: LedgerRow[];
 function Cell({ r, asking, setAsking, hata }: { r: LedgerRow; asking: string | null; setAsking: (id: string | null) => void; hata: (id: string) => void }) {
   const L = useCopy();
   return (
-    <span className="hand block">
+    <div className="hand block">
       <span className="money">{formatINR(r.amountPaise)}</span> <span className="text-base">{fmtDate(r.confirmedAt)}</span>
       {r.voidedAt ? <span className="block text-base no-underline" style={{ textDecoration: "none" }}>{L("Voided", "Hata diya")}: {r.voidReason}</span> : null}
+      <details className="text-base"><summary className="min-h-12 cursor-pointer underline">{L("Entry details", "Entry ki details")}</summary><p>{r.sourceText}</p>{r.note ? <p>{L("Note", "Note")}: {r.note}</p> : null}<p>{L("Recorded", "Likhne ka samay")}: {new Date(r.confirmedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST</p></details>
       {!r.voidedAt ? (
         asking === r.id ? (
           <span className="mt-1 flex gap-2">
@@ -77,6 +78,6 @@ function Cell({ r, asking, setAsking, hata }: { r: LedgerRow; asking: string | n
           </button>
         )
       ) : null}
-    </span>
+    </div>
   );
 }

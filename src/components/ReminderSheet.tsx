@@ -3,13 +3,13 @@
 import { useCopy, useLocale } from "./LocaleProvider";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api, ApiError } from "@/lib/client/api";
+import { api, call, ApiError } from "@/lib/client/api";
 import { buildWaUrl } from "@/lib/remind";
 
 /**
  * A draft first. The owner edits the text, then either opens their own WhatsApp (wa.me) or, when the
  * WhatsApp service is paired, taps L("Send through WhatsApp", "WhatsApp se bhejo") and confirms. Nothing is sent automatically.
- * The number is typed here for this one message; it is never stored.
+ * A consented saved number may prefill the recipient. Changes here are only for this one message.
  */
 export function ReminderSheet({ customerId, customerName, onClose }: { customerId: string; customerName: string; onClose: () => void }) {
   const L = useCopy();
@@ -18,6 +18,7 @@ export function ReminderSheet({ customerId, customerName, onClose }: { customerI
   const [text, setText] = useState("");
   const [payUrl, setPayUrl] = useState("");
   const [phone, setPhone] = useState("");
+  const phoneEdited = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [canSend, setCanSend] = useState(false);
   const [adminUrl, setAdminUrl] = useState<string | null>(null);
@@ -41,6 +42,10 @@ export function ReminderSheet({ customerId, customerName, onClose }: { customerI
     const d = ref.current;
     if (d && !d.open) d.showModal();
     void loadDraft();
+    let active = true;
+    void call<{ phone: string | null }>(`/api/customers/${encodeURIComponent(customerId)}/contact`).then((r) => {
+      if (active && !phoneEdited.current && r.phone) setPhone(r.phone);
+    }).catch(() => { /* the owner can always type the recipient for this message */ });
     api
       .waStatus()
       .then((s) => {
@@ -48,6 +53,7 @@ export function ReminderSheet({ customerId, customerName, onClose }: { customerI
         setAdminUrl(s.configured && !(s.reachable && s.whatsapp === "CONNECTED") ? s.adminUrl : null);
       })
       .catch(() => setCanSend(false));
+    return () => { active = false; };
   }, [customerId, loadDraft]);
 
   async function send() {
@@ -98,7 +104,7 @@ export function ReminderSheet({ customerId, customerName, onClose }: { customerI
           <label className="mt-3 block font-semibold" htmlFor="remind-phone">
             {L("Customer's WhatsApp number", "Customer ka WhatsApp number")}
           </label>
-          <input id="remind-phone" className="input mt-1" type="tel" inputMode="tel" disabled={busy || locked} value={phone} onChange={(e) => { setPhone(e.target.value); setConfirming(false); }} placeholder={L("Include country code, e.g. +91… Not saved here", "Desh code ke saath, jaise +91… Save nahi hota")} autoComplete="off" data-testid="remind-phone" />
+          <input id="remind-phone" className="input mt-1" type="tel" inputMode="tel" disabled={busy || locked} value={phone} onChange={(e) => { phoneEdited.current = true; setPhone(e.target.value); setConfirming(false); }} placeholder={L("Include country code, e.g. +91… Not saved here", "Desh code ke saath, jaise +91… Save nahi hota")} autoComplete="off" data-testid="remind-phone" />
           <p className="mt-3 text-base">Pay link: {payUrl}</p>
 
           {canSend ? (

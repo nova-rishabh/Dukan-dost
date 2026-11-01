@@ -158,7 +158,9 @@ export interface RegistrationChallenge {
   id: string;
   browserHash: string;
   mobile: string;
-  purpose: "signup" | "recovery";
+  purpose: "signup" | "recovery" | "mobile_change";
+  ownerShopId?: string;
+  ownerAuthVersion?: number;
   expiresAt: string;
   state: "requested" | "verifying" | "verified" | "completed" | "failed";
   providerVerified?: boolean;

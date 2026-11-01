@@ -47,6 +47,7 @@ export const RemindBody = z.object({
 export const EraseBody = z.object({
   confirmed: z.boolean(),
   phrase: z.string().max(40),
+  passcode: z.string().max(128).optional(),
 });
 
 export const SpeakBody = z.object({ text: z.string().trim().min(1).max(200) });

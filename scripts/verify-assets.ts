@@ -17,7 +17,7 @@ const need = (rel: string) => {
   return abs(rel);
 };
 
-// Social posts: three PNGs at 1080 by 1350, plus captions with the link placeholder.
+// Social posts: three PNGs at 1080 by 1350, plus captions with the published trial URL.
 for (const f of ["post-1-ne-ya-ko", "post-2-bahi-vs-bolo", "post-3-vasooli-politely"]) {
   check(`social ${f}.png`, () => {
     const size = pngSize(readFileSync(need(`deliverables/social/${f}.png`)));
@@ -27,10 +27,10 @@ for (const f of ["post-1-ne-ya-ko", "post-2-bahi-vs-bolo", "post-3-vasooli-polit
 }
 check("social captions.md", () => {
   const t = readFileSync(need("deliverables/social/captions.md"), "utf8");
-  const n = (t.match(/\{\{APP_URL\}\}/g) ?? []).length;
-  if (n < 3) throw new Error(`expected {{APP_URL}} at least 3 times, found ${n}`);
+  const n = (t.match(/https:\/\/dukaan-dost\.onrender\.com\/try/g) ?? []).length;
+  if (n < 3 || t.includes("{{APP_URL}}")) throw new Error(`expected finished trial URL at least 3 times, found ${n}`);
   if (!/[ऀ-ॿ]/.test(t)) throw new Error("no Hindi (Devanagari) caption");
-  return `${n} link placeholders, Hindi and English`;
+  return `${n} finished trial links, Hindi and English`;
 });
 
 // Deck: 8 slides in HTML, and a PDF that opens with 8 pages.
@@ -51,7 +51,7 @@ check("deck deck.pdf opens, 8 pages", () => {
 
 // Video ad: ffprobe the vertical render.
 check("ad mp4 (ffprobe)", () => {
-  const file = need("deliverables/ad/out/dukaan-dost-ad-vertical.mp4");
+  const file = need("public/submission/dukaan-dost-ad.mp4");
   const raw = execFileSync("ffprobe", ["-v", "error", "-show_entries", "stream=codec_type,width,height,r_frame_rate,duration:format=duration", "-of", "json", file], { encoding: "utf8" });
   const j = JSON.parse(raw) as { streams: Array<{ codec_type: string; width?: number; height?: number; r_frame_rate?: string }>; format: { duration: string } };
   const v = j.streams.find((s) => s.codec_type === "video");

@@ -1,8 +1,8 @@
 import { call, post } from "./api";
 import type { Product, StockMovement } from "../types";
 
-export interface ManagedCustomer { id: string; name: string; area?: string; archivedAt?: string; phoneMasked?: string; balancePaise: number }
-export interface CustomerChange { name: string; area: string; phoneE164?: string; phoneConsent?: boolean; separate?: boolean; archived?: boolean; confirmed: true }
+export interface ManagedCustomer { id: string; name: string; area?: string; aliases?: string[]; archivedAt?: string; phoneMasked?: string; balancePaise: number }
+export interface CustomerChange { name: string; area: string; aliases?: string[]; phoneE164?: string; phoneConsent?: boolean; separate?: boolean; archived?: boolean; confirmed: true }
 export interface MovementChange { kind: StockMovement["kind"]; quantityMinor: number; reason: string; expectedVersion: number; idempotencyKey: string; reversalOf?: string; confirmed: true }
 export const operations = {
   customers: () => call<{ customers: ManagedCustomer[] }>("/api/customers"),

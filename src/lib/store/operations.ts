@@ -19,6 +19,7 @@ export function completeProof(challenge: RegistrationChallenge | null, owners: O
   if (!challenge || challenge.browserHash !== input.browserHash) throw new Error("invalid_registration");
   if (!Number.isFinite(Date.parse(challenge.expiresAt)) || !Number.isFinite(Date.parse(input.now)) || Date.parse(challenge.expiresAt) <= Date.parse(input.now)) throw new Error("invalid_registration");
   const existing = ownerByMobile(owners, challenge.mobile);
+  if (challenge.purpose === "mobile_change") throw new Error("invalid_registration");
   if (challenge.state === "completed") {
     if (!existing || existing.shopId !== challenge.resultShopId || existing.authVersion !== challenge.resultAuthVersion) throw new Error("stale_registration");
     return { owner: existing, created: false, replay: true };
@@ -68,4 +69,12 @@ export function movementResult(product: Product, movements: StockMovement[], inp
   const { expectedVersion: _version, ...fields } = input;
   void _version;
   return { product: { ...product, onHandMinor, version: product.version + 1 }, movement: { ...fields, id: randomUUID(), deltaMinor: delta }, created: true };
+}
+
+export function mobileChangeResult(challenge: RegistrationChallenge | null, owners: OwnerRecord[], input: { id: string; browserHash: string; shopId: string; expectedAuthVersion: number; now: string }) {
+  const owner = owners.find((o) => o.shopId === input.shopId);
+  if (!challenge || challenge.purpose !== "mobile_change" || challenge.state !== "verified" || !challenge.providerVerified || challenge.browserHash !== input.browserHash || challenge.ownerShopId !== input.shopId || challenge.ownerAuthVersion !== input.expectedAuthVersion || !owner || owner.authVersion !== input.expectedAuthVersion || !(Date.parse(challenge.expiresAt) > Date.parse(input.now))) throw new Error("invalid_mobile_change");
+  const existing = ownerByMobile(owners, challenge.mobile);
+  if (existing) throw new Error("mobile_unavailable");
+  return { ...owner, mobile: normalizedMobile(challenge.mobile), authVersion: owner.authVersion + 1 };
 }

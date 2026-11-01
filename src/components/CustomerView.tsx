@@ -45,6 +45,10 @@ export function CustomerView({ id }: { id: string }) {
   async function markReceived() {
     if (!data || data.balance <= 0) return;
     setError(null);
+    if (data.balance % 100 !== 0) {
+      window.location.assign(`/shop/entry?${new URLSearchParams({ customer: id, type: "payment_received", amount: `${Math.floor(data.balance / 100)}.${String(data.balance % 100).padStart(2, "0")}` })}`);
+      return;
+    }
     try {
       const r = await api.interpret(L(`${data.name} paid ${data.balance / 100} rupees`, `${data.name} ne ${data.balance / 100} diye`), "text");
       setMark(r.proposal);
