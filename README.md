@@ -33,5 +33,6 @@ Environment variable names are in `.env.example`. The names are `ELEVENLABS_API_
 11. [docs/10_BUILD_PLAN.md](docs/10_BUILD_PLAN.md): schedule and cut lines
 12. [docs/11_IMPLEMENTATION_PLAN.md](docs/11_IMPLEMENTATION_PLAN.md), [12_VISUAL_REVIEW.md](docs/12_VISUAL_REVIEW.md), [13_SELF_REVIEW.md](docs/13_SELF_REVIEW.md), [14_API_FACTS.md](docs/14_API_FACTS.md): build plan, visual review, honest self-score, vendor API facts
 13. [docs/reviews/](docs/reviews/): independent reviews (money and privacy, design, docs versus code, security, verification)
+14. [docs/15_TODO.md](docs/15_TODO.md): what is still to do (the ad, login, nonce CSP, hosting for the database file)
 
 Also in the Workshop folder: [ai_judge_prompt_v2.md](../ai_judge_prompt_v2.md), the prompt we use to score ideas against the challenge rubric.
