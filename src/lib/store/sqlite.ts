@@ -3,9 +3,10 @@ import { mkdirSync } from "node:fs";
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { SEED_CUSTOMERS, SEED_ENTRIES, SEED_SHOP, SEED_STOCK } from "../seed";
-import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
+import type { AuditEvent, Product, StockMovement, RegistrationChallenge, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
 import { retentionCutoff, UNCONFIRMED_AUDIT_KIND } from "./retention";
-import type { EraseCounts, LedgerStore } from "./types";
+import { completeProof, movementResult, normalizedMobile, ownerByMobile, validateProduct } from "./operations";
+import type { CompleteRegistrationInput, CustomerPatch, MovementInput, ProductPatch, EraseCounts, LedgerStore } from "./types";
 
 /**
  * A real database file with no account and no key (ADR-023). Uses Node's built-in `node:sqlite`,
@@ -107,6 +108,7 @@ const toCustomer = (r: Row): Customer => ({
   nameDevanagari: (r.name_devanagari as string | null) ?? undefined,
   aliases: JSON.parse((r.aliases as string) || "[]") as string[],
   phoneE164: (r.phone_e164 as string | null) ?? undefined,
+  archivedAt: (r.archived_at as string | null) ?? undefined,
 });
 const toEntry = (r: Row): Entry => ({
   id: r.id as string,
@@ -151,6 +153,32 @@ export class SqliteStore implements LedgerStore {
     if (!ownerColumns.some((column) => column.name === "auth_version")) {
       this.db.exec("alter table owners add column auth_version integer not null default 0");
     }
+    const customerColumns = this.db.prepare("pragma table_info(customers)").all() as Row[];
+    if (!customerColumns.some((c) => c.name === "archived_at")) this.db.exec("alter table customers add column archived_at text");
+    if (!ownerColumns.some((c) => c.name === "mobile_key")) this.db.exec("alter table owners add column mobile_key text");
+    try { this.tx(() => {
+      const owners = this.db.prepare("select shop_id, mobile from owners").all() as Row[];
+      const seen = new Set<string>();
+      for (const owner of owners) {
+        const key = normalizedMobile(owner.mobile as string);
+        if (seen.has(key)) throw new Error("duplicate_mobile");
+        seen.add(key);
+        this.db.prepare("update owners set mobile_key = ?, mobile = ? where shop_id = ?").run(key, key, owner.shop_id as string);
+      }
+      this.db.exec("create unique index if not exists owners_mobile_unique on owners(mobile_key)");
+    }); } catch (error) { this.db.close(); throw error; }
+    this.db.exec(`create table if not exists products (
+      id text primary key, shop_id text not null references shops(id) on delete cascade, payload text not null
+    );
+    create index if not exists products_shop on products(shop_id);
+    create table if not exists stock_movements (
+      id text primary key, shop_id text not null references shops(id) on delete cascade,
+      product_id text not null references products(id) on delete cascade,
+      idempotency_key text not null, reversal_of text, payload text not null,
+      unique(shop_id, idempotency_key), unique(shop_id, reversal_of)
+    );
+    create index if not exists movements_shop on stock_movements(shop_id, product_id);
+    create table if not exists registration_challenges (id text primary key, payload text not null);`);
     const any = this.db.prepare("select count(*) as n from shops").get() as { n: number };
     if (any.n === 0) {
       if (opts.shop) this.db.prepare("insert into shops (id, name, upi_vpa, is_demo) values (?, ?, ?, 0)").run(opts.shop.id, opts.shop.name, opts.shop.upiVpa);
@@ -163,7 +191,7 @@ export class SqliteStore implements LedgerStore {
   }
 
   private tx<T>(fn: () => T): T {
-    this.db.exec("BEGIN");
+    this.db.exec("BEGIN IMMEDIATE");
     try {
       const out = fn();
       this.db.exec("COMMIT");
@@ -193,6 +221,11 @@ export class SqliteStore implements LedgerStore {
     return r ? toShop(r) : null;
   }
 
+  async updateShop(shopId: string, patch: { name: string; upiVpa: string }) {
+    this.db.prepare("update shops set name = ?, upi_vpa = ? where id = ?").run(patch.name, patch.upiVpa, shopId);
+    return this.getShop(shopId);
+  }
+
   async listCustomers(shopId: string) {
     return (this.db.prepare("select * from customers where shop_id = ? order by rowid").all(shopId) as Row[]).map(toCustomer);
   }
@@ -202,6 +235,7 @@ export class SqliteStore implements LedgerStore {
     this.db
       .prepare("insert into customers (id, shop_id, display_name, area, name_roman, name_devanagari, aliases, phone_e164) values (?, ?, ?, ?, ?, ?, ?, ?)")
       .run(id, input.shopId, input.name, input.area ?? null, input.nameRoman, input.nameDevanagari ?? null, JSON.stringify(input.aliases), input.phoneE164 ?? null);
+    if (input.archivedAt) this.db.prepare("update customers set archived_at = ? where id = ?").run(input.archivedAt, id);
     return { ...input, id };
   }
 
@@ -287,7 +321,8 @@ export class SqliteStore implements LedgerStore {
         payTokens: n("select count(*) as n from pay_tokens where shop_id = ?"),
         auditEvents: n("select count(*) as n from audit_events where shop_id = ?"),
       };
-      for (const t of ["reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers"]) this.db.prepare(`delete from ${t} where shop_id = ?`).run(shopId);
+      for (const t of ["stock_movements", "products", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers"]) this.db.prepare(`delete from ${t} where shop_id = ?`).run(shopId);
+      this.db.prepare("delete from registration_challenges where json_extract(payload, '$.resultShopId') = ? or json_extract(payload, '$.mobile') = (select mobile from owners where shop_id = ?)").run(shopId, shopId);
       return counts;
     });
   }
@@ -302,7 +337,7 @@ export class SqliteStore implements LedgerStore {
   }
 
   async createOwner(o: OwnerRecord) {
-    this.db.prepare("insert into owners (shop_id, name, mobile, passcode_hash, auth_version, created_at) values (?, ?, ?, ?, ?, ?)").run(o.shopId, o.name, o.mobile, o.passcodeHash, o.authVersion, o.createdAt);
+    this.insertOwner(o);
   }
 
   async setPasscodeHash(shopId: string, passcodeHash: string) {
@@ -313,9 +348,112 @@ export class SqliteStore implements LedgerStore {
     this.db.prepare("update owners set auth_version = auth_version + 1 where shop_id = ?").run(shopId);
   }
 
+
+  private allOwners(): OwnerRecord[] {
+    return (this.db.prepare("select * from owners").all() as Row[]).map((r) => ({ shopId: r.shop_id as string, name: r.name as string, mobile: r.mobile as string, passcodeHash: r.passcode_hash as string, authVersion: Number(r.auth_version), createdAt: r.created_at as string }));
+  }
+  private insertOwner(o: OwnerRecord) {
+    if (ownerByMobile(this.allOwners(), o.mobile)) throw new Error("duplicate_mobile");
+    this.db.prepare("insert into owners (shop_id,name,mobile,mobile_key,passcode_hash,auth_version,created_at) values (?,?,?,?,?,?,?)").run(o.shopId,o.name,normalizedMobile(o.mobile),normalizedMobile(o.mobile),o.passcodeHash,o.authVersion,o.createdAt);
+  }
+  async hasOwners() { return Boolean((this.db.prepare("select 1 from owners limit 1").get())); }
+  async getOwnerByMobile(mobile: string) { return ownerByMobile(this.allOwners(), mobile); }
+  async createRegisteredShop(shop: Shop, owner: OwnerRecord) {
+    this.tx(() => {
+      if (shop.id !== owner.shopId) throw new Error("invalid_registration");
+      if (ownerByMobile(this.allOwners(), owner.mobile)) throw new Error("duplicate_mobile");
+      this.db.prepare("insert into shops (id,name,upi_vpa,is_demo) values (?,?,?,?)").run(shop.id,shop.name,shop.upiVpa,shop.isDemo ? 1 : 0);
+      this.insertOwner(owner);
+    });
+  }
+  private registration(id: string): RegistrationChallenge | null {
+    const row = this.db.prepare("select payload from registration_challenges where id = ?").get(id) as Row | undefined;
+    return row ? JSON.parse(row.payload as string) as RegistrationChallenge : null;
+  }
+  async getRegistration(id: string) { return this.registration(id); }
+  async createRegistration(input: RegistrationChallenge) {
+    this.db.prepare("insert into registration_challenges (id,payload) values (?,?)").run(input.id, JSON.stringify({ ...input, mobile: normalizedMobile(input.mobile) }));
+  }
+  async pruneRegistrations(before: string) {
+    const cutoff = Date.parse(before);
+    if (!Number.isFinite(cutoff)) throw new Error("invalid_registration_cutoff");
+    this.tx(() => {
+      const rows = this.db.prepare("select id,payload from registration_challenges").all() as Row[];
+      const remove = this.db.prepare("delete from registration_challenges where id = ?");
+      for (const row of rows) if (!(Date.parse((JSON.parse(row.payload as string) as RegistrationChallenge).expiresAt) > cutoff)) remove.run(row.id as string);
+    });
+  }
+  async transitionRegistration(id: string, browserHash: string, from: RegistrationChallenge["state"], to: RegistrationChallenge["state"]) {
+    return this.tx(() => {
+      const row = this.registration(id);
+      if (!row || row.browserHash !== browserHash || row.state !== from) return false;
+      const allowed = (from === "requested" && (to === "verifying" || to === "failed")) || (from === "verifying" && (to === "verified" || to === "failed" || to === "requested"));
+      if (!allowed) return false;
+      if (to === "verifying") { if ((row.verifyAttempts ?? 0) >= 5) return false; row.verifyAttempts = (row.verifyAttempts ?? 0) + 1; }
+    row.state = to; if (to === "verified") row.providerVerified = true;
+      this.db.prepare("update registration_challenges set payload = ? where id = ?").run(JSON.stringify(row),id); return true;
+    });
+  }
+  async completeRegistration(input: CompleteRegistrationInput) {
+    return this.tx(() => {
+      const challenge = this.registration(input.id);
+      const result = completeProof(challenge, this.allOwners(), input);
+      if (result.replay) return { owner: result.owner, created: false };
+      if (result.created) {
+        const shop = input.shop!;
+        this.db.prepare("insert into shops (id,name,upi_vpa,is_demo) values (?,?,?,?)").run(shop.id,shop.name,shop.upiVpa,shop.isDemo ? 1 : 0);
+        this.insertOwner(result.owner);
+      } else if (challenge!.purpose === "recovery") {
+        this.db.prepare("update owners set passcode_hash = ?,auth_version = ? where shop_id = ?").run(result.owner.passcodeHash,result.owner.authVersion,result.owner.shopId);
+      }
+      Object.assign(challenge!, { state: "completed", resultShopId: result.owner.shopId, resultAuthVersion: result.owner.authVersion });
+      this.db.prepare("update registration_challenges set payload = ? where id = ?").run(JSON.stringify(challenge),input.id);
+      return { owner: result.owner, created: result.created };
+    });
+  }
+  async updateCustomer(shopId: string, id: string, patch: CustomerPatch) {
+    return this.tx(() => {
+      const row = this.db.prepare("select * from customers where id = ? and shop_id = ?").get(id,shopId) as Row | undefined;
+      if (!row) return null;
+      const next = { ...toCustomer(row), ...patch };
+      this.db.prepare("update customers set display_name=?,area=?,name_roman=?,name_devanagari=?,aliases=?,phone_e164=?,archived_at=? where id=? and shop_id=?").run(next.name,next.area ?? null,next.nameRoman,next.nameDevanagari ?? null,JSON.stringify(next.aliases),next.phoneE164 ?? null,next.archivedAt ?? null,id,shopId);
+      return next;
+    });
+  }
+  private products(shopId: string): Product[] { return (this.db.prepare("select payload from products where shop_id = ? order by rowid").all(shopId) as Row[]).map((r) => JSON.parse(r.payload as string) as Product); }
+  async listProducts(shopId: string) { return this.products(shopId); }
+  async createProduct(input: Omit<Product,"id"|"version">) {
+    validateProduct(input);
+    if (input.onHandMinor !== null) throw new Error("opening_required"); const row = { ...input, id: randomUUID(), version: 0 };
+    this.db.prepare("insert into products (id,shop_id,payload) values (?,?,?)").run(row.id,row.shopId,JSON.stringify(row)); return row;
+  }
+  async updateProduct(shopId: string, id: string, patch: ProductPatch, expectedVersion: number) {
+    return this.tx(() => {
+      const row = this.products(shopId).find((p) => p.id === id); if (!row) return null;
+      if (row.version !== expectedVersion) throw new Error("version_conflict");
+      const next = { ...row, ...patch, version: row.version + 1 }; validateProduct(next);
+      this.db.prepare("update products set payload = ? where id = ? and shop_id = ?").run(JSON.stringify(next),id,shopId); return next;
+    });
+  }
+  private movements(shopId: string, productId?: string): StockMovement[] {
+    return (this.db.prepare("select payload from stock_movements where shop_id = ? order by rowid").all(shopId) as Row[]).map((r) => JSON.parse(r.payload as string) as StockMovement).filter((m) => !productId || m.productId === productId);
+  }
+  async listMovements(shopId: string, productId?: string) { return this.movements(shopId,productId); }
+  async applyMovement(input: MovementInput) {
+    return this.tx(() => {
+      const product = this.products(input.shopId).find((p) => p.id === input.productId); if (!product) throw new Error("product_not_found");
+      const result = movementResult(product,this.movements(input.shopId),input);
+      if (result.created) {
+        this.db.prepare("insert into stock_movements (id,shop_id,product_id,idempotency_key,reversal_of,payload) values (?,?,?,?,?,?)").run(result.movement.id,input.shopId,input.productId,input.idempotencyKey,input.reversalOf ?? null,JSON.stringify(result.movement));
+        this.db.prepare("update products set payload = ? where id = ? and shop_id = ?").run(JSON.stringify(result.product),input.productId,input.shopId);
+      }
+      return result;
+    });
+  }
+
   async reset() {
     this.tx(() => {
-      for (const t of ["owners", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers", "shops"]) this.db.exec(`delete from ${t}`);
+      for (const t of ["registration_challenges", "stock_movements", "products", "owners", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers", "shops"]) this.db.exec(`delete from ${t}`);
     });
     if (this.seedDemo) this.seed();
   }

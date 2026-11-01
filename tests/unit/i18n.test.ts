@@ -21,3 +21,10 @@ describe("explicit account locale catalog", () => {
     expect(errorHint("en", { code: "unknown", hint: "untrusted server prose" }, "requestFailed")).toBe(translate("en", "requestFailed"));
   });
 });
+
+it("gives actionable English ledger and reminder safety errors instead of raw Hinglish", () => {
+  expect(errorHint("en", { code: "proposal_mismatch", hint: "raw hint" }, "requestFailed")).toContain("fresh card");
+  expect(errorHint("en", { code: "draft_stale", hint: "raw hint" }, "requestFailed")).toContain("balance changed");
+  expect(errorHint("en", { code: "second_confirm_required", hint: "raw hint" }, "requestFailed")).toContain("second confirmation");
+  expect(errorHint("en", { code: "consent_required", hint: "raw hint" }, "requestFailed")).toContain("agreed");
+});

@@ -20,6 +20,7 @@ export const POST = route(
     rateLimit(req, "setup", 10);
     const ctx = getContext();
     if (!ctx.authRequired) throw new HttpError(404, "not_found", "No setup in demo mode", "Yeh demo dukaan hai, set karne ki zaroorat nahi.");
+    if (await ctx.store.hasOwners()) throw new AuthError("already_set_up", "Initial setup is complete", "Log in, or create a shop with WhatsApp verification.", 409);
     const body = SetupBody.parse(await readJson(req));
     const key = `setup:${clientIp(req)}`;
     const now = new Date();

@@ -1,5 +1,7 @@
 # Handoff: read this first if you are an AI agent continuing the work
 
+Latest implementation update: owner-approved items 2–7 are on `codex/shop-operations`; see `docs/24_SHOP_OPERATIONS.md` for public signup, tenant isolation, full English UI, customers, dashboard, measured stock and statements. Earlier deployment/one-shop descriptions below are historical; no production migration was performed in this change.
+
 Written 2026-11-01. It says what exists, how to run it, what is live, what is not verified, and what to do next. Facts here were checked against the repo on that date. When this file and the code disagree, trust the code, then fix this file.
 
 ## 1. What this is

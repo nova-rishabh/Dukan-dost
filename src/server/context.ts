@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { makeSetupCode } from "./bootstrap";
 import { validateRuntimeMode } from "@/lib/runtime-mode";
 import { AttemptLimiter } from "@/lib/auth";
@@ -73,7 +74,13 @@ function build(): AppContext {
   };
 }
 
+const requestContext = new AsyncLocalStorage<AppContext>();
+
+export function withContext<T>(ctx: AppContext, run: () => T): T { return requestContext.run(ctx, run); }
+
 export function getContext(): AppContext {
+  const scoped = requestContext.getStore();
+  if (scoped) return scoped;
   if (!g.__dukaan) g.__dukaan = build();
   return g.__dukaan;
 }

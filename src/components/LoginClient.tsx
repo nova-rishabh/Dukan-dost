@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale } from "./LocaleProvider";
 import { api, ApiError, type Me } from "@/lib/client/api";
@@ -10,7 +11,7 @@ const svgSrc = (svg: string) => `data:image/svg+xml;utf8,${encodeURIComponent(sv
 
 /** Two ways in: passcode, or a code sent to the owner's WhatsApp by the WhatsApp service. */
 export function LoginClient() {
-  const { t, hint } = useLocale();
+  const { t, hint, locale } = useLocale();
   const [me, setMe] = useState<Me | null>(null);
   const [mode, setMode] = useState<Mode>("passcode");
   const [mobile, setMobile] = useState("");
@@ -31,8 +32,7 @@ export function LoginClient() {
     try {
       const m = await api.me();
       setMe(m);
-      if (m.setupNeeded) window.location.assign("/setup");
-      else if (m.loggedIn || !m.authRequired) window.location.assign("/shop");
+      if (m.loggedIn || !m.authRequired) window.location.assign("/shop");
     } catch (e) {
       setLoadError(hint(e, "loginLoadFailed"));
     }
@@ -196,6 +196,7 @@ export function LoginClient() {
         </form>
       )}
 
+      <div className="flex flex-wrap gap-4"><Link className="underline" href="/signup">{locale === "en" ? "Create a shop" : "Dukaan banao"}</Link><Link className="underline" href="/recover">{locale === "en" ? "Recover account" : "Account wapas kholo"}</Link></div>
       {error ? (
         <p className="sticker bg-haldi p-3 font-semibold" role="alert" data-testid="login-error">
           {error}

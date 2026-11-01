@@ -40,6 +40,7 @@ export const CustomerBody = z.object({
 });
 
 export const RemindBody = z.object({
+  locale: z.enum(["en", "hi-Latn"]).optional(),
   customerId: z.string().min(1).max(64),
 });
 

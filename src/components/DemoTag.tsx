@@ -4,17 +4,17 @@ import { useEffect, useState } from "react";
 import { useLocale } from "./LocaleProvider";
 import { api } from "@/lib/client/api";
 
-/** Visible whenever any adapter is running locally (no keys). Honest by default. */
+/** Only a fictional shop is labelled demo; local providers do not make private records fictional. */
 export function DemoTag() {
   const { t } = useLocale();
   const [demo, setDemo] = useState<boolean | null>(null);
   useEffect(() => {
     api
       .status()
-      .then((s) => setDemo(s.demoMode))
-      .catch(() => setDemo(true));
+      .then((s) => setDemo(s.isDemoShop))
+      .catch(() => setDemo(null));
   }, []);
-  if (demo === false) return null;
+  if (demo !== true) return null;
   return (
     <span className="inline-flex min-h-[48px] items-center rounded-md border-2 border-syahi bg-syahi px-3 text-sm font-semibold text-safed" data-testid="demo-tag">
       {t("demo")}

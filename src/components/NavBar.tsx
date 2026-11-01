@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useLocale } from "./LocaleProvider";
+import { useLocale, useCopy } from "./LocaleProvider";
 import { api, type Me } from "@/lib/client/api";
 
 /** Demo shop: the two sample links. Real shop: login, or the shop and logout. */
 export function NavBar() {
+  const L = useCopy();
   const { t } = useLocale();
   const [me, setMe] = useState<Me | null>(null);
   useEffect(() => {
@@ -45,9 +46,10 @@ export function NavBar() {
           </button>
         </>
       ) : (
-        <Link href={me.setupNeeded ? "/setup" : "/login"} className="btn btn-primary" data-testid="nav-login">
-          {me.setupNeeded ? t("setup") : t("login")}
-        </Link>
+        <>
+        <Link href="/signup" className="btn btn-primary">{L("Create account", "Naya account")}</Link>
+        <Link href="/login" className="btn" data-testid="nav-login">{t("login")}</Link>
+        </>
       )}
     </nav>
   );

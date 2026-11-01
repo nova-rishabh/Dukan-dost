@@ -1,4 +1,4 @@
-import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
+import type { AuditEvent, Product, StockMovement, RegistrationChallenge, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
 
 export interface EraseCounts {
   customers: number;
@@ -13,8 +13,23 @@ export interface EraseCounts {
  * (keyless demo and tests). "sqlite" is a real database file (node:sqlite), no account or key needed.
  */
 export interface LedgerStore {
+  hasOwners(): Promise<boolean>;
+  getOwnerByMobile(mobile: string): Promise<OwnerRecord | null>;
+  createRegisteredShop(shop: Shop, owner: OwnerRecord): Promise<void>;
+  getRegistration(id: string): Promise<RegistrationChallenge | null>;
+  createRegistration(input: RegistrationChallenge): Promise<void>;
+  pruneRegistrations(before: string): Promise<void>;
+  transitionRegistration(id: string, browserHash: string, from: RegistrationChallenge["state"], to: RegistrationChallenge["state"]): Promise<boolean>;
+  completeRegistration(input: CompleteRegistrationInput): Promise<{ owner: OwnerRecord; created: boolean }>;
+  updateCustomer(shopId: string, id: string, patch: CustomerPatch): Promise<Customer | null>;
+  listProducts(shopId: string): Promise<Product[]>;
+  createProduct(input: Omit<Product, "id" | "version">): Promise<Product>;
+  updateProduct(shopId: string, id: string, patch: ProductPatch, expectedVersion: number): Promise<Product | null>;
+  listMovements(shopId: string, productId?: string): Promise<StockMovement[]>;
+  applyMovement(input: MovementInput): Promise<{ product: Product; movement: StockMovement; created: boolean }>;
   readonly kind: "local" | "sqlite";
   getShop(shopId: string): Promise<Shop | null>;
+  updateShop(shopId: string, patch: { name: string; upiVpa: string }): Promise<Shop | null>;
   listCustomers(shopId: string): Promise<Customer[]>;
   createCustomer(input: Omit<Customer, "id">): Promise<Customer>;
   listEntries(shopId: string): Promise<Entry[]>;
@@ -44,4 +59,16 @@ export interface LedgerStore {
   revokeOwnerSessions(shopId: string): Promise<void>;
   /** back to the seeded demo shop (demo only) */
   reset(): Promise<void>;
+}
+
+export type CustomerPatch = Partial<Pick<Customer, "name" | "nameRoman" | "nameDevanagari" | "area" | "aliases" | "phoneE164" | "archivedAt">>;
+export type ProductPatch = Partial<Pick<Product, "name" | "lowThresholdMinor" | "archivedAt">>;
+export type MovementInput = Omit<StockMovement, "id" | "deltaMinor"> & { expectedVersion: number };
+export interface CompleteRegistrationInput {
+  id: string;
+  browserHash: string;
+  now: string;
+  shop?: Shop;
+  owner?: OwnerRecord;
+  nextPasscodeHash?: string;
 }

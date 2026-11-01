@@ -19,7 +19,7 @@ export const POST = route("interpret", async (req) => {
     getLastEntry(ctx.store, ctx.shopId),
   ]);
   const recentEntries = entries.filter((e) => !e.voidedAt && now.getTime() - new Date(e.confirmedAt).getTime() <= 120_000);
-  const proposal = await interpretText(body.text, { shopId: ctx.shopId, customers, llm: ctx.llm, now, recentEntries, lastEntry });
+  const proposal = await interpretText(body.text, { shopId: ctx.shopId, customers: customers.filter((c) => !c.archivedAt), llm: ctx.llm, now, recentEntries, lastEntry });
   const balances = computeBalances(customers, entries);
   for (const i of proposal.intents) {
     if (i.kind === "query_balance" && i.resolvedCustomerId) i.balancePaise = balances.get(i.resolvedCustomerId) ?? 0;

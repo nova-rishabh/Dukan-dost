@@ -1,10 +1,12 @@
 "use client";
 
+import { useCopy, useLocale } from "./LocaleProvider";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api, ApiError } from "@/lib/client/api";
 import { interpretText } from "@/lib/interpret";
 import { formatINR } from "@/lib/money";
-import { SAMPLE_CLIPS, sampleById } from "@/lib/samples";
+import { SAMPLE_CLIPS, sampleById, sampleDescription } from "@/lib/samples";
 import { SEED_CUSTOMERS, SEED_SHOP_ID } from "@/lib/seed";
 import type { EntrySource, Proposal } from "@/lib/types";
 import { BoloButton, type BoloState } from "./BoloButton";
@@ -24,6 +26,8 @@ interface Props {
 }
 
 export function Assistant({ variant, previewText, showSamples, onChange }: Props) {
+  const L = useCopy();
+  const { locale, hint } = useLocale();
   const [bolo, setBolo] = useState<BoloState>("idle");
   const [busy, setBusy] = useState(false);
   const [heard, setHeard] = useState<string | null>(null);
@@ -65,7 +69,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
     for (const i of p.intents) {
       if (i.kind === "query_balance" && i.balancePaise !== undefined) {
         const name = i.candidates?.[0]?.name ?? i.customer ?? "Customer";
-        const text = i.balancePaise > 0 ? `${name}, ${formatINR(i.balancePaise)} baaki hai.` : `${name}, kuch baaki nahi hai.`;
+        const text = i.balancePaise > 0 ? L(`${name}, ${formatINR(i.balancePaise)} outstanding.`, `${name}, ${formatINR(i.balancePaise)} baaki hai.`) : i.balancePaise < 0 ? L(`${name}, ${formatINR(-i.balancePaise)} advance.`, `${name}, ${formatINR(-i.balancePaise)} advance hai.`) : L(`${name}, nothing outstanding.`, `${name}, kuch baaki nahi hai.`);
         try {
           const blob = await api.speak(text);
           if (blob && current === speechRun.current) {
@@ -90,7 +94,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
         }
       }
     }
-  }, []);
+  }, [L]);
 
   const submitText = useCallback(
     async (text: string, source: EntrySource) => {
@@ -99,17 +103,17 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
       setBusy(true);
       setProblem(null);
       setHeard(text);
-      setStatus("Samajh raha hoon…");
+      setStatus(L("Understanding…", "Samajh raha hoon…"));
       try {
         const r = await api.interpret(text, source);
         if (id !== run.current) return;
         setProposal({ ...r.proposal, source });
-        setStatus("Dekho aur Likh do dabao.");
+        setStatus(L("Review the card, then press Record entry.", "Dekho aur Likh do dabao."));
         void speakAnswers(r.proposal);
       } catch (e) {
         if (id !== run.current) return;
         setProposal(null);
-        setProblem(e instanceof ApiError ? e.hint : "Samajh nahi aaya. Dobara bolo ya likho.");
+        setProblem(locale === "en" ? hint(e, "inputFailed") : e instanceof ApiError ? e.hint : "Samajh nahi aaya. Dobara bolo ya likho.");
         setStatus("");
       } finally {
         if (id === run.current) {
@@ -118,18 +122,18 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
         }
       }
     },
-    [speakAnswers, stopSpeech],
+    [speakAnswers, stopSpeech, L, locale, hint],
   );
 
   async function onAudio(blob: Blob, mime: string) {
     setProblem(null);
-    setStatus("Sun raha hoon…");
+    setStatus(L("Listening…", "Sun raha hoon…"));
     try {
       const t = await api.transcribeAudio(blob, mime);
       await submitText(t.text, "voice");
     } catch (e) {
       setProposal(null);
-      setProblem(e instanceof ApiError ? e.hint : "Samajh nahi aaya. Dobara bolo ya likho.");
+      setProblem(locale === "en" ? hint(e, "inputFailed") : e instanceof ApiError ? e.hint : "Samajh nahi aaya. Dobara bolo ya likho.");
       setStatus("");
       setBolo("error");
     }
@@ -146,7 +150,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
       await submitText(t.text, "sample");
     } catch (e) {
       setBusy(false);
-      setProblem(e instanceof ApiError ? e.hint : "Sample nahi chala. Likh kar try karo.");
+      setProblem(locale === "en" ? hint(e, "inputFailed") : e instanceof ApiError ? e.hint : "Sample nahi chala. Likh kar try karo.");
     }
   }
 
@@ -168,7 +172,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
         <div className="grid gap-3" data-testid="result">
           {heard ? (
             <p className="hand" data-testid="heard">
-              Maine suna: “{heard}”
+              {L("I heard", "Maine suna")}: “{heard}”
             </p>
           ) : null}
           {problem ? (
@@ -188,7 +192,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
               onWritten={written}
             />
           ))}
-          {proposal?.preview ? <p className="text-base">Yeh dikhawa hai, kuch likha nahi gaya. Neeche khud try karo.</p> : null}
+          {proposal?.preview ? <p className="text-base">{L("This is a preview. Nothing was recorded. Try it below.", "Yeh dikhawa hai, kuch likha nahi gaya. Neeche khud try karo.")}</p> : null}
         </div>
       ) : null}
 
@@ -205,7 +209,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
             <span className="font-semibold">Try:</span>
             {heroClips.map((c) => (
               <button key={c.id} type="button" className="btn" disabled={busy} onClick={() => void onSample(c.id)}>
-                {c.label}
+                {sampleDescription(c, locale === "en").label}
               </button>
             ))}
           </div>

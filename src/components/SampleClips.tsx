@@ -1,10 +1,14 @@
 "use client";
 
+import { useCopy, useLocale } from "./LocaleProvider";
+
 import { useEffect, useState } from "react";
-import { SAMPLE_CLIPS } from "@/lib/samples";
+import { SAMPLE_CLIPS, sampleDescription } from "@/lib/samples";
 
 /** Juror mode: five labelled clips, honest about what is canned. Works without a mic or a login. */
 export function SampleClips({ onPick, disabled, showNotes }: { onPick: (id: string) => void; disabled?: boolean; showNotes?: boolean }) {
+  const L = useCopy();
+  const { locale } = useLocale();
   const [audio, setAudio] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -29,7 +33,7 @@ export function SampleClips({ onPick, disabled, showNotes }: { onPick: (id: stri
         {SAMPLE_CLIPS.map((c) => (
           <li key={c.id}>
             <button type="button" className="btn" disabled={disabled} onClick={() => onPick(c.id)} data-testid={`clip-${c.id}`}>
-              {c.label}
+              {sampleDescription(c, locale === "en").label}
             </button>
           </li>
         ))}
@@ -38,16 +42,16 @@ export function SampleClips({ onPick, disabled, showNotes }: { onPick: (id: stri
         <ul className="mt-4 grid gap-3 text-base">
           {SAMPLE_CLIPS.map((c) => (
             <li key={c.id}>
-              <span className="block font-semibold">{c.label}</span>
-              <span className="block">{c.note}</span>
+              <span className="block font-semibold">{sampleDescription(c, locale === "en").label}</span>
+              <span className="block">{sampleDescription(c, locale === "en").note}</span>
             </li>
           ))}
         </ul>
       ) : null}
       <p className="mt-3 text-base" data-testid="clip-note">
         {anyAudio
-          ? "Sample clips AI se banayi gayi awaaz hain (dramatisation), asli dukaandaar nahi."
-          : "Abhi clips mein sirf likha hua sentence chalta hai, awaaz nahi."}
+          ? L("Sample clips use AI voices (dramatisation), not real shopkeepers.", "Sample clips AI se banayi gayi awaaz hain (dramatisation), asli dukaandaar nahi.")
+          : L("These clips currently use their written sentences without audio.", "Abhi clips mein sirf likha hua sentence chalta hai, awaaz nahi.")}
       </p>
     </div>
   );

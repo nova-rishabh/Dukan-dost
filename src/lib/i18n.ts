@@ -4,8 +4,15 @@ export const readLocale = (value: string | undefined): Locale => value === "en" 
 
 const en = {
   language: "Language", skip: "Skip to main content", home: "Dukaan Dost, home", sampleShop: "Sample shop", myShop: "My shop",
-  languageScope: "English preview: account screens. The khata is still in Hinglish.",
+  languageScope: "Speak or type in Hindi, Hinglish or English. Your original entries stay as entered.",
   setup: "Set up shop", login: "Login", logout: "Logout", demo: "Demo mode", mainNav: "Main navigation",
+  inputFailed: "The sentence could not be understood. Speak again or type the customer, amount and direction.",
+  entryFailed: "Recording could not be confirmed. Check the ledger before trying again.",
+  customerFailed: "The customer could not be created. Check the customer list before trying again.",
+  draftFailed: "The reminder draft could not be created. Check the customer balance and try again.",
+  reminderFailed: "The reminder could not be sent. Check WhatsApp before trying again.",
+  posterFailed: "The poster could not be created. Check the item names and prices, then try again.",
+  eraseFailed: "Erasing could not be confirmed. Reload the shop to check its data before trying again.",
   loading: "Opening…", retry: "Try again", network: "Check your connection and try again.",
   loginIntro: "Only the shop owner can sign in.", setupIntro: "Set up once to become the owner of this shop.",
   loginLoadFailed: "Login could not open. Check your connection and try again.",
@@ -38,8 +45,15 @@ const en = {
 
 const hi: Record<keyof typeof en, string> = {
   language: "Bhasha", skip: "Seedha kaam par jao", home: "Dukaan Dost, home", sampleShop: "Sample dukaan", myShop: "Meri dukaan",
-  languageScope: "English abhi account screen par hai. Khata filhaal Hinglish mein hai.",
+  languageScope: "Hindi, Hinglish ya English mein bolo ya likho. Aapki asli entry waise hi rahegi.",
   setup: "Dukaan set karo", login: "Login", logout: "Logout", demo: "Demo mode", mainNav: "Main",
+  inputFailed: "Samajh nahi aaya. Dobara bolo ya likho.",
+  entryFailed: "Entry nahi likhi ja saki. Khata check karke dobara try karo.",
+  customerFailed: "Customer nahi ban paya. Customer list check karo.",
+  draftFailed: "Reminder nahi bana. Khata check karke dobara try karo.",
+  reminderFailed: "Message nahi ja paya. WhatsApp check karo.",
+  posterFailed: "Poster nahi bana. Item aur daam check karo.",
+  eraseFailed: "Data hata ya nahi, pakka nahi hai. Dukaan dobara kholo aur check karo.",
   loading: "Khul raha hai…", retry: "Dobara kholo", network: "Net nahi hai. Connection check karke dobara kholo.",
   loginIntro: "Sirf dukaan ka maalik andar aa sakta hai.", setupIntro: "Ek baar ka kaam. Isse aap is dukaan ke maalik ban jaate ho.",
   loginLoadFailed: "Login nahi khula. Connection check karke dobara kholo.",
@@ -90,7 +104,55 @@ export function errorHint(locale: Locale, error: unknown, fallback: MessageKey):
       return translate(locale, "interruptedWrite");
     }
     if (locale === "hi-Latn" && "hint" in error && typeof error.hint === "string") return error.hint;
+    if (locale === "en" && domainErrors[code]) return domainErrors[code];
     return translate(locale, errorKeys[code] ?? fallback);
   }
   return translate(locale, fallback);
 }
+
+
+const domainErrors: Record<string, string> = {
+  invalid_registration: "Your verification expired or is unavailable. Verify your WhatsApp number again.",
+  stale_registration: "Your signup verification expired or changed. Request a fresh code and try again.",
+  verification_in_progress: "Verification is already in progress. Wait for its result before requesting another code.",
+  passcode_required: "Enter your password to continue.",
+  profile_required: "Enter your name and shop name to continue.",
+  invalid_period: "Choose a valid date range with the start date before the end date.",
+  customer_archived: "This customer is archived. Restore the customer before recording another entry.",
+  consent_required: "Confirm that the customer agreed to storing this WhatsApp number, or leave it blank.",
+  upi_required: "Configure your shop UPI ID in Settings before creating a payment link.",
+  verification_locked: "Too many incorrect verification attempts. Request a new verification code.",
+  nothing_due: "This customer has no outstanding balance.",
+  inventory_conflict: "Stock changed or the item is unavailable. Reload inventory and review before confirming.",
+  same_name: "A customer with this name exists. Confirm these are different people before creating a separate account.",
+  too_large: "This request is too large. Speak or type a shorter sentence.",
+  sample_not_found: "This sample is unavailable. Choose another clip or type your sentence.",
+  not_demo: "This action is available only in the sample shop.",
+  no_upi: "Ask the shopkeeper to add a UPI ID before creating a pay link.",
+  wa_not_connected: "Connect WhatsApp in Settings before sending directly, or open your own WhatsApp.",
+  no_outstanding: "This customer has no outstanding balance.",
+  forbidden: "You do not have permission for this action. Sign in to your own shop.",
+  bad_audio: "This recording could not be read. Record again or type the sentence.",
+  no_speech: "No speech was heard. Speak again or type the sentence.",
+  not_confirmed: "Review the card and confirm before recording.",
+  bad_proposal: "This proposal is invalid or expired. Enter the sentence again and review a fresh card.",
+  bad_request: "Check the required fields and try again.",
+  not_found: "This record could not be found. Refresh the ledger.",
+  needs_clarification: "Choose the customer, amount and money direction before recording.",
+  proposal_mismatch: "The details no longer match this proposal. Enter the sentence again and review a fresh card.",
+  second_confirm_required: "This large amount needs a second confirmation. Check the amount and confirm again.",
+  duplicate_entry: "An identical entry was just recorded. Check the ledger before confirming another.",
+  already_voided: "This entry is already voided. Refresh the ledger.",
+  draft_stale: "The balance changed. Create a fresh reminder draft before sending.",
+  draft_expired: "This reminder draft expired. Create a fresh draft before sending.",
+  draft_already_used: "This reminder was already attempted. Check WhatsApp before sending again.",
+  delivery_unknown: "Delivery is uncertain. Check the customer's WhatsApp before sending again.",
+  no_balance: "There is no outstanding balance to remind this customer about.",
+  bad_phone: "Enter a valid WhatsApp number with its country code.",
+  empty_audio: "No speech was heard. Speak again or type your entry.",
+  audio_too_large: "The recording is too large. Record a shorter sentence or type it.",
+  audio_unsupported: "This audio format is unsupported. Try another browser or type your entry.",
+  transcription_failed: "The recording could not be understood. Speak again or type your entry.",
+  no_items: "Include an item name and price, for example: flour 40 rupees per kilo.",
+  invalid_offer: "Include an item name and price, for example: flour 40 rupees per kilo.",
+};

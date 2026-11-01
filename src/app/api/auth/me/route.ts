@@ -9,17 +9,18 @@ export const GET = route(
   "auth.me",
   async (req) => {
     const ctx = getContext();
-    const owner = ctx.authRequired ? await ctx.store.getOwner(ctx.shopId) : null;
     const session = await readSession(req, ctx);
-    const shop = await ctx.store.getShop(ctx.shopId);
+    const owner = session ? await ctx.store.getOwner(session.shopId) : null;
+    const shop = await ctx.store.getShop(session?.shopId ?? ctx.shopId);
     return {
       authRequired: ctx.authRequired,
-      setupNeeded: ctx.authRequired && !owner,
+      setupNeeded: ctx.authRequired && !(await ctx.store.hasOwners()),
+      publicSignup: ctx.authRequired && !!ctx.wa,
       loggedIn: !!session,
       owner: session && owner ? { name: owner.name } : null,
       waLogin: ctx.authRequired && !!ctx.wa,
       isDemoShop: shop?.isDemo ?? !ctx.authRequired,
-      shopName: shop?.name ?? null,
+      shopName: session || !ctx.authRequired ? shop?.name ?? null : null,
     };
   },
   { public: true },

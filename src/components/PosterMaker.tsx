@@ -1,5 +1,7 @@
 "use client";
 
+import { useCopy, useLocale } from "./LocaleProvider";
+
 import { toPng } from "html-to-image";
 import { useRef, useState } from "react";
 import { api, ApiError } from "@/lib/client/api";
@@ -16,10 +18,11 @@ const unitLabel = (u?: string) => (u === "kilo" ? "/ kilo" : u === "packet" ? "/
 
 /** 1080 by 1350. Every glyph comes from these fixed templates and local fonts; no model draws text. */
 function PosterCanvas({ spec, t }: { spec: PosterSpec; t: (typeof TEMPLATES)[number] }) {
+  const L = useCopy();
   return (
     <div style={{ width: 1080, height: 1350, background: t.bg, color: t.fg, padding: 72, display: "flex", flexDirection: "column", fontFamily: "var(--font-ui)" }}>
       <div style={{ fontFamily: "var(--font-display)", fontSize: 60 }}>{spec.shopName}</div>
-      <div style={{ fontFamily: "var(--font-display)", fontSize: 140, lineHeight: 1.15, marginTop: 48 }}>{spec.headline}</div>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: 140, lineHeight: 1.15, marginTop: 48 }}>{spec.headline === "Aaj ka offer" ? L("Today’s offer", spec.headline) : spec.headline}</div>
       <div style={{ marginTop: 56, display: "grid", gap: 28 }}>
         {spec.items.map((it) => (
           <div key={it.name} style={{ background: t.card, color: "var(--syahi)", border: "6px solid var(--syahi)", boxShadow: "12px 12px 0 var(--syahi)", padding: "28px 40px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -30,12 +33,14 @@ function PosterCanvas({ spec, t }: { spec: PosterSpec; t: (typeof TEMPLATES)[num
           </div>
         ))}
       </div>
-      <div style={{ marginTop: "auto", fontSize: 48, fontWeight: 600 }}>{spec.validUntil}</div>
+      <div style={{ marginTop: "auto", fontSize: 48, fontWeight: 600 }}>{spec.validUntil === "Aaj shaam tak" ? L("Until this evening", spec.validUntil) : spec.validUntil}</div>
     </div>
   );
 }
 
 export function PosterMaker() {
+  const L = useCopy();
+  const { locale, hint } = useLocale();
   const [text, setText] = useState("aata 40 rupaye kilo, chini 45 rupaye kilo");
   const [spec, setSpec] = useState<PosterSpec | null>(null);
   const [tpl, setTpl] = useState<Template>("haldi");
@@ -50,7 +55,7 @@ export function PosterMaker() {
       setSpec((await api.poster(text)).poster);
     } catch (e) {
       setSpec(null);
-      setError(e instanceof ApiError ? e.hint : "Poster nahi bana. Dobara try karo.");
+      setError(locale === "en" ? hint(e, "posterFailed") : e instanceof ApiError ? e.hint : "Poster nahi bana. Dobara try karo.");
     }
   }
 
@@ -64,7 +69,7 @@ export function PosterMaker() {
       a.download = "dukaan-offer.png";
       a.click();
     } catch {
-      setError("Image save nahi hui. Dobara try karo.");
+      setError(L("The image could not be saved. Try again.", "Image save nahi hui. Dobara try karo."));
     } finally {
       setBusy(false);
     }
@@ -74,10 +79,10 @@ export function PosterMaker() {
     <div className="grid gap-4">
       <div className="grid gap-2">
         <label htmlFor="offer" className="font-semibold">
-          Offer bolo ya likho
+          {L("Type your offer", "Offer bolo ya likho")}
         </label>
         <textarea id="offer" className="input min-h-[96px] rounded-2xl py-3" value={text} onChange={(e) => setText(e.target.value)} maxLength={300} />
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Poster ka rang">
+        <div className="flex flex-wrap gap-2" role="group" aria-label={L("Poster colour", "Poster ka rang")}>
           {TEMPLATES.map((x) => (
             <button key={x.id} type="button" className="chip" aria-pressed={tpl === x.id} onClick={() => setTpl(x.id)}>
               {x.label}
@@ -86,10 +91,10 @@ export function PosterMaker() {
         </div>
         <div className="flex flex-wrap gap-3">
           <button type="button" className="btn btn-primary" onClick={make}>
-            Poster banao
+            {L("Make poster", "Poster banao")}
           </button>
           <button type="button" className="btn btn-reminder" onClick={download} disabled={!spec || busy}>
-            Image save karo
+            {L("Save image", "Image save karo")}
           </button>
         </div>
         {error ? <p role="alert" className="font-semibold">{error}</p> : null}

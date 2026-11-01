@@ -1,5 +1,6 @@
 # Workflow discovery registry
 
+> Implementation update (2026-11-01): owner approved items 2–7. See [shop operations](../24_SHOP_OPERATIONS.md) for the implemented APIs, policies and validation. Proposed contracts below are historical and must not be treated as current API documentation.
 Date: 2026-11-01. Current-state source audit; proposed workflows remain Draft, not approved for implementation. Related requirements: docs/19_COMPLETION_ROADMAP.md. Discovery covers app routes, components, store contract/schema, provider clients and Render blueprint; remote infrastructure and package internals were not audited. No scheduled app jobs or background queues were found in src. Configuration references were read without reading secret env values.
 
 ## By workflow

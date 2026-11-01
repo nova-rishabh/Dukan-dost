@@ -32,6 +32,7 @@ export async function readPayToken(store: LedgerStore, token: string, now: Date)
   const [shop, customers, entries] = await Promise.all([store.getShop(row.shopId), store.listCustomers(row.shopId), store.listEntries(row.shopId)]);
   const customer = customers.find((c) => c.id === row.customerId);
   if (!shop || !customer) return { status: "invalid" };
+  if (!shop.isDemo && !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/.test(shop.upiVpa)) return { status: "invalid" };
   // The link never asks for more than is owed today (a cash payment may have been recorded since).
   const live = computeBalances([customer], entries).get(customer.id) ?? 0;
   if (live <= 0) return { status: "settled" };

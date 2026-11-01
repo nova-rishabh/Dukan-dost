@@ -1,5 +1,6 @@
 # WORKFLOW: confirm inventory movement
 
+> Implementation update (2026-11-01): owner approved items 2–7. See [shop operations](../24_SHOP_OPERATIONS.md) for the implemented APIs, policies and validation. Proposed contracts below are historical and must not be treated as current API documentation.
 Version 0.1; 2026-11-01; Draft. Implements roadmap G06. No measured inventory API exists today. Existing low notes remain quantity-free and are not auto-converted into stock.
 
 Actors: authenticated owner, validation/proposal service, store, operator. Prerequisites: confirmed product/unit, known opening quantity or explicit unknown state, tenant authorization, unit precision and negative-stock policy agreed. No purchasing/payment integration is assumed.

@@ -5,6 +5,7 @@ import type { LedgerStore } from "./store/types";
 import type { Customer, Entry, EntrySource, EntryType, StockFlag, UndoTarget } from "./types";
 
 export type LedgerErrorCode =
+  | "customer_archived"
   | "not_confirmed"
   | "bad_proposal"
   | "bad_request"
@@ -77,6 +78,8 @@ export async function createEntry(store: LedgerStore, req: CreateEntryRequest, o
   if (req.amountPaise > CEILING_RUPEES * 100) throw new LedgerError("bad_request", "Amount above the ceiling", "Itna bada amount galat sunai diya ho sakta hai. Dobara check karo.");
   const customers = await store.listCustomers(req.shopId);
   if (!customers.some((c) => c.id === req.customerId)) throw new LedgerError("not_found", "Customer not found", "Customer chuno ya naya banao.");
+
+  if (customers.find((c) => c.id === req.customerId)?.archivedAt) throw new LedgerError("customer_archived", "Customer is archived", "Customer ko pehle restore karo.");
 
   // The signed proposal decides what may be written. The owner can only fill in what the card asked.
   const unresolved = intent.clarifications.filter((c) => !req.resolutions.includes(c));

@@ -50,7 +50,7 @@ async function request<T>(url: string, init: RequestInit | undefined, read: (res
   }
 }
 
-async function call<T>(url: string, init?: RequestInit): Promise<T> {
+export async function call<T>(url: string, init?: RequestInit): Promise<T> {
   return request(url, init, async (res) => {
     const json = (await res.json().catch(() => null)) as ({ ok: boolean; error?: ApiFailure } & Record<string, unknown>) | null;
     if (!res.ok || !json || json.ok === false) {
@@ -65,7 +65,7 @@ async function call<T>(url: string, init?: RequestInit): Promise<T> {
   });
 }
 
-const post = <T>(url: string, body: unknown) =>
+export const post = <T>(url: string, body: unknown) =>
   call<T>(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
 
 export interface Summary {
@@ -76,6 +76,7 @@ export interface Summary {
 }
 
 export interface CustomerListItem {
+  archivedAt?: string;
   id: string;
   name: string;
   area?: string;
@@ -95,6 +96,7 @@ export interface LedgerRow {
 export interface Me {
   authRequired: boolean;
   setupNeeded: boolean;
+  publicSignup?: boolean;
   loggedIn: boolean;
   owner: { name: string } | null;
   waLogin: boolean;
@@ -122,7 +124,7 @@ export const api = {
   waStatus: () => call<WaStatus>("/api/wa/status"),
   sendReminder: (body: { customerId: string; phone: string; text: string; payUrl: string }) =>
     post<{ sent: boolean; simulated: boolean }>("/api/remind/send", { ...body, confirmed: true }),
-  status: () => call<{ adapters: { stt: string; tts: string; llm: string; store: string }; demoMode: boolean }>("/api/status"),
+  status: () => call<{ adapters: { stt: string; tts: string; llm: string; store: string }; demoMode: boolean; isDemoShop: boolean }>("/api/status"),
   summary: () => call<{ summary: Summary; shopName: string; demoMode: boolean; isDemoShop: boolean }>("/api/summary"),
   customers: () => call<{ customers: CustomerListItem[] }>("/api/customers"),
   customer: (id: string) =>
@@ -139,7 +141,7 @@ export const api = {
     post<{ summary: Summary }>(`/api/entries/${id}/void`, { reason, confirmed: true, proposalToken: proposal?.token, intentIndex: proposal?.index }),
   createStock: (body: Record<string, unknown>) => post<{ flag: StockFlag; created: boolean; summary: Summary }>("/api/stock", body),
   resolveStock: (id: string) => post<{ summary: Summary }>(`/api/stock/${id}/resolve`, {}),
-  remind: (customerId: string) => post<{ text: string; waUrl: string; payUrl: string; amountPaise: number }>("/api/remind", { customerId }),
+  remind: (customerId: string, locale?: "en" | "hi-Latn") => post<{ text: string; waUrl: string; payUrl: string; amountPaise: number }>("/api/remind", { customerId, locale }),
   poster: (text: string, validUntil?: string) =>
     post<{ poster: import("../poster").PosterSpec }>("/api/poster", { text, validUntil }),
   eraseMyData: (phrase: string) => post<{ erased: Record<string, number> }>("/api/shop/erase", { confirmed: true, phrase }),

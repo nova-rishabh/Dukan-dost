@@ -28,17 +28,17 @@ export async function readSession(req: Request, ctx: AppContext): Promise<(Sessi
   const token = cookieValue(req.headers.get("cookie"), SESSION_COOKIE);
   if (!token) return null;
   const s = verifySession(token, { now: new Date(), secret: ctx.secret });
-  if (!s || s.shopId !== ctx.shopId) return null;
-  const owner = await ctx.store.getOwner(ctx.shopId);
+  if (!s) return null;
+  const owner = await ctx.store.getOwner(s.shopId);
   return owner && owner.mobile === s.mobile && owner.authVersion === s.authVersion ? s : null;
 }
 
 /** Throws unless this is the demo (no login) or a valid owner session. */
 export async function requireOwner(req: Request, ctx: AppContext): Promise<(SessionPayload & { iat: number }) | null> {
   if (!ctx.authRequired) return null;
-  const owner = await ctx.store.getOwner(ctx.shopId);
-  if (!owner) throw new AuthError("setup_required", "The shop is not set up yet", "Pehle dukaan set karo.", 401);
   const s = await readSession(req, ctx);
+  if (s) return s;
+  if (!(await ctx.store.hasOwners())) throw new AuthError("setup_required", "The shop is not set up yet", "Pehle dukaan set karo.", 401);
   if (!s) throw new AuthError("auth_required", "Login required", "Pehle login karo.", 401);
   return s;
 }

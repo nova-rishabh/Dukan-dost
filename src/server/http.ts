@@ -3,8 +3,8 @@ import { ZodError } from "zod";
 import { AuthError, type SessionPayload } from "@/lib/auth";
 import { LedgerError } from "@/lib/ledger";
 import { ProviderError } from "@/lib/providers/types";
-import { requireOwner } from "./auth";
-import { getContext } from "./context";
+import { requireOwner, readSession } from "./auth";
+import { getContext, withContext } from "./context";
 
 export class HttpError extends Error {
   constructor(
@@ -105,9 +105,12 @@ export function route(name: string, handler: Handler, opts: { public?: boolean }
     try {
       assertSameOrigin(req);
       // a real shop needs the owner's login on every route except the ones marked public
-      const session = opts.public ? null : await requireOwner(req, getContext());
+      const base = getContext();
+      const session = opts.public ? await readSession(req, base) : await requireOwner(req, base);
+      const shop = session ? await base.store.getShop(session.shopId) : null;
+      const ctx = session ? { ...base, shopId: session.shopId, upiVpa: shop?.upiVpa ?? "" } : base;
       const params = (await routeCtx?.params) ?? {};
-      const out = await handler(req, { requestId, params, session });
+      const out = await withContext(ctx, () => handler(req, { requestId, params, session }));
       if (out instanceof Response) {
         status = out.status;
         out.headers.set("x-request-id", requestId);

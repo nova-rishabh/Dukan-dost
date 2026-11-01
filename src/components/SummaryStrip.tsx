@@ -1,24 +1,27 @@
 "use client";
 
+import { useCopy } from "./LocaleProvider";
+
 import { useState } from "react";
 import { api, type Summary } from "@/lib/client/api";
 import { formatINR } from "@/lib/money";
 import { CountUp } from "./CountUp";
 
 export function SummaryStrip({ summary, onChanged }: { summary: Summary; onChanged: () => void }) {
+  const L = useCopy();
   const [pending, setPending] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   return (
-    <section aria-label="Aaj ka hisaab" className="grid gap-3 md:grid-cols-3" data-testid="summary">
+    <section aria-label={L("Today's overview", "Aaj ka hisaab")} className="grid gap-3 md:grid-cols-3" data-testid="summary">
       <div className="sticker bg-sindoor p-4" style={{ background: "var(--sindoor)" }}>
-        <h2 className="text-xl">Total udhaar</h2>
+        <h2 className="text-xl">{L("Total outstanding", "Total udhaar")}</h2>
         <CountUp paise={summary.totalOutstandingPaise} className="text-[44px] leading-tight" />
         <p className="text-base">{summary.customerCount} customer</p>
       </div>
       <div className="sticker p-4">
-        <h2 className="text-xl">Sabse jyada baaki</h2>
+        <h2 className="text-xl">{L("Largest balances", "Sabse jyada baaki")}</h2>
         {summary.topDebtors.length === 0 ? (
-          <p>Kisi ka baaki nahi.</p>
+          <p>{L("No outstanding balances.", "Kisi ka baaki nahi.")}</p>
         ) : (
           <ol className="mt-1 grid gap-1">
             {summary.topDebtors.map((d) => (
@@ -31,16 +34,16 @@ export function SummaryStrip({ summary, onChanged }: { summary: Summary; onChang
         )}
       </div>
       <div className="sticker p-4" style={{ background: "var(--bahi-page)" }}>
-        <h2 className="text-xl">Kam hai</h2>
+        <h2 className="text-xl">{L("Low stock", "Kam hai")}</h2>
         {error ? <p role="alert">{error}</p> : null}
         {summary.lowStock.length === 0 ? (
-          <p>Abhi koi cheez kam nahi.</p>
+          <p>{L("No low stock notes.", "Abhi koi cheez kam nahi.")}</p>
         ) : (
           <ul className="mt-1 grid gap-2" data-testid="low-stock">
             {summary.lowStock.map((f) => (
               <li key={f.id} className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-semibold">
-                  {f.itemName} <span className="ribbon bg-safed text-base">Kam hai</span>
+                  {f.itemName} <span className="ribbon bg-safed text-base">{L("Low stock", "Kam hai")}</span>
                 </span>
                 <button
                   type="button"
@@ -50,11 +53,11 @@ export function SummaryStrip({ summary, onChanged }: { summary: Summary; onChang
                     setPending((p) => [...p, f.id]);
                     setError(null);
                     try { await api.resolveStock(f.id); onChanged(); }
-                    catch { setError("Note nahi hata. Dobara Mangwa liya dabao."); }
+                    catch { setError(L("The note was not cleared. Try Restocked again.", "Note nahi hata. Dobara Mangwa liya dabao.")); }
                     finally { setPending((p) => p.filter((id) => id !== f.id)); }
                   }}
                 >
-                  Mangwa liya
+                  {L("Restocked", "Mangwa liya")}
                 </button>
               </li>
             ))}
