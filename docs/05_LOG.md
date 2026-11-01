@@ -64,3 +64,10 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - ElevenLabs voice-over added to the ad (seven lines, checked by transcription). Pairing QR reconnect storm fixed with backoff and a test (daemon now 48 tests). Both pushed to GitHub `master`.
 - Added `render.yaml` (app plus WhatsApp service as two web services with disks); the WhatsApp service is public so `/admin` opens for pairing. `WA_SERVICE_URL` now accepts `host:port`. The WhatsApp service names which production credential is missing. First Render deploy of the WhatsApp service crashed on missing credentials; waiting on the owner to correct the two fields.
 - Wrote `docs/17_HANDOFF.md` for the next agent.
+
+## 2026-11-01: audit repairs and Munshi screens
+- Owner approved the documented app improvement plan and waived the unavailable planning skill. Work is on codex/munshi-improvements, not pushed.
+- Added customer search and balance filters, Munshi welcome/empty/retry art, /shop/help and /shop/settings. Moved WhatsApp, passcode and data controls into Settings.
+- Fixed swallowed customer load errors, stock resolve failures, microphone context/stream lifecycle and permission races, and read-back object URL cleanup/stale playback.
+- Full pnpm verify returned VERIFY-PASS after implementation (187 unit tests, 48 daemon tests, browser and axe checks). Rendered mobile Help and desktop Settings inspected. Screenshots: docs/screenshots/help-390.png and settings-1440.png.
+- Real deployment and real WhatsApp delivery were not checked. Remaining media/deployment/platform work is listed in docs/18_AUDIT_AND_IMPROVEMENT_PLAN.md.

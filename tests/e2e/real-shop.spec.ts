@@ -50,6 +50,7 @@ test("setup: a wrong code is refused, the right one creates the owner and signs 
   await expect(page).toHaveURL(/\/shop$/);
   await expect(page.getByRole("heading", { name: "Test Dukaan" })).toBeVisible();
   await expect(page.getByTestId("logout")).toBeVisible();
+  await page.getByRole("link", { name: "Settings", exact: true }).click();
   await expect(page.getByTestId("retention-note")).toContainText("30 din");
   await expect(page.getByTestId("wa-status")).toHaveText("WhatsApp jura hua hai");
 });
@@ -131,6 +132,7 @@ test("delete-my-data erases the business data after the typed phrase and keeps t
   await signIn(page);
   await page.goto("/shop");
   await expect(page.locator('[data-paise="25000"]').first()).toBeVisible();
+  await page.getByRole("link", { name: "Settings", exact: true }).click();
   await page.getByTestId("erase-open").click();
   const confirm = page.getByTestId("erase-confirm");
   await expect(confirm).toBeDisabled();
@@ -139,6 +141,7 @@ test("delete-my-data erases the business data after the typed phrase and keeps t
   await page.getByTestId("erase-phrase").fill("sab hata do");
   await confirm.click();
   await expect(page.getByText("Data hata diya.")).toBeVisible();
+  await page.getByRole("link", { name: "Khata par wapas", exact: true }).click();
   await expect(page.locator('[data-paise="0"]').first()).toBeVisible();
   const list = await (await page.request.get("/api/customers")).json();
   expect(list.customers).toEqual([]);

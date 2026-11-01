@@ -5,15 +5,14 @@ import { useCallback, useEffect, useState } from "react";
 import { api, type CustomerListItem, type Summary } from "@/lib/client/api";
 import { Assistant } from "./Assistant";
 import { CustomerRow } from "./CustomerRow";
-import { DataPanel } from "./DataPanel";
-import { PasscodePanel } from "./PasscodePanel";
-import { WaPanel } from "./WaPanel";
+import { Munshi } from "./Munshi";
 import { SummaryStrip } from "./SummaryStrip";
 
 export function ShopHome() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [shopName, setShopName] = useState("");
-  const [isDemoShop, setIsDemoShop] = useState(true);
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("all");
   const [customers, setCustomers] = useState<CustomerListItem[] | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -22,7 +21,6 @@ export function ShopHome() {
       const [s, c] = await Promise.all([api.summary(), api.customers()]);
       setSummary(s.summary);
       setShopName(s.shopName);
-      setIsDemoShop(s.isDemoShop);
       setCustomers(c.customers);
       setFailed(false);
     } catch {
@@ -34,6 +32,8 @@ export function ShopHome() {
     void load();
   }, [load]);
 
+  const visible = customers?.filter((c) => `${c.name} ${c.area ?? ""}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()) && (filter === "all" || (filter === "owed" ? c.balancePaise > 0 : filter === "advance" ? c.balancePaise < 0 : c.balancePaise === 0)));
+
   return (
     <div className="mx-auto grid max-w-5xl gap-5 px-4 pb-40 pt-2 md:px-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -43,32 +43,38 @@ export function ShopHome() {
         </Link>
       </div>
 
+      <nav aria-label="Dukaan" className="flex flex-wrap gap-3"><Link href="/shop/help" className="btn">Madad</Link><Link href="/shop/settings" className="btn">Settings</Link></nav>
+      <div className="flex items-center gap-4"><Munshi /><p>Namaste! Entry bolo ya neeche likho. Main parchi dikhaunga, aap pakka karna.</p></div>
+
       {failed ? (
-        <p className="sticker p-4 font-semibold" role="alert">
-          Net nahi hai. Thodi der baad try karo.
-        </p>
+        <div className="sticker p-4 font-semibold" role="alert"><p>Hisaab nahi khula. Dobara try karo.</p><button className="btn mt-3" onClick={() => void load()}>Dobara kholo</button></div>
       ) : null}
 
-      {summary ? <SummaryStrip summary={summary} onChanged={load} /> : <div className="sticker h-40 p-4" aria-busy="true">Hisaab khul raha hai…</div>}
+      {summary ? <SummaryStrip summary={summary} onChanged={load} /> : failed ? null : <div className="sticker h-40 p-4" aria-busy="true">Hisaab khul raha hai…</div>}
 
       <Assistant variant="shop" showSamples onChange={() => void load()} />
 
       <section aria-label="Customer">
         <h2 className="mb-2 text-[28px]">Khata</h2>
+        <div className="mb-4 grid gap-3 sm:grid-cols-2">
+          <label>Customer dhoondo<input type="search" className="input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Naam ya area" /></label>
+          <label>Khata dikhao<select className="input" value={filter} onChange={(e) => setFilter(e.target.value)}><option value="all">Sab customer</option><option value="owed">Udhaar baaki</option><option value="settled">Hisaab barabar</option><option value="advance">Advance jama</option></select></label>
+        </div>
         {customers ? (
+          <>
+          <p role="status" className="mb-3">{visible?.length} customer mile</p>
+          {visible?.length === 0 ? <div className="sticker flex items-center gap-4 p-4"><Munshi pose="empty" /><div><p>{customers.length === 0 ? "Abhi koi khata nahi. Customer ka naam aur rakam bolo ya likho." : "Is khoj mein koi customer nahi mila."}</p>{customers.length > 0 ? <button className="btn mt-3" onClick={() => { setQuery(""); setFilter("all"); }}>Sab dikhao</button> : null}</div></div> : null}
           <ul className="grid gap-3 md:grid-cols-2">
-            {customers.map((c) => (
+            {visible?.map((c) => (
               <CustomerRow key={c.id} c={c} />
             ))}
           </ul>
+          </>
         ) : (
-          <p aria-busy="true">Khata khul raha hai…</p>
+          failed ? null : <p aria-busy="true">Khata khul raha hai…</p>
         )}
       </section>
 
-      {!isDemoShop ? <WaPanel /> : null}
-      <DataPanel isDemoShop={isDemoShop} onErased={() => void load()} />
-      {!isDemoShop ? <PasscodePanel /> : null}
     </div>
   );
 }

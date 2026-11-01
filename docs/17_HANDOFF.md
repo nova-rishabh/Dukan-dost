@@ -109,3 +109,6 @@ Nothing below is claimed as working.
 | Owner setup steps (plain language) | `SETUP_FOR_RISHABH.md` |
 | What is left | `docs/15_TODO.md` |
 | History | `docs/05_LOG.md`, `git log` |
+
+## 11. Latest local app improvements (2026-11-01)
+Owner approved docs/18_AUDIT_AND_IMPROVEMENT_PLAN.md and waived the unavailable planning skill requirement. Branch: codex/munshi-improvements; not pushed. Added customer search/filtering, contextual Munshi art, Help (/shop/help) and Settings (/shop/settings). WhatsApp, passcode and data controls now live in Settings. Fixed customer/stock failure recovery and audio lifecycle cleanup. Full pnpm verify returned VERIFY-PASS after implementation. See ADR-026 and docs/05_LOG.md. Deployment and live delivery remain unverified by this agent.

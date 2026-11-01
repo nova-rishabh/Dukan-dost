@@ -32,6 +32,18 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
   const [toast, setToast] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const run = useRef(0);
+  const playback = useRef<{ audio: HTMLAudioElement; url: string } | null>(null);
+  const speechRun = useRef(0);
+
+  const stopSpeech = useCallback(() => {
+    speechRun.current++;
+    if (playback.current) {
+      playback.current.audio.pause();
+      URL.revokeObjectURL(playback.current.url);
+      playback.current = null;
+    }
+  }, []);
+  useEffect(() => () => { run.current++; stopSpeech(); }, [stopSpeech]);
 
   // Landing hero: the real interpreter, in the browser, on one sentence. Nothing is written.
   useEffect(() => {
@@ -49,13 +61,30 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
   }, [previewText]);
 
   const speakAnswers = useCallback(async (p: Proposal) => {
+    const current = speechRun.current;
     for (const i of p.intents) {
       if (i.kind === "query_balance" && i.balancePaise !== undefined) {
         const name = i.candidates?.[0]?.name ?? i.customer ?? "Customer";
         const text = i.balancePaise > 0 ? `${name}, ${formatINR(i.balancePaise)} baaki hai.` : `${name}, kuch baaki nahi hai.`;
         try {
           const blob = await api.speak(text);
-          if (blob) await new Audio(URL.createObjectURL(blob)).play();
+          if (blob && current === speechRun.current) {
+            // Only one answer may play at a time; release its URL on every exit path.
+            if (playback.current) {
+              playback.current.audio.pause();
+              URL.revokeObjectURL(playback.current.url);
+            }
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
+            playback.current = { audio, url };
+            const release = () => {
+              URL.revokeObjectURL(url);
+              if (playback.current?.audio === audio) playback.current = null;
+            };
+            audio.onended = release;
+            audio.onerror = release;
+            try { await audio.play(); } catch { release(); }
+          }
         } catch {
           // read-back is optional; the answer is already on screen as text
         }
@@ -65,6 +94,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
 
   const submitText = useCallback(
     async (text: string, source: EntrySource) => {
+      stopSpeech();
       const id = ++run.current;
       setBusy(true);
       setProblem(null);
@@ -88,7 +118,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
         }
       }
     },
-    [speakAnswers],
+    [speakAnswers, stopSpeech],
   );
 
   async function onAudio(blob: Blob, mime: string) {
