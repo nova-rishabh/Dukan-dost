@@ -8,6 +8,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "wa:start": "npm --prefix services/wa-userauth start",
+    "wa:test": "npm --prefix services/wa-userauth test",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests scripts",
     "test": "vitest run",

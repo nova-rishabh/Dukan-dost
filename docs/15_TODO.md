@@ -10,7 +10,10 @@ The 30 s vertical ad renders and passes `verify:assets`, but it is not finished.
 5. Replace `{{APP_URL}}` on the end card after deploy. Optional 1920x1080 cut.
 
 ## App and platform
-- Login and per-shop access control. Until then do not host a real shop on a public URL (ADR-022).
+- Move WhatsApp to the official Business Cloud API (`docs/16_WHATSAPP_FACTS.md`) and drop the unofficial `berryprotocol` client (ADR-025).
+- Staff accounts and multi-shop. Single-owner login is done.
+- A host with a persistent disk, if the real shop should be reachable from outside this computer: the SQLite file and the WhatsApp service both need one.
+- Review or replace `berryprotocol` / `@berrysdk/core` if the unofficial client stays in use.
 - Nonce-based CSP, so `script-src` can drop `'unsafe-inline'` (ADR-024).
 - Shared rate limiter for real traffic; Gemini retry; PWA manifest.
 - A persistent host for the SQLite file (a small server or Docker volume), since Vercel serverless cannot keep it (ADR-023).

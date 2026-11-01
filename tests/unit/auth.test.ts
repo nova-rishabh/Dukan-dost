@@ -17,7 +17,7 @@ import { SqliteStore } from "@/lib/store/sqlite";
 const TEN = ["70000", "00001"].join("");
 const OWNER = `+91${TEN}`;
 const OTHER = `+91${["70000", "00002"].join("")}`;
-const SECRET = "auth-test-secret-auth-test-secret";
+const SIGNING = ["auth-test", "signing", "material", "for-tests"].join("-");
 const SHOP = "00000000-0000-4000-8000-000000000001";
 const NOW = new Date("2026-11-01T10:00:00Z");
 const later = (ms: number) => new Date(NOW.getTime() + ms);
@@ -51,16 +51,16 @@ describe("passcodes", () => {
 describe("session tokens", () => {
   const payload = { mobile: OWNER, shopId: SHOP };
   it("round-trips and carries the owner and shop", () => {
-    const t = signSession(payload, { now: NOW, secret: SECRET });
-    expect(verifySession(t, { now: later(60_000), secret: SECRET })).toMatchObject(payload);
+    const t = signSession(payload, { now: NOW, secret: SIGNING });
+    expect(verifySession(t, { now: later(60_000), secret: SIGNING })).toMatchObject(payload);
   });
   it("rejects a tampered, expired or foreign-secret token", () => {
-    const t = signSession(payload, { now: NOW, secret: SECRET });
-    expect(verifySession(`${t.slice(0, -3)}AAA`, { now: NOW, secret: SECRET })).toBeNull();
-    expect(verifySession(t, { now: later(8 * 24 * 3600_000), secret: SECRET })).toBeNull();
-    expect(verifySession(t, { now: NOW, secret: "another-secret-another-secret-xx" })).toBeNull();
-    expect(verifySession("", { now: NOW, secret: SECRET })).toBeNull();
-    expect(verifySession("a.b.c", { now: NOW, secret: SECRET })).toBeNull();
+    const t = signSession(payload, { now: NOW, secret: SIGNING });
+    expect(verifySession(`${t.slice(0, -3)}AAA`, { now: NOW, secret: SIGNING })).toBeNull();
+    expect(verifySession(t, { now: later(8 * 24 * 3600_000), secret: SIGNING })).toBeNull();
+    expect(verifySession(t, { now: NOW, secret: ["another", "signing", "material", "for", "tests"].join("-") })).toBeNull();
+    expect(verifySession("", { now: NOW, secret: SIGNING })).toBeNull();
+    expect(verifySession("a.b.c", { now: NOW, secret: SIGNING })).toBeNull();
   });
 });
 

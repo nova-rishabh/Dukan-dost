@@ -56,3 +56,6 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 
 ## 2026-11-01: real fixes
 - Built delete-my-data, 30-day retention of unconfirmed sentences, CSP and HSTS (ADR-024). Added a second e2e server that runs a real SQLite shop.
+
+## 2026-11-01: login and WhatsApp
+- Owner login (passcode, WhatsApp code), first-run setup, session cookie, route protection (ADR-025). The supplied WA-USERAUTH zip is vendored and runs as its own localhost service; sending a reminder from the app is owner-confirmed. Both servers were started locally; nothing was pushed (remote added only).

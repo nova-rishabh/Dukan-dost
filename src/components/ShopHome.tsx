@@ -6,6 +6,8 @@ import { api, type CustomerListItem, type Summary } from "@/lib/client/api";
 import { Assistant } from "./Assistant";
 import { CustomerRow } from "./CustomerRow";
 import { DataPanel } from "./DataPanel";
+import { PasscodePanel } from "./PasscodePanel";
+import { WaPanel } from "./WaPanel";
 import { SummaryStrip } from "./SummaryStrip";
 
 export function ShopHome() {
@@ -64,7 +66,9 @@ export function ShopHome() {
         )}
       </section>
 
+      {!isDemoShop ? <WaPanel /> : null}
       <DataPanel isDemoShop={isDemoShop} onErased={() => void load()} />
+      {!isDemoShop ? <PasscodePanel /> : null}
     </div>
   );
 }

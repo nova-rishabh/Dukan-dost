@@ -77,10 +77,6 @@ export function createApp(options = {}) {
     res.sendFile(path.join(publicDir, 'admin/index.html'));
   });
 
-  app.get('/demo', (req, res) => {
-    res.sendFile(path.join(publicDir, 'demo/index.html'));
-  });
-
   // 8. 404 Handler
   app.use((req, res) => {
     res.status(404).json({ success: false, error: 'Endpoint not found' });
@@ -119,9 +115,7 @@ export async function startServer(options = {}) {
     const server = app.listen(port, host, () => {
       console.log(`\n======================================================`);
       console.log(`🚀 WA-USERAUTH is running on http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`);
-      console.log(`📦 Integration Script: http://localhost:${port}/wa-userauth.js`);
       console.log(`🛡️  Admin Dashboard:    http://localhost:${port}/admin`);
-      console.log(`✨ Live Demo Page:     http://localhost:${port}/demo`);
       console.log(`======================================================\n`);
       resolve({ app, server });
     });

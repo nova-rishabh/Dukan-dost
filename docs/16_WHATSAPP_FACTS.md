@@ -21,7 +21,7 @@ Note: the fetch tool summarises pages with a small model; JSON below for the tex
 CONFIRMED (S2): fields `messaging_product: "whatsapp"`, `recipient_type: "individual"`, `to`, `type: "text"`, `text: { body, preview_url (boolean, optional) }`.
 ```json
 { "messaging_product": "whatsapp", "recipient_type": "individual",
-  "to": "+919876543210", "type": "text",
+  "to": "<E.164 number>", "type": "text",
   "text": { "preview_url": false, "body": "Hello" } }
 ```
 - `to` format CONFIRMED (S1, S2): include plus sign and country code; docs say plus, hyphens, parentheses, spaces are accepted and normalised (`+1 (631) 555-1234` -> `+16315551234`). If the plus is omitted the business number's country code is prepended (risk of wrong number). Recommendation: always send `+<country code><number>` (E.164). Digits-only with country code is UNVERIFIED as a documented-safe form.

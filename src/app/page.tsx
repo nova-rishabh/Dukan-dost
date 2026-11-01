@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Assistant } from "@/components/Assistant";
+import { LandingCtas } from "@/components/LandingCtas";
 
 const HERO_SENTENCE = "Amit Sharma ne 500 rupaye udhaar liye";
 
@@ -17,14 +17,7 @@ export default function Landing() {
           <p className="mt-5 max-w-[34ch] text-xl">
             Udhaar ka khata jo aap bolkar likhwate ho. Pehle parchi dikhti hai, aap Likh do dabate ho, tab stamp lagta hai.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/try" className="btn btn-primary" data-testid="try-sample">
-              Sample dukaan try karo
-            </Link>
-            <Link href="/shop" className="btn">
-              Meri dukaan
-            </Link>
-          </div>
+          <LandingCtas />
         </div>
         <div className="md:col-span-7">
           <Assistant variant="hero" previewText={HERO_SENTENCE} />

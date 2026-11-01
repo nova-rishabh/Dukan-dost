@@ -22,6 +22,8 @@ const csp = [
 ].join("; ");
 
 const config: NextConfig = {
+  // `pnpm verify` builds into its own folder so it never breaks a copy of the app that is running
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: true,
   poweredByHeader: false,
   async headers() {

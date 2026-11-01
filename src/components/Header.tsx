@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DemoTag } from "./DemoTag";
+import { NavBar } from "./NavBar";
 
 export function Header() {
   return (
@@ -8,14 +9,7 @@ export function Header() {
         Dukaan Dost
       </Link>
       <DemoTag />
-      <nav aria-label="Main" className="flex w-full flex-wrap items-center gap-2 md:w-auto">
-        <Link href="/try" className="btn">
-          Sample dukaan
-        </Link>
-        <Link href="/shop" className="btn btn-primary">
-          Meri dukaan
-        </Link>
-      </nav>
+      <NavBar />
     </header>
   );
 }

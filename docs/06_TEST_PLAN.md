@@ -136,8 +136,8 @@ All P0 acceptance criteria in 01_PRD.md pass; the 20-fixture gate passes; the re
 | Gate | Result | How to re-run |
 |---|---|---|
 | 20 utterance fixtures, offline rules interpreter | 20 of 20 pass; plus a test that no flagged intent is ever writable (21 tests in the file) | `pnpm vitest run tests/fixtures` |
-| Unit tests (number table, money, resolve via fixtures, ledger, proposal tokens, remind, UPI, pay tokens, adapters with mocked HTTP, gates, contrast) | 149 tests in 10 files pass (includes the 21 fixture tests and the store contract run against both stores) | `pnpm test` |
-| End to end (Playwright, 390 px, keyless app) | 22 pass: the nine scripts in section 5 (script 8 split into three), Badlo edit, forged proposal and cross-site POST refused, CSP check, retention note, a real SQLite shop writing and erasing its data, plus axe on 5 pages | `pnpm test:e2e` |
+| Unit tests (number table, money, resolve via fixtures, ledger, proposal tokens, remind, UPI, pay tokens, adapters with mocked HTTP, gates, contrast) | 197 tests in 14 files pass (includes the 21 fixture tests, the store contract run against both stores, login and route protection, and the real WhatsApp daemon code in-process) | `pnpm test` |
+| End to end (Playwright, 390 px, keyless app) | 27 pass: the nine scripts in section 5 (script 8 split into three), Badlo edit, forged proposal and cross-site POST refused, CSP check, retention note, a real SQLite shop that needs setup then login (passcode and WhatsApp code with CAPTCHA), sends a reminder only after confirmation, and erases its data, plus axe on 7 pages | `pnpm test:e2e` |
 | axe (WCAG 2.2 A and AA tags) on landing, shop home, customer page, pay page, /try | no serious or critical violations | included above |
 | Design-token contrast | all pairs meet the minimums in 03 section 3 | `pnpm test` |
 | `pnpm check:slop`, `pnpm check:secrets` | pass; both are proven able to fail by `tests/unit/gates.test.ts` | `pnpm check:slop` |
@@ -146,3 +146,5 @@ All P0 acceptance criteria in 01_PRD.md pass; the 20-fixture gate passes; the re
 Not run here (need keys or a device): STT accuracy on clean and noisy audio (sections 1 and 4), live speakers, Lighthouse, real Android and iOS, 10-run rehearsal, judge proxy on live links. The expired-token page, a forced speech-to-text failure and an LLM timeout are covered by unit tests with mocks; the end-to-end fallbacks are: mic blocked (8a), keyless speech-to-text message (8b) and a sample clip (8c).
 
 The e2e script 3 (which Sharma) uses fixture 1 ("Sharma ji ne 500 rupaye udhaar liye"), because fixture 12 resolves both names exactly. Fixture 12 is covered by the fixture test.
+
+The WhatsApp service in `services/wa-userauth` has its own 43 tests (`pnpm wa:test`, part of `pnpm verify`). No test sends a real WhatsApp message or calls ElevenLabs or Gemini: test servers blank those variables on purpose.

@@ -8,6 +8,7 @@ const steps: Array<[string, string[]]> = [
   ["typecheck", ["run", "typecheck"]],
   ["lint", ["run", "lint"]],
   ["test (unit + 20 fixtures)", ["run", "test"]],
+  ["wa daemon tests", ["run", "wa:test"]],
   ["build", ["run", "build"]],
   ["test:e2e (scripts + axe)", ["run", "test:e2e"]],
   ["check:slop", ["run", "check:slop"]],
@@ -19,7 +20,7 @@ mkdirSync(path.join(ROOT, ".goal"), { recursive: true });
 const failed: string[] = [];
 for (const [name, args] of steps) {
   const started = Date.now();
-  const r = spawnSync("pnpm", args, { cwd: ROOT, encoding: "utf8", shell: true, maxBuffer: 64 * 1024 * 1024 });
+  const r = spawnSync("pnpm", args, { cwd: ROOT, encoding: "utf8", shell: true, maxBuffer: 64 * 1024 * 1024, env: { ...process.env, NEXT_DIST_DIR: ".next-verify" } });
   const log = `${r.stdout ?? ""}\n${r.stderr ?? ""}`;
   writeFileSync(path.join(ROOT, ".goal", `verify-${name.split(" ")[0].replace(/[^a-z0-9]/gi, "_")}.log`), log);
   const ok = r.status === 0;
