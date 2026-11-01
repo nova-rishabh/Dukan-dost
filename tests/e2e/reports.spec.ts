@@ -24,6 +24,10 @@ test("dashboard totals reconcile with statements and CSV is downloadable", async
   await page.goto("/shop/dashboard");
   await page.getByLabel("Language / Bhasha").selectOption("en");
   await expect(page.getByRole("heading", { name: "Shop dashboard" })).toBeVisible();
+  const currentNav = page.getByRole("link", { name: "Dashboard", exact: true });
+  await expect(currentNav).toHaveAttribute("aria-current", "page");
+  await expect(currentNav).toHaveCSS("background-color", "rgb(22, 18, 58)");
+  await expect(currentNav).toHaveCSS("color", "rgb(255, 255, 255)");
   await expect(page.getByText("Outstanding now", { exact: true })).toBeVisible();
   await page.screenshot({ path: ".goal/screenshots/dashboard-390.png", fullPage: true });
   await page.goto(`/shop/${customers[0].id}/statement`);

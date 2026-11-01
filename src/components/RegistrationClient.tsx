@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api, call, post } from "@/lib/client/api";
 import { useLocale } from "./LocaleProvider";
 import { Munshi } from "./Munshi";
@@ -13,6 +13,8 @@ export function RegistrationClient({ purpose }: { purpose: "signup" | "recovery"
   const [state, setState] = useState("loading");
   const [mobile, setMobile] = useState("");
   const [captcha, setCaptcha] = useState<{ captchaId: string; svg: string } | null>(null);
+  const [captchaLoading, setCaptchaLoading] = useState(true);
+  const captchaPending = useRef(false);
   const [captchaCode, setCaptchaCode] = useState("");
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
@@ -23,9 +25,13 @@ export function RegistrationClient({ purpose }: { purpose: "signup" | "recovery"
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const loadCaptcha = useCallback(async () => {
+    if (captchaPending.current) return;
+    captchaPending.current = true;
+    setCaptchaLoading(true);
     setCaptcha(null); setCaptchaCode("");
     try { setCaptcha(await api.waCaptcha()); }
     catch (e) { setError(hint(e, "captchaFailed")); }
+    finally { captchaPending.current = false; setCaptchaLoading(false); }
   }, [hint]);
   const status = useCallback(async () => {
     try {
@@ -69,7 +75,7 @@ export function RegistrationClient({ purpose }: { purpose: "signup" | "recovery"
       catch (e) { void loadCaptcha(); throw e; }
     }); }}>
       <label>{copy("WhatsApp number", "WhatsApp number")}<input className="input w-full" type="tel" autoComplete="tel" required value={mobile} onChange={(e) => setMobile(e.target.value)} /></label>
-      <div className="flex flex-wrap items-center gap-3">{captcha ? <img src={`data:image/svg+xml;utf8,${encodeURIComponent(captcha.svg)}`} alt={copy("Verification image", "Verification tasveer")} width={180} height={60} /> : <p>{copy("Verification image unavailable", "Verification tasveer nahi mili")}</p>}<button className="chip" type="button" disabled={busy} onClick={() => void loadCaptcha()}>{copy("New image", "Nayi tasveer")}</button></div>
+      <div className="flex flex-wrap items-center gap-3">{captcha ? <img src={`data:image/svg+xml;utf8,${encodeURIComponent(captcha.svg)}`} alt={copy("Verification image", "Verification tasveer")} width={180} height={60} /> : captchaLoading ? <p role="status" aria-busy="true">{copy("Loading verification image…", "Verification tasveer aa rahi hai…")}</p> : <p>{copy("Verification image unavailable", "Verification tasveer nahi mili")}</p>}<button className="chip" type="button" disabled={busy || captchaLoading} onClick={() => void loadCaptcha()}>{copy("New image", "Nayi tasveer")}</button></div>
       <label>{copy("Characters in image", "Tasveer ke akshar")}<input className="input w-full" autoComplete="off" required maxLength={8} value={captchaCode} onChange={(e) => setCaptchaCode(e.target.value)} /></label>
       <button className="btn btn-primary" disabled={busy || !captcha || !captchaCode.trim()}>{copy("Send WhatsApp code", "WhatsApp code bhejo")}</button>
     </form>}

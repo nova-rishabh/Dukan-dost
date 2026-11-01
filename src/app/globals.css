@@ -201,7 +201,8 @@ h3 {
   font-weight: 600;
   cursor: pointer;
 }
-.chip[aria-pressed="true"] {
+.chip[aria-pressed="true"],
+.chip[aria-current="page"] {
   background: var(--syahi);
   color: var(--safed);
 }
