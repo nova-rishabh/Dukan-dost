@@ -83,3 +83,8 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - Added English account/header/security preview with persisted language choice; other shop surfaces remain Hinglish.
 - pnpm verify: VERIFY-PASS (222 unit/fixture tests, 48 daemon tests, 42 browser tests). English account screenshot inspected at 390 px; axe/overflow/input-preservation checks passed.
 - docs/20_OPERATIONS.md records backup, restore, secret rotation and release requirements. No hosted CI, live deployment or real WhatsApp delivery verified. Tenant-safe public signup, full locale coverage, dashboard and inventory remain ahead.
+
+## 2026-11-01: test everything request
+- Ran the complete suite, added three API regressions, corrected the new malformed-body test to send raw bytes, and reran pnpm verify: VERIFY-PASS (222 unit/fixture, 48 daemon, 45 browser, 25 asset checks).
+- pnpm shots passed at 390/1440; inspected refreshed stills. Live ElevenLabs TTS/Scribe and Gemini structured-output smoke scenarios both passed using fictional data. No real WhatsApp send. Both production dependency audits reported zero known advisories.
+- Final local summary read burst: 40 requests, concurrency 10, p95 14.7 ms/max 15.5 ms; no production capacity claim. Full report and untested boundaries: docs/21_TEST_REPORT.md.

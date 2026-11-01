@@ -148,3 +148,7 @@ Not run here (need keys or a device): STT accuracy on clean and noisy audio (sec
 The e2e script 3 (which Sharma) uses fixture 1 ("Sharma ji ne 500 rupaye udhaar liye"), because fixture 12 resolves both names exactly. Fixture 12 is covered by the fixture test.
 
 The WhatsApp service in `services/wa-userauth` has its own 48 tests (`pnpm wa:test`, part of `pnpm verify`). No test sends a real WhatsApp message or calls ElevenLabs or Gemini: test servers blank those variables on purpose.
+
+## 11. Expanded reliability test run (2026-11-01)
+
+See docs/21_TEST_REPORT.md. Final pnpm verify returned VERIFY-PASS: 222 unit/fixture tests in 20 files, 48 daemon tests, 45 browser tests and 25 asset checks. Added authentication sweep across 20 protected endpoint/method combinations, malformed/oversized request non-mutation and a small local read burst. Both screenshot sizes and both live provider smoke checks passed. This is not a production or real-device certification.
