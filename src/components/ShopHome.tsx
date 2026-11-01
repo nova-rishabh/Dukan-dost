@@ -5,11 +5,13 @@ import { useCallback, useEffect, useState } from "react";
 import { api, type CustomerListItem, type Summary } from "@/lib/client/api";
 import { Assistant } from "./Assistant";
 import { CustomerRow } from "./CustomerRow";
+import { DataPanel } from "./DataPanel";
 import { SummaryStrip } from "./SummaryStrip";
 
 export function ShopHome() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [shopName, setShopName] = useState("");
+  const [isDemoShop, setIsDemoShop] = useState(true);
   const [customers, setCustomers] = useState<CustomerListItem[] | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -18,6 +20,7 @@ export function ShopHome() {
       const [s, c] = await Promise.all([api.summary(), api.customers()]);
       setSummary(s.summary);
       setShopName(s.shopName);
+      setIsDemoShop(s.isDemoShop);
       setCustomers(c.customers);
       setFailed(false);
     } catch {
@@ -61,6 +64,7 @@ export function ShopHome() {
         )}
       </section>
 
+      <DataPanel isDemoShop={isDemoShop} onErased={() => void load()} />
     </div>
   );
 }

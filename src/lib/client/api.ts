@@ -61,7 +61,7 @@ export interface LedgerRow {
 
 export const api = {
   status: () => call<{ adapters: { stt: string; tts: string; llm: string; store: string }; demoMode: boolean }>("/api/status"),
-  summary: () => call<{ summary: Summary; shopName: string; demoMode: boolean }>("/api/summary"),
+  summary: () => call<{ summary: Summary; shopName: string; demoMode: boolean; isDemoShop: boolean }>("/api/summary"),
   customers: () => call<{ customers: CustomerListItem[] }>("/api/customers"),
   customer: (id: string) =>
     call<{ customer: { id: string; name: string; area?: string }; entries: LedgerRow[]; balancePaise: number }>(`/api/customers/${id}`),
@@ -80,6 +80,7 @@ export const api = {
   remind: (customerId: string) => post<{ text: string; waUrl: string; payUrl: string; amountPaise: number }>("/api/remind", { customerId }),
   poster: (text: string, validUntil?: string) =>
     post<{ poster: import("../poster").PosterSpec }>("/api/poster", { text, validUntil }),
+  eraseMyData: (phrase: string) => post<{ erased: Record<string, number> }>("/api/shop/erase", { confirmed: true, phrase }),
   resetDemo: () => post<{ reset: boolean }>("/api/demo/reset", {}),
   debug: () => call<{ events: Array<{ id: number; createdAt: string; payload: Record<string, unknown> }> }>("/api/debug"),
   async speak(text: string): Promise<Blob | null> {

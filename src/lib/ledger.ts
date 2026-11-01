@@ -1,3 +1,4 @@
+import { ERASE_PHRASE } from "./erase-phrase";
 import { CEILING_RUPEES, DUPLICATE_WINDOW_MS, HIGH_AMOUNT_RUPEES } from "./checks";
 import { proposalIntentKey, verifyProposal } from "./proposal";
 import type { LedgerStore } from "./store/types";
@@ -207,3 +208,20 @@ export async function getLastEntry(store: LedgerStore, shopId: string): Promise<
   const last = live.reduce((a, b) => (new Date(b.confirmedAt).getTime() >= new Date(a.confirmedAt).getTime() ? b : a));
   return { entryId: last.id, customerName: customers.find((c) => c.id === last.customerId)?.name ?? "Customer", type: last.type, amountPaise: last.amountPaise };
 }
+
+
+/**
+ * The owner's delete-my-data. Removes customers, entries, stock notes, pay links and the audit log of
+ * the shop (including the sentences kept with entries) and keeps the shop row. It cannot be undone,
+ * so it needs `confirmed: true` and the typed phrase. The shared demo shop refuses it (use reset).
+ */
+export async function eraseShopData(store: LedgerStore, req: { shopId: string; confirmed: boolean; phrase: string }) {
+  if (req.confirmed !== true) throw new LedgerError("not_confirmed", "Erase was not confirmed", "Data hatane se pehle pakka karo.");
+  if (req.phrase.trim().toLowerCase() !== ERASE_PHRASE) throw new LedgerError("bad_request", "Confirmation phrase does not match", `Pakka karne ke liye likho: ${ERASE_PHRASE}`);
+  const shop = await store.getShop(req.shopId);
+  if (!shop) throw new LedgerError("not_found", "Shop not found", "Dukaan nahi mili.");
+  if (shop.isDemo) throw new LedgerError("bad_request", "The demo shop cannot be erased", "Yeh demo dukaan hai. Data hatane ki jagah Dukaan reset karo use karo.");
+  return store.eraseShop(req.shopId);
+}
+
+export { ERASE_PHRASE };

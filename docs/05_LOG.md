@@ -53,3 +53,6 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 
 ## 2026-11-01: Supabase replaced
 - Owner's Supabase limit ran out, so Supabase was removed and a SQLite file store added (ADR-023). A shared contract test runs the same 13 behaviours against the memory store and the SQLite store, including reopen-from-disk.
+
+## 2026-11-01: real fixes
+- Built delete-my-data, 30-day retention of unconfirmed sentences, CSP and HSTS (ADR-024). Added a second e2e server that runs a real SQLite shop.

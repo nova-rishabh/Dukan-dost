@@ -201,3 +201,40 @@ test("11 the API refuses a forged proposal and a cross-site POST", async ({ requ
   const sameSiteJsonOnly = await request.post("/api/interpret", { headers: { "content-type": "text/plain" }, data: '{"text":"x"}' });
   expect(sameSiteJsonOnly.status()).toBe(415);
 });
+
+test("12 the CSP header is sent and no page breaks under it", async ({ page, request }) => {
+  const head = (await request.get("/")).headers();
+  expect(head["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(head["content-security-policy"]).toContain("object-src 'none'");
+  expect(head["strict-transport-security"]).toContain("max-age=");
+
+  const problems: string[] = [];
+  page.on("console", (m) => {
+    if (/Content Security Policy|Refused to/i.test(m.text())) problems.push(m.text());
+  });
+  page.on("pageerror", (e) => problems.push(String(e)));
+
+  await page.goto("/");
+  await page.goto("/shop");
+  await say(page, "Gupta ji ne 500 rupaye udhaar liye");
+  await page.getByTestId("likh-do").click();
+  await expect(page.getByTestId("stamp")).toBeVisible();
+  const id = await customerId(page, "Gupta ji");
+  await page.goto(`/shop/${id}`);
+  await page.getByRole("button", { name: "Yaad dilao" }).click();
+  await expect(page.getByTestId("remind-text")).toHaveValue(/Namaste/);
+  const rem = await (await page.request.post("/api/remind", { data: { customerId: id } })).json();
+  await page.goto(new URL(rem.payUrl).pathname);
+  await expect(page.getByTestId("pay-qr")).toBeVisible();
+  await page.goto("/try");
+  await page.getByTestId("clip-saaf").click();
+  await expect(page.getByTestId("parchi")).toBeVisible();
+  expect(problems).toEqual([]);
+});
+
+test("13 the demo shop shows the retention note and no erase button", async ({ page }) => {
+  await page.goto("/shop");
+  await expect(page.getByTestId("retention-note")).toContainText("Awaaz kabhi save nahi hoti");
+  await expect(page.getByTestId("erase-open")).toHaveCount(0);
+  await expect(page.getByTestId("data-panel")).toContainText("Dukaan reset karo");
+});
