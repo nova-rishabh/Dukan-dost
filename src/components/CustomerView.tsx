@@ -57,7 +57,7 @@ export function CustomerView({ id }: { id: string }) {
 
   return (
     <div className="mx-auto grid max-w-3xl gap-5 px-4 py-4 md:px-8">
-      <Link href="/shop" className="font-semibold underline">
+      <Link href="/shop" className="btn w-fit">
         Sab customer
       </Link>
       <div className="flex flex-wrap items-center justify-between gap-3">

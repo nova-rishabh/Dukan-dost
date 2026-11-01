@@ -123,7 +123,7 @@ Type the sentence, or tap a sample clip. Identical downstream.
 5. Reminders are drafts the owner sends; the app never messages a customer on its own.
 6. Customer phone numbers and balances are not exposed on public links. The pay page shows name and amount only, behind an unguessable id.
 7. Every write is auditable: source sentence, who confirmed, when, voids with a reason.
-8. Demo data is fictional. Real shopkeeper data is used only with consent and is deletable. **Status 2026-11-01: the delete button and retention note are not built yet; do not store real shop data until they are (ADR-022).**
+8. Demo data is fictional. Real shopkeeper data is used only with consent and is deletable. **Status 2026-11-01: built (ADR-024). Still no login, so do not host a real shop on a public URL yet (ADR-022).**
 
 ## 10. Success metrics
 

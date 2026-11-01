@@ -10,7 +10,7 @@ export interface SampleClip {
 }
 
 export const SAMPLE_CLIPS: SampleClip[] = [
-  { id: "saaf", label: "Saaf awaaz", transcript: "Amit Sharma ne 500 rupaye udhaar liye", note: "Saaf awaaz, ek kaam.", audioPath: "/samples/saaf.mp3" },
+  { id: "saaf", label: "Saaf awaaz", transcript: "Amit Sharma ne 500 rupaye udhaar liye", note: "Ek saaf sentence, ek kaam.", audioPath: "/samples/saaf.mp3" },
   { id: "shor", label: "Shor mein", transcript: "gupta ji ne barah sau wapas kar diye", note: "Shor mein bola gaya. Amount shabdon mein hai, phir bhi 1,200 padha gaya.", audioPath: "/samples/shor.mp3" },
   { id: "teen", label: "Teen kaam ek saath", transcript: "Amit Sharma ne 300 udhaar liye, Ramesh ko 350 ka saman udhaar, chini kam hai", note: "Do entry aur ek stock note, ek hi sentence mein.", audioPath: "/samples/teen.mp3" },
   { id: "sharma", label: "Kaun Sharma?", transcript: "Sharma ji ne 500 diye", note: "Do Sharma hain, isliye app poochta hai.", audioPath: "/samples/sharma.mp3" },

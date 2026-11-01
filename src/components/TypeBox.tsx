@@ -26,7 +26,7 @@ export function TypeBox({ onSubmit, disabled, initial = "" }: { onSubmit: (text:
         className="input"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Yahan likho: Gupta ji ne 500 udhaar liye"
+        placeholder="Yahan likho"
         maxLength={400}
         autoComplete="off"
         enterKeyHint="send"

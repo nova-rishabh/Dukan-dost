@@ -16,20 +16,21 @@ Open `.env.local` in an editor. Never paste keys into chat or commit this file (
 
 - `ELEVENLABS_API_KEY`: ElevenLabs, Profile, API keys.
 - `GEMINI_API_KEY`: Google AI Studio, Get API key.
-- `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`: Supabase project, Project settings, API. The service role key stays server-side only.
-- `PROPOSAL_SECRET`: any long random string you make up (for example 40 random characters). **Required once Supabase is on**: the app refuses to start without it, because it signs the confirm cards with it. Set it in Vercel too (step 9).
+- `PROPOSAL_SECRET`: any long random string you make up (for example 40 random characters). **Required once `DUKAAN_DB_FILE` is set**: the app refuses to start without it, because it signs the confirm cards with it.
+- `DUKAAN_DB_FILE`: path of the database file, for example `.data/ledger.sqlite` (step 3). Leave empty to keep the demo shop.
+- `DUKAAN_SHOP_NAME`: set it to run your own empty shop instead of the fictional demo shop.
 - `DEMO_UPI_VPA`: leave empty for the fake demo id, or a UPI id you own for the later test.
 - `DEMO_SHOP_ID`: leave empty (uses the seeded shop id).
 - `NEXT_PUBLIC_APP_URL`: after step 9.
 
-## Step 3 [you]: create the database
+## Step 3 [you]: choose where the data lives
 
-In the Supabase SQL editor run these two files, in this order:
+There is no database account to create. Supabase was removed (ADR-023).
 
-1. `supabase/migrations/0001_init.sql`
-2. `supabase/seed.sql`
-
-The seed creates the fictional shop with 8 customers (two Sharmas).
+- **Demo (default):** leave `DUKAAN_DB_FILE` empty. The fictional shop lives in memory and a JSON file in `.data/`.
+- **Your own shop, kept on disk:** set `DUKAAN_DB_FILE=.data/ledger.sqlite`, `DUKAAN_SHOP_NAME=Your shop name`, a `PROPOSAL_SECRET`, and your own UPI id in `DEMO_UPI_VPA`. The app creates the file and an empty shop on first start. Back the file up by copying it.
+- It needs a disk that survives restarts (your own computer, a small server, a Docker volume). Vercel's serverless disk does not, so the deployed demo stays on the in-memory demo shop unless you host it somewhere with a persistent disk.
+- The database uses Node's built-in `node:sqlite`, which Node marks experimental, so keep Node at the version in `package.json` / this machine (24.x).
 
 ## Step 4: check which services are active
 
@@ -45,7 +46,7 @@ It lists missing variable names and says honestly which adapters are local. **[d
 pnpm verify:live
 ```
 
-It does a Scribe round trip, a Gemini structured-output call and a Supabase insert, repeat and void. Not verified yet: no keys existed during the build, so the vendor request shapes are covered only by mocked-HTTP tests. The facts used are in `docs/14_API_FACTS.md`; the model ids sit in `src/lib/config.ts` marked VERIFY.
+It does a Scribe round trip and a Gemini structured-output call. The SQLite store needs no key and is covered by `pnpm test`. Not verified yet: no keys existed during the build, so the vendor request shapes are covered only by mocked-HTTP tests. The facts used are in `docs/14_API_FACTS.md`; the model ids sit in `src/lib/config.ts` marked VERIFY.
 
 ## Step 6 [you]: make the sample clip audio
 
@@ -70,7 +71,7 @@ Open `deliverables/ad/FLOWS_PROMPTS.md`, paste each shot's prompts into the node
 
 ## Step 9 [you]: connect GitHub and Vercel, deploy
 
-Create the GitHub repo and push (nothing was pushed by the build). In Vercel import it, set the env vars from step 2, deploy, then set `NEXT_PUBLIC_APP_URL` to the live URL and redeploy. Replace `{{APP_URL}}` in `deliverables/social/captions.md`, the post sources (`deliverables/social/_src/*.html`, then `node deliverables/social/_src/render.mjs`), the deck (`deliverables/deck/index.html`, then `node deliverables/deck/export.mjs`) and the ad end card. Until you do, the five links show the literal `{{APP_URL}}`.
+Create the GitHub repo and push (nothing was pushed by the build). In Vercel import it, set the env vars from step 2 (leave `DUKAAN_DB_FILE` empty there, see step 3), deploy, then set `NEXT_PUBLIC_APP_URL` to the live URL and redeploy. Replace `{{APP_URL}}` in `deliverables/social/captions.md`, the post sources (`deliverables/social/_src/*.html`, then `node deliverables/social/_src/render.mjs`), the deck (`deliverables/deck/index.html`, then `node deliverables/deck/export.mjs`) and the ad end card. Until you do, the five links show the literal `{{APP_URL}}`.
 
 ## Step 10 [you]: test on a real Android phone
 

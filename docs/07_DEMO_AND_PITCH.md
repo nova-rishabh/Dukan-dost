@@ -35,7 +35,7 @@ Say once: "Noisy room, so I'll type it." Move on.
 | How do you reach shopkeepers? | "Through wholesalers and distributors who visit weekly, plus shop-to-shop referrals. We have not run this yet." |
 | Is the payment real? | "The pay page builds a UPI link and QR for the shop's own UPI. We do not process payments or mark anything paid on our own." |
 | Does the AI image make the posters? | "No. Posters use fixed templates so Hindi text is never garbled. AI only picks wording and items." (the poster is deterministic: item and price are parsed from the sentence and no model writes any poster text) |
-| What about privacy? | "Demo data is fictional. Real shop data only with consent, with a delete button (not built yet: say so if asked, and do not store real shop data until it exists). Pay pages show name and amount only." |
+| What about privacy? | "Demo data is fictional. Real shop data only with consent, with a delete button (built; there is still no login, so say so if asked). Pay pages show name and amount only." |
 
 ## 4. Five submission links (AI-juror readiness)
 

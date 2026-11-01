@@ -5,7 +5,7 @@ import { localStt, localTts } from "@/lib/providers/local";
 import type { SttProvider, TtsProvider } from "@/lib/providers/types";
 import { SEED_SHOP_ID } from "@/lib/seed";
 import { LocalStore } from "@/lib/store/local";
-import { SupabaseStore } from "@/lib/store/supabase";
+import { SqliteStore } from "@/lib/store/sqlite";
 import type { LedgerStore } from "@/lib/store/types";
 import type { LlmProvider } from "@/lib/types";
 
@@ -25,25 +25,33 @@ const g = globalThis as unknown as { __dukaan?: AppContext };
 function build(): AppContext {
   const env = process.env;
   const status = adapterStatus(env);
-  const store: LedgerStore =
-    status.store === "supabase"
-      ? new SupabaseStore(env.SUPABASE_URL!, env.SUPABASE_SERVICE_ROLE_KEY!)
-      : new LocalStore({ file: env.DUKAAN_MEMORY_ONLY === "1" ? null : (env.DUKAAN_DATA_FILE ?? ".data/ledger.json") });
-  if (env.DEMO_RESET_ON_BOOT === "1" && store.kind === "local") void store.reset();
-  // Real data needs a real signing secret. The keyless demo shop may use a fixed one (its tokens guard nothing private).
-  if (status.store === "supabase" && !env.PROPOSAL_SECRET) {
-    throw new Error("PROPOSAL_SECRET is required when Supabase is active. Set a long random string.");
+  const shopId = env.DEMO_SHOP_ID || SEED_SHOP_ID;
+  const upiVpa = env.DEMO_UPI_VPA || "demo.shop@invalid";
+
+  // A durable database file means real data, which needs a real signing secret.
+  // The keyless demo shop may use a fixed one (its tokens guard nothing private).
+  if (status.store === "sqlite" && !env.PROPOSAL_SECRET) {
+    throw new Error("PROPOSAL_SECRET is required when DUKAAN_DB_FILE is set. Use a long random string.");
   }
-  const secret = env.PROPOSAL_SECRET || "dukaan-dost-local-demo-secret";
+
+  let store: LedgerStore;
+  if (status.store === "sqlite") {
+    // DUKAAN_SHOP_NAME set: an empty real shop. Not set: the seeded fictional demo shop in a database file.
+    store = new SqliteStore(env.DUKAAN_DB_FILE!, env.DUKAAN_SHOP_NAME ? { seedDemo: false, shop: { id: shopId, name: env.DUKAAN_SHOP_NAME, upiVpa } } : {});
+  } else {
+    store = new LocalStore({ file: env.DUKAAN_MEMORY_ONLY === "1" ? null : (env.DUKAAN_DATA_FILE ?? ".data/ledger.json") });
+    if (env.DEMO_RESET_ON_BOOT === "1") void store.reset();
+  }
+
   return {
     store,
     stt: status.stt === "elevenlabs" ? createElevenLabsStt(env.ELEVENLABS_API_KEY!) : localStt,
     tts: status.tts === "elevenlabs" ? createElevenLabsTts(env.ELEVENLABS_API_KEY!) : localTts,
     llm: status.llm === "gemini" ? createGeminiLlm(env.GEMINI_API_KEY!) : null,
-    shopId: env.DEMO_SHOP_ID || SEED_SHOP_ID,
-    secret,
+    shopId,
+    secret: env.PROPOSAL_SECRET || "dukaan-dost-local-demo-secret",
     status,
-    upiVpa: env.DEMO_UPI_VPA || "demo.shop@invalid",
+    upiVpa,
   };
 }
 

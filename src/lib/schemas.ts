@@ -43,6 +43,11 @@ export const RemindBody = z.object({
   customerId: z.string().min(1).max(64),
 });
 
+export const EraseBody = z.object({
+  confirmed: z.boolean(),
+  phrase: z.string().max(40),
+});
+
 export const SpeakBody = z.object({ text: z.string().trim().min(1).max(200) });
 
 export const PosterBody = z.object({

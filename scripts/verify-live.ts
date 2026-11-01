@@ -3,7 +3,6 @@ import { interpretText } from "../src/lib/interpret";
 import { createElevenLabsStt, createElevenLabsTts } from "../src/lib/providers/elevenlabs";
 import { createGeminiLlm } from "../src/lib/providers/gemini";
 import { SEED_CUSTOMERS, SEED_SHOP_ID } from "../src/lib/seed";
-import { SupabaseStore } from "../src/lib/store/supabase";
 import { loadEnv } from "./lib/util";
 
 loadEnv();
@@ -47,21 +46,5 @@ if (status.llm === "gemini") {
     return JSON.stringify(first);
   });
 } else console.log("SKIP Gemini: GEMINI_API_KEY missing");
-
-if (status.store === "supabase") {
-  await step("Supabase round trip (insert, idempotent repeat, void)", async () => {
-    const s = new SupabaseStore(env.SUPABASE_URL!, env.SUPABASE_SERVICE_ROLE_KEY!);
-    const shopId = env.DEMO_SHOP_ID || SEED_SHOP_ID;
-    const customers = await s.listCustomers(shopId);
-    if (!customers.length) throw new Error("no customers: run supabase/seed.sql");
-    const key = `verify-live-${Date.now()}`;
-    const row = { shopId, customerId: customers[0].id, type: "credit_given" as const, amountPaise: 100, sourceText: "verify:live", source: "text" as const, idempotencyKey: key, confirmedAt: new Date().toISOString() };
-    const a = await s.insertEntry(row);
-    const b = await s.insertEntry(row);
-    if (!a.created || b.created) throw new Error("idempotency failed");
-    await s.voidEntry(shopId, a.entry.id, "verify:live cleanup", new Date().toISOString());
-    return "inserted once, repeat ignored, voided";
-  });
-} else console.log("SKIP Supabase: SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY missing");
 
 process.exit(failures ? 1 : 0);

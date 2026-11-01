@@ -1,5 +1,5 @@
 /**
- * One place for vendor ids and adapter selection (ADR-018, ADR-019).
+ * One place for vendor ids and adapter selection (ADR-018, ADR-019, ADR-023).
  * Ids marked VERIFY are checked against the vendor docs in docs/14_API_FACTS.md and by `pnpm verify:live`.
  */
 export const GEMINI_MODEL_ID = "gemini-3.8-flash"; // VERIFY: https://ai.google.dev/gemini-api/docs/models
@@ -9,10 +9,9 @@ export const ELEVENLABS_TTS_MODEL_ID = "eleven_multilingual_v2"; // VERIFY: http
 export const ENV_NAMES = [
   "ELEVENLABS_API_KEY",
   "GEMINI_API_KEY",
-  "SUPABASE_URL",
-  "SUPABASE_ANON_KEY",
-  "SUPABASE_SERVICE_ROLE_KEY",
   "PROPOSAL_SECRET",
+  "DUKAAN_DB_FILE",
+  "DUKAAN_SHOP_NAME",
   "NEXT_PUBLIC_APP_URL",
   "DEMO_SHOP_ID",
   "DEMO_UPI_VPA",
@@ -25,7 +24,8 @@ export interface AdapterStatus {
   stt: "elevenlabs" | "local";
   tts: "elevenlabs" | "local";
   llm: "gemini" | "rules-only";
-  store: "supabase" | "local";
+  /** "sqlite" is a real database file; "local" is the in-memory demo store with a JSON file */
+  store: "sqlite" | "local";
   demoMode: boolean;
   missing: string[];
 }
@@ -33,7 +33,7 @@ export interface AdapterStatus {
 export function adapterStatus(env: Env): AdapterStatus {
   const stt = has(env, "ELEVENLABS_API_KEY") ? "elevenlabs" : "local";
   const llm = has(env, "GEMINI_API_KEY") ? "gemini" : "rules-only";
-  const store = has(env, "SUPABASE_URL") && has(env, "SUPABASE_SERVICE_ROLE_KEY") ? "supabase" : "local";
+  const store = has(env, "DUKAAN_DB_FILE") ? "sqlite" : "local";
   return {
     stt,
     tts: stt,

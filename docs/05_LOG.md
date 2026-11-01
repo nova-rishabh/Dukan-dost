@@ -51,3 +51,8 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - Independent reviews (agents that did not write the code) are in `docs/reviews/`. They found and the build fixed: proposals not binding the written values, a spoofable rate-limit IP, stale pay-link amounts, a UPI id that could route to a real account, layout defects, stale deck numbers, and a red `check:secrets`/`verify:assets`. Accepted gaps are listed in ADR-022.
 - Closeout: `pnpm verify` and every definition-of-done command were re-run fresh in one dedicated turn; the output is quoted in the final report of the run.
 
+## 2026-11-01: Supabase replaced
+- Owner's Supabase limit ran out, so Supabase was removed and a SQLite file store added (ADR-023). A shared contract test runs the same 13 behaviours against the memory store and the SQLite store, including reopen-from-disk.
+
+## 2026-11-01: real fixes
+- Built delete-my-data, 30-day retention of unconfirmed sentences, CSP and HSTS (ADR-024). Added a second e2e server that runs a real SQLite shop.

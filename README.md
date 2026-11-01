@@ -7,7 +7,7 @@ A voice-first udhaar ledger for kirana shops. Say "Sharma ji ne 500 udhaar liye,
 Built for the AI Builder Challenge (Roobaroo AI Camp, with Developers' Society, IIT Kharagpur). Theme: Local business.
 
 ## Status
-Built and verified locally (2026-11-01): the app runs with no API keys in Demo mode (typed input, five sample clips, local ledger, rules interpreter). Real ElevenLabs, Gemini and Supabase adapters are written and tested against mocked HTTP only; they have not been run with live keys. Not deployed. See [SETUP_FOR_RISHABH.md](SETUP_FOR_RISHABH.md).
+Built and verified locally (2026-11-01): the app runs with no API keys in Demo mode (typed input, five sample clips, local ledger, rules interpreter). Real ElevenLabs and Gemini adapters are written and tested against mocked HTTP only; they have not been run with live keys. Data lives in memory plus a JSON file (demo) or in a SQLite database file you choose; there is no database account to create. Not deployed. See [SETUP_FOR_RISHABH.md](SETUP_FOR_RISHABH.md).
 
 ## Run it
 ```bash
@@ -17,7 +17,7 @@ pnpm verify       # typecheck, lint, unit and fixtures, build, e2e with axe, slo
 pnpm setup:check  # which adapters are active, which env names are missing
 ```
 
-Environment variable names are in `.env.example`. Beyond the eight in the brief there is `PROPOSAL_SECRET` (required when Supabase is active), and optional `ELEVENLABS_VOICE_ID`, `DUKAAN_DATA_FILE`, `DUKAAN_MEMORY_ONLY` and `DEMO_RESET_ON_BOOT`.
+Environment variable names are in `.env.example`. The names are `ELEVENLABS_API_KEY`, `GEMINI_API_KEY`, `PROPOSAL_SECRET` (required when `DUKAAN_DB_FILE` is set), `DUKAAN_DB_FILE`, `DUKAAN_SHOP_NAME`, `NEXT_PUBLIC_APP_URL`, `DEMO_SHOP_ID` and `DEMO_UPI_VPA`; optional extras: `ELEVENLABS_VOICE_ID`, `DUKAAN_DATA_FILE`, `DUKAAN_MEMORY_ONLY` and `DEMO_RESET_ON_BOOT`.
 
 ## Read in this order
 1. [docs/00_INFO.md](docs/00_INFO.md): challenge facts, access, glossary
@@ -33,5 +33,6 @@ Environment variable names are in `.env.example`. Beyond the eight in the brief 
 11. [docs/10_BUILD_PLAN.md](docs/10_BUILD_PLAN.md): schedule and cut lines
 12. [docs/11_IMPLEMENTATION_PLAN.md](docs/11_IMPLEMENTATION_PLAN.md), [12_VISUAL_REVIEW.md](docs/12_VISUAL_REVIEW.md), [13_SELF_REVIEW.md](docs/13_SELF_REVIEW.md), [14_API_FACTS.md](docs/14_API_FACTS.md): build plan, visual review, honest self-score, vendor API facts
 13. [docs/reviews/](docs/reviews/): independent reviews (money and privacy, design, docs versus code, security, verification)
+14. [docs/15_TODO.md](docs/15_TODO.md): what is still to do (the ad, login, nonce CSP, hosting for the database file)
 
 Also in the Workshop folder: [ai_judge_prompt_v2.md](../ai_judge_prompt_v2.md), the prompt we use to score ideas against the challenge rubric.

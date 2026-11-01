@@ -11,7 +11,7 @@ Source of truth: `.goal/dukaan-dost-build-20261101.md`. Order follows TRD sectio
 | 5 | `rules` interpreter (direction, multi-intent, stock, undo, balance) | P0-2, P0-7 | 20 fixtures |
 | 6 | `checks` + `interpret` orchestrator + Gemini fallback | P0-2, P0-3 | unit |
 | 7 | `ledger` over `LedgerStore` (idempotency, void, balances, summary) | P0-5, P0-8 | unit |
-| 8 | Adapters: local store/STT/LLM/TTS; ElevenLabs, Gemini, Supabase | ADR-018 | mocked HTTP |
+| 8 | Adapters: local store/STT/LLM/TTS; ElevenLabs, Gemini; SQLite file store (replaced Supabase, ADR-023) | ADR-018 | mocked HTTP |
 | 9 | API routes + pay page + reminder | P0-6 | unit + e2e |
 | 10 | UI components and screens, stamp, juror mode, poster | P0-1, P0-3, P0-9, P1-2 | e2e + axe |
 | 11 | Quality scripts: slop, secrets, assets, setup:check | | self-tests |
