@@ -1,10 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
 import { ELEVENLABS_STT_MODEL_ID, ELEVENLABS_TTS_MODEL_ID, adapterStatus } from "@/lib/config";
 import { interpretText } from "@/lib/interpret";
 import { createElevenLabsStt, createElevenLabsTts } from "@/lib/providers/elevenlabs";
 import { parseLlmJson } from "@/lib/providers/gemini";
-import { SupabaseStore } from "@/lib/store/supabase";
 import { SEED_CUSTOMERS, SEED_SHOP_ID } from "@/lib/seed";
 import type { LlmProvider } from "@/lib/types";
 
@@ -121,56 +119,17 @@ describe("hybrid interpretation (ADR-020)", () => {
   });
 });
 
-describe("Supabase store (mocked HTTP)", () => {
-  function store(handler: (url: string, init: RequestInit) => Response) {
-    const calls: Array<{ url: string; init: RequestInit }> = [];
-    const fetchImpl = (async (input: RequestInfo | URL, init: RequestInit = {}) => {
-      const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
-      calls.push({ url, init });
-      return handler(url, init);
-    }) as typeof fetch;
-    const client = createClient("https://proj.supabase.test", "service-key", { auth: { persistSession: false }, global: { fetch: fetchImpl } });
-    return { s: new SupabaseStore("https://proj.supabase.test", "service-key", client), calls };
-  }
-  it("upserts entries on (shop_id, idempotency_key) ignoring duplicates and reports created", async () => {
-    const row = { id: "e1", shop_id: "s", customer_id: "c", type: "credit_given", amount_paise: 50000, source_text: "t", source: "text", idempotency_key: "k-12345678", confirmed_at: "2026-11-01T10:00:00Z" };
-    const { s, calls } = store(() => json([row], 201));
-    const r = await s.insertEntry({ shopId: "s", customerId: "c", type: "credit_given", amountPaise: 50000, sourceText: "t", source: "text", idempotencyKey: "k-12345678", confirmedAt: "2026-11-01T10:00:00Z" });
-    expect(r.created).toBe(true);
-    expect(r.entry.amountPaise).toBe(50000);
-    expect(calls[0].url).toContain("/rest/v1/entries");
-    expect(calls[0].url).toContain("on_conflict=shop_id%2Cidempotency_key");
-    expect(new Headers(calls[0].init.headers).get("prefer")).toContain("resolution=ignore-duplicates");
-    expect(new Headers(calls[0].init.headers).get("apikey")).toBe("service-key");
-  });
-  it("reads the existing row on a repeated idempotency key", async () => {
-    const row = { id: "e1", shop_id: "s", customer_id: "c", type: "credit_given", amount_paise: 50000, source_text: "t", source: "text", idempotency_key: "k-12345678", confirmed_at: "2026-11-01T10:00:00Z" };
-    let n = 0;
-    const { s } = store(() => (n++ === 0 ? json([], 201) : json(row)));
-    const r = await s.insertEntry({ shopId: "s", customerId: "c", type: "credit_given", amountPaise: 50000, sourceText: "t", source: "text", idempotencyKey: "k-12345678", confirmedAt: "x" });
-    expect(r.created).toBe(false);
-    expect(r.entry.id).toBe("e1");
-  });
-  it("voids with an update guarded by voided_at is null", async () => {
-    const { s, calls } = store(() => json([{ id: "e1", shop_id: "s", customer_id: "c", type: "credit_given", amount_paise: 100, source_text: "t", source: "text", idempotency_key: "k", confirmed_at: "x", voided_at: "y", void_reason: "r" }]));
-    const e = await s.voidEntry("s", "e1", "r", "y");
-    expect(e?.voidedAt).toBe("y");
-    expect(calls[0].init.method).toBe("PATCH");
-    expect(calls[0].url).toContain("voided_at=is.null");
-  });
-});
-
 describe("adapter selection (keyless mode)", () => {
   it("selects local adapters and reports every missing name when no keys exist", () => {
     const s = adapterStatus({});
     expect(s).toMatchObject({ stt: "local", tts: "local", llm: "rules-only", store: "local", demoMode: true });
     expect(s.missing).toContain("ELEVENLABS_API_KEY");
     expect(s.missing).toContain("GEMINI_API_KEY");
-    expect(s.missing).toHaveLength(9);
+    expect(s.missing).toHaveLength(8);
   });
   it("selects real adapters when keys exist", () => {
-    const s = adapterStatus({ ELEVENLABS_API_KEY: "a", GEMINI_API_KEY: "b", SUPABASE_URL: "c", SUPABASE_SERVICE_ROLE_KEY: "d" });
-    expect(s).toMatchObject({ stt: "elevenlabs", llm: "gemini", store: "supabase", demoMode: false });
+    const s = adapterStatus({ ELEVENLABS_API_KEY: "a", GEMINI_API_KEY: "b", DUKAAN_DB_FILE: ".data/ledger.sqlite" });
+    expect(s).toMatchObject({ stt: "elevenlabs", llm: "gemini", store: "sqlite", demoMode: false });
   });
 });
 

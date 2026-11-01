@@ -9,7 +9,7 @@ const SKIP = /(^|\/)(pnpm-lock\.yaml|package-lock\.json)$|(^|\/)\.hyperframes\//
 const KEY_PATTERNS: Array<[string, RegExp]> = [
   ["Google API key", /AIza[0-9A-Za-z_-]{35}/],
   ["ElevenLabs-style key", /\bsk_[a-f0-9]{24,}\b/],
-  ["JWT / Supabase key", /eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{10,}/],
+  ["JWT-like key", /eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{10,}/],
   ["private key block", /-----BEGIN [A-Z ]*PRIVATE KEY-----/],
   ["assigned secret", /\b(api[_-]?key|secret|service[_-]?role[_-]?key|access[_-]?token)\b\s*[:=]\s*["'][A-Za-z0-9_\-/+]{24,}["']/i],
 ];

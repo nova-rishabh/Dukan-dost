@@ -28,7 +28,7 @@ Applied `ai_judge_prompt_v2.md` rules to the finished Dukaan Dost only (Idea B),
 4. Rehearse and time the pitch.
 
 ## Not verified (said plainly)
-- Live ElevenLabs Scribe, ElevenLabs TTS, Gemini and Supabase calls. Request shapes follow `docs/14_API_FACTS.md` and are covered by mocked-HTTP tests only. The TTS model for Hindi and the Gemini JSON-output call path are the least certain.
+- Live ElevenLabs Scribe, ElevenLabs TTS and Gemini calls (Supabase was removed, ADR-023; the SQLite store is tested locally). Request shapes follow `docs/14_API_FACTS.md` and are covered by mocked-HTTP tests only. The TTS model for Hindi and the Gemini JSON-output call path are the least certain.
 - Real Android phone, iOS Safari, outdoor glare, Lighthouse LCP.
 - `modern-web-guidance` was not run (blocked by the permission classifier; see ADR-021).
 - Nobody listened to the ad's sound or played it at speed; it was measured and inspected frame by frame. No 16:9 cut.

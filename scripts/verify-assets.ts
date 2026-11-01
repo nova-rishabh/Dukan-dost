@@ -108,7 +108,7 @@ check("docs/12_VISUAL_REVIEW.md", () => {
 });
 check(".env.example (names only)", () => {
   const t = readFileSync(need(".env.example"), "utf8");
-  for (const n of ["ELEVENLABS_API_KEY", "GEMINI_API_KEY", "SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "NEXT_PUBLIC_APP_URL", "DEMO_SHOP_ID", "DEMO_UPI_VPA"]) {
+  for (const n of ["ELEVENLABS_API_KEY", "GEMINI_API_KEY", "PROPOSAL_SECRET", "DUKAAN_DB_FILE", "DUKAAN_SHOP_NAME", "NEXT_PUBLIC_APP_URL", "DEMO_SHOP_ID", "DEMO_UPI_VPA"]) {
     if (!new RegExp(`^${n}=\\s*$`, "m").test(t)) throw new Error(`${n} missing or has a value`);
   }
   return "8 names, no values";
@@ -119,10 +119,9 @@ check("SETUP_FOR_RISHABH.md", () => {
   if (steps < 12) throw new Error(`expected 12 steps, found ${steps}`);
   return `${steps} steps`;
 });
-check("supabase migration and seed", () => {
-  need("supabase/migrations/0001_init.sql");
-  need("supabase/seed.sql");
-  return "0001_init.sql, seed.sql";
+check("sqlite store source", () => {
+  need("src/lib/store/sqlite.ts");
+  return "src/lib/store/sqlite.ts";
 });
 
 let failed = 0;

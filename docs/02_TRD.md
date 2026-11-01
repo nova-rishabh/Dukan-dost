@@ -311,3 +311,4 @@ Where this section and earlier text disagree, this section is right.
 - **Env names.** Added `PROPOSAL_SECRET` (required with Supabase). Optional, read by code: `ELEVENLABS_VOICE_ID`, `DUKAAN_DATA_FILE`, `DUKAAN_MEMORY_ONLY`, `DEMO_RESET_ON_BOOT`, `VERCEL`.
 - **Sample clips** are canned transcripts until `pnpm samples:generate` creates audio; the "noisy" clip carries no noise until mixed with ffmpeg.
 - **Audit.** Events record the sentence, resolutions and amounts; there is no actor field (no auth yet).
+- **Data layer (supersedes sections 2 and 4 where they say Supabase / Postgres).** Supabase was removed (ADR-023). Persistence is `LocalStore` (demo) or `SqliteStore` (a database file). The schema is in `src/lib/store/sqlite.ts`; money is INTEGER paise. Env names: `DUKAAN_DB_FILE`, `DUKAAN_SHOP_NAME` replace `SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY`. Row-level security does not apply to a local file.
