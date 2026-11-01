@@ -8,6 +8,10 @@ The 30 s vertical ad renders and passes `verify:assets`, but it is not finished.
 4. ~~Voice-over~~ Done (ElevenLabs stock voices Kishan and Raju, seven lines, checked by transcribing the finished mix). Listening to it and judging the delivery is still yours.
 5. Replace `{{APP_URL}}` on the end card after deploy. Optional 1920x1080 cut.
 
+## Deploy (do first)
+- Render: fix `ADMIN_PASSWORD` and `ALLOWED_APPS` on `dukaan-wa`, confirm a healthy deploy, set the real `NEXT_PUBLIC_APP_URL`, pair the WhatsApp number at `/admin`, run `/setup`. Details: `docs/17_HANDOFF.md` section 6.
+- Re-run `pnpm verify` (last full pass was before the Render commits).
+
 ## App and platform
 - Move WhatsApp to the official Business Cloud API (`docs/16_WHATSAPP_FACTS.md`) and drop the unofficial `berryprotocol` client (ADR-025).
 - Staff accounts and multi-shop. Single-owner login is done.
