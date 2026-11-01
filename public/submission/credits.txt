@@ -1,0 +1,22 @@
+Dukaan Dost submission media credits
+Prepared 2026-11-01
+
+Fictional demo shop and customers. AI-generated scene dramatisation; no real-user testimonial.
+Voice-over: ElevenLabs stock professional voices Kishan and Raju. No voice cloning.
+UI captures are fictional product demonstrations. Supplied Munshi artwork belongs to the project owner.
+
+Music and sound effects: CC0 (https://creativecommons.org/publicdomain/zero/1.0/).
+Upbeat loop — mistermender — https://freesound.org/people/mistermender/sounds/512340/ — license: cc0
+Swipe Whoosh — qubodup — https://freesound.org/people/qubodup/sounds/60007 — license: cc0
+SFX UI Button Click — suntemple — https://freesound.org/people/suntemple/sounds/253168 — license: cc0
+UI Button Click — benzix2 — https://freesound.org/people/benzix2/sounds/467951 — license: cc0
+Medium Thud 1 — sgrowe — https://freesound.org/people/sgrowe/sounds/342535 — license: cc0
+Swosh swoosh whoosh air sound, free, high quality — qubodup — https://freesound.org/people/qubodup/sounds/60026 — license: cc0
+Plop Sound — BlueSiren — https://freesound.org/people/BlueSiren/sounds/414383 — license: cc0
+Professional Logo 02.wav — MATRIXXX_ — https://freesound.org/people/MATRIXXX_/sounds/659371 — license: cc0
+
+Music source125BPM adapted to120BPM; trimmed, normalized, faded and ducked beneath speech.
+Exact source provenance and editable composition: https://github.com/nova-rishabh/Dukan-dost/tree/master/deliverables/ad
+
+No real payment, bank settlement, automatic reminder or shopkeeper adoption is implied.
+Human listening, physical-phone playback and live delivery review remain separate evidence checks.

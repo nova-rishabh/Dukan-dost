@@ -40,12 +40,14 @@ export const CustomerBody = z.object({
 });
 
 export const RemindBody = z.object({
+  locale: z.enum(["en", "hi-Latn"]).optional(),
   customerId: z.string().min(1).max(64),
 });
 
 export const EraseBody = z.object({
   confirmed: z.boolean(),
   phrase: z.string().max(40),
+  passcode: z.string().max(128).optional(),
 });
 
 export const SpeakBody = z.object({ text: z.string().trim().min(1).max(200) });

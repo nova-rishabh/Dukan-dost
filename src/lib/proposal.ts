@@ -18,6 +18,8 @@ export interface ProposalPayload {
     resolvedCustomerId?: string;
     candidateIds?: string[];
     amountRupees?: number;
+    /** Only deterministic manual entry preparation signs exact paise. */
+    amountPaise?: number;
     item?: string;
     clarifications: Clarification[];
     undoEntryId?: string;
@@ -69,4 +71,12 @@ export function verifyProposal(token: string, o: Opts): ProposalPayload {
   const age = o.now.getTime() - new Date(payload.issuedAt).getTime();
   if (age < 0 || age > PROPOSAL_TTL_MS) throw new Error("proposal expired");
   return payload;
+}
+
+/** Manual amounts still use the same signed, expiring, tenant-bound confirmation gate. */
+export function signManualEntry(input: { customerId: string; type: "credit_given" | "payment_received"; amountPaise: number; sourceText: string }, o: Opts): string {
+  if (!Number.isSafeInteger(input.amountPaise) || input.amountPaise <= 0 || input.amountPaise > 10_000_000) throw new Error("invalid_amount");
+  const payload: ProposalPayload = { v: 1, shopId: o.shopId, sourceText: input.sourceText, issuedAt: o.now.toISOString(), intents: [{ kind: input.type, resolvedCustomerId: input.customerId, amountPaise: input.amountPaise, clarifications: [] }] };
+  const body = b64(JSON.stringify(payload));
+  return `${body}.${b64(mac(body, o.secret))}`;
 }

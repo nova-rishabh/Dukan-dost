@@ -15,4 +15,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: npm ci --prefix services/wa-userauth
       - run: pnpm exec playwright install --with-deps chromium
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: pnpm verify
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: verification-logs
+          path: |
+            .goal/verify-*.log
+            test-results/
+          retention-days: 7

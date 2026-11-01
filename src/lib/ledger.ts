@@ -5,6 +5,7 @@ import type { LedgerStore } from "./store/types";
 import type { Customer, Entry, EntrySource, EntryType, StockFlag, UndoTarget } from "./types";
 
 export type LedgerErrorCode =
+  | "customer_archived"
   | "not_confirmed"
   | "bad_proposal"
   | "bad_request"
@@ -71,12 +72,14 @@ export async function createEntry(store: LedgerStore, req: CreateEntryRequest, o
     throw new LedgerError("bad_request", "Intent is not a ledger entry", "Dobara bolo ya likho.");
   }
   if (req.type !== "credit_given" && req.type !== "payment_received") throw new LedgerError("bad_request", "Unknown entry type", "Udhaar diya ya Paise mile chuno.");
-  if (!Number.isInteger(req.amountPaise) || req.amountPaise <= 0 || req.amountPaise % 100 !== 0) {
-    throw new LedgerError("bad_request", "Amount must be a positive whole-rupee amount in integer paise", "Amount check karo.");
+  if (!Number.isSafeInteger(req.amountPaise) || req.amountPaise <= 0 || (req.amountPaise % 100 !== 0 && intent.amountPaise === undefined)) {
+    throw new LedgerError("bad_request", "Amount must match a validated amount in integer paise", "Amount check karo.");
   }
   if (req.amountPaise > CEILING_RUPEES * 100) throw new LedgerError("bad_request", "Amount above the ceiling", "Itna bada amount galat sunai diya ho sakta hai. Dobara check karo.");
   const customers = await store.listCustomers(req.shopId);
   if (!customers.some((c) => c.id === req.customerId)) throw new LedgerError("not_found", "Customer not found", "Customer chuno ya naya banao.");
+
+  if (customers.find((c) => c.id === req.customerId)?.archivedAt) throw new LedgerError("customer_archived", "Customer is archived", "Customer ko pehle restore karo.");
 
   // The signed proposal decides what may be written. The owner can only fill in what the card asked.
   const unresolved = intent.clarifications.filter((c) => !req.resolutions.includes(c));
@@ -86,7 +89,7 @@ export async function createEntry(store: LedgerStore, req: CreateEntryRequest, o
   const asked = (c: string) => (intent.clarifications as string[]).includes(c);
   const customerOk = asked("which_customer") || asked("new_customer") || req.customerId === intent.resolvedCustomerId || (intent.candidateIds ?? []).includes(req.customerId);
   const typeOk = asked("direction") || req.type === intent.kind;
-  const amountOk = asked("amount") || (intent.amountRupees ?? -1) * 100 === req.amountPaise;
+  const amountOk = intent.amountPaise !== undefined ? intent.amountPaise === req.amountPaise : asked("amount") || (intent.amountRupees ?? -1) * 100 === req.amountPaise;
   if (!customerOk || !typeOk || !amountOk) {
     throw new LedgerError("proposal_mismatch", "Entry does not match what was proposed", "Card se alag entry nahi likhi ja sakti. Badlo dabao, phir Likh do.");
   }
@@ -215,13 +218,13 @@ export async function getLastEntry(store: LedgerStore, shopId: string): Promise<
  * the shop (including the sentences kept with entries) and keeps the shop row. It cannot be undone,
  * so it needs `confirmed: true` and the typed phrase. The shared demo shop refuses it (use reset).
  */
-export async function eraseShopData(store: LedgerStore, req: { shopId: string; confirmed: boolean; phrase: string }) {
+export async function eraseShopData(store: LedgerStore, req: { shopId: string; confirmed: boolean; phrase: string; expectedAuthVersion?: number }) {
   if (req.confirmed !== true) throw new LedgerError("not_confirmed", "Erase was not confirmed", "Data hatane se pehle pakka karo.");
   if (req.phrase.trim().toLowerCase() !== ERASE_PHRASE) throw new LedgerError("bad_request", "Confirmation phrase does not match", `Pakka karne ke liye likho: ${ERASE_PHRASE}`);
   const shop = await store.getShop(req.shopId);
   if (!shop) throw new LedgerError("not_found", "Shop not found", "Dukaan nahi mili.");
   if (shop.isDemo) throw new LedgerError("bad_request", "The demo shop cannot be erased", "Yeh demo dukaan hai. Data hatane ki jagah Dukaan reset karo use karo.");
-  return store.eraseShop(req.shopId);
+  return store.eraseShop(req.shopId, req.expectedAuthVersion);
 }
 
 export { ERASE_PHRASE };

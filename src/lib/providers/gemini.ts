@@ -53,7 +53,7 @@ export function createGeminiLlm(apiKey: string): LlmProvider {
       const response = await ai.models.generateContent({
         model: GEMINI_MODEL_ID,
         contents: `Known customers: ${ctx.customerNames.join(", ")}\nSentence: ${text}`,
-        config: { systemInstruction: SYSTEM_PROMPT, responseMimeType: "application/json", responseJsonSchema: RESPONSE_JSON_SCHEMA, temperature: 0 },
+        config: { httpOptions: { timeout: 2500, retryOptions: { attempts: 2, initialDelay: 0.2, maxDelay: 0.3, expBase: 2, jitter: 0.1, httpStatusCodes: [429, 500, 502, 503, 504] } }, systemInstruction: SYSTEM_PROMPT, responseMimeType: "application/json", responseJsonSchema: RESPONSE_JSON_SCHEMA, temperature: 0 },
       });
       return parseLlmJson(response.text ?? "");
     },

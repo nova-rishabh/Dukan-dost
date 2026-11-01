@@ -1,5 +1,7 @@
 "use client";
 
+import { useCopy, useLocale } from "./LocaleProvider";
+
 import { useEffect, useState } from "react";
 import { api, type WaStatus } from "@/lib/client/api";
 
@@ -12,6 +14,8 @@ const LABEL: Record<string, string> = {
 
 /** Shows whether the WhatsApp service is up and a phone is paired. Pairing itself happens on the service's own page. */
 export function WaPanel() {
+  const L = useCopy();
+  const { locale } = useLocale();
   const [s, setS] = useState<WaStatus | null>(null);
   useEffect(() => {
     let alive = true;
@@ -37,16 +41,16 @@ export function WaPanel() {
       </h2>
       <p className="mt-2">
         <span className={`ribbon ${connected ? "ribbon-received" : "bg-safed"}`} data-testid="wa-status">
-          {s.reachable ? (LABEL[s.whatsapp] ?? s.whatsapp) : "WhatsApp service band hai"}
+          {s.reachable ? (locale === "en" ? ({ CONNECTED: "WhatsApp connected", QR_READY: "Scan the QR code to connect", CONNECTING: "Connecting…", DISCONNECTED: "WhatsApp disconnected" }[s.whatsapp] ?? "WhatsApp status unavailable") : (LABEL[s.whatsapp] ?? s.whatsapp)) : L("WhatsApp service is unavailable", "WhatsApp service band hai")}
         </span>
       </p>
-      <p className="mt-2 text-base">Login code aur reminder isi se jaate hain. Reminder tabhi jaata hai jab aap “WhatsApp se bhejo” dabate ho.</p>
+      <p className="mt-2 text-base">{L("Login codes and reminders use this connection. Reminders are sent only after you confirm Send through WhatsApp.", "Login code aur reminder isi se jaate hain. Reminder tabhi jaata hai jab aap “WhatsApp se bhejo” dabate ho.")}</p>
       {!connected && s.adminUrl ? (
         <a className="btn mt-3 w-fit no-underline" href={s.adminUrl} target="_blank" rel="noopener noreferrer">
-          Jodne ke liye kholo
+          {L("Open connection settings", "Jodne ke liye kholo")}
         </a>
       ) : null}
-      <p className="mt-3 text-base">Yeh tareeka abhi sirf testing ke liye hai. Alag number use karo, kyunki WhatsApp number ban kar sakta hai.</p>
+      <p className="mt-3 text-base">{L("This connection is for testing. Use a separate number because WhatsApp may block it.", "Yeh tareeka abhi sirf testing ke liye hai. Alag number use karo, kyunki WhatsApp number ban kar sakta hai.")}</p>
     </section>
   );
 }

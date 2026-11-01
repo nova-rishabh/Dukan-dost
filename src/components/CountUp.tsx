@@ -25,7 +25,7 @@ export function CountUp({ paise, className }: { paise: number; className?: strin
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
       const eased = 1 - Math.pow(1 - t, 3);
-      const next = Math.round((origin + (paise - origin) * eased) / 100) * 100;
+      const next = Math.round(origin + (paise - origin) * eased);
       setShown(next);
       if (t < 1) raf = requestAnimationFrame(tick);
       else from.current = paise;

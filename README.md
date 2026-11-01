@@ -7,7 +7,11 @@ A voice-first udhaar ledger for kirana shops. Say "Sharma ji ne 500 udhaar liye,
 Built for the AI Builder Challenge (Roobaroo AI Camp, with Developers' Society, IIT Kharagpur). Theme: Local business.
 
 ## Status
-Built and verified locally (2026-11-01): the app runs with no API keys in Demo mode (typed input, five sample clips, local ledger, rules interpreter). Real ElevenLabs and Gemini adapters are written and tested against mocked HTTP only; they have not been run with live keys. Data lives in memory plus a JSON file (demo) or in a SQLite database file you choose; there is no database account to create. Not deployed. See [SETUP_FOR_RISHABH.md](SETUP_FOR_RISHABH.md).
+Current pilot code includes English/Hinglish, WhatsApp public signup and recovery with isolated shops, customer/stock management, dashboard/statements, exact-paise manual entries, reviewed JSON export/import, account/mobile controls, private visitor demos and install/offline-help support. No real messages are sent in the fictional trial. See [implementation and research](docs/25_PILOT_COMPLETION.md) and [submission package](docs/26_SUBMISSION.md) for tested behavior and remaining evidence.
+
+Run `pnpm verify` before claiming the build works. The final result is recorded in [handoff](docs/17_HANDOFF.md). Source implementation is distinct from live deployment: actual-phone WhatsApp receipt, native-speaker/user observation and off-host backup scheduling still require external evidence/configuration. Earlier real AI-provider smoke checks are recorded in docs/21_TEST_REPORT.md; they are not natural noisy-shop accuracy evidence.
+
+Useful routes: `/try`, `/signup`, `/shop/start`, `/shop/dashboard`, `/shop/entry`, `/shop/inventory`, `/shop/ledger`, `/shop/data`, `/shop/activity`, `/shop/account`, `/submission`. Shop pages require the owner's session or an explicit fictional sample session on real deployments.
 
 ## Run it
 Real shop on this computer: double-click `start-local.cmd`, then follow [SETUP_FOR_RISHABH.md](SETUP_FOR_RISHABH.md) (pair WhatsApp, set up the shop, log in). Open demo: leave `DUKAAN_DB_FILE` empty.
@@ -18,7 +22,7 @@ pnpm verify       # typecheck, lint, unit and fixtures, build, e2e with axe, slo
 pnpm setup:check  # which adapters are active, which env names are missing
 ```
 
-Environment variable names are in `.env.example`. The names are `ELEVENLABS_API_KEY`, `GEMINI_API_KEY`, `PROPOSAL_SECRET` (required when `DUKAAN_DB_FILE` is set), `DUKAAN_DB_FILE`, `DUKAAN_SHOP_NAME`, `NEXT_PUBLIC_APP_URL`, `DEMO_SHOP_ID` and `DEMO_UPI_VPA`; optional extras: `ELEVENLABS_VOICE_ID`, `DUKAAN_DATA_FILE`, `DUKAAN_MEMORY_ONLY` and `DEMO_RESET_ON_BOOT`.
+Environment variable names are in `.env.example`. The names are `ELEVENLABS_API_KEY`, `GEMINI_API_KEY`, `PROPOSAL_SECRET` (required when `DUKAAN_DB_FILE` is set), `DUKAAN_DB_FILE`, `DUKAAN_SHOP_NAME`, `NEXT_PUBLIC_APP_URL`, `DEMO_SHOP_ID` and `DEMO_UPI_VPA`; optional extras: `APP_PUBLIC_URL` (server runtime URL override), `TRUST_PROXY_HOPS` (verified trusted proxy chain only), `ELEVENLABS_VOICE_ID`, `DUKAAN_DATA_FILE`, `DUKAAN_MEMORY_ONLY` and `DEMO_RESET_ON_BOOT`.
 
 ## Read in this order
 1. [docs/00_INFO.md](docs/00_INFO.md): challenge facts, access, glossary

@@ -195,3 +195,10 @@ describe("review fixes: the proposal binds what may be written", () => {
     await voidEntry(store, { shopId: SEED_SHOP_ID, entryId: last.id, reason: "x", confirmed: true, proposalToken: token, intentIndex: 0 }, { now: NOW, secret: SECRET });
   });
 });
+
+
+it("rejects an old confirmed proposal after its customer is archived", async () => {
+  const { token } = await propose("Amit Sharma ne 500 udhaar liye");
+  await store.updateCustomer(SEED_SHOP_ID, AMIT, { archivedAt: NOW.toISOString() });
+  await expect(createEntry(store, baseReq(token), { now: NOW, secret: SECRET })).rejects.toMatchObject({ code: "customer_archived" });
+});

@@ -1,0 +1,71 @@
+import { afterAll, beforeAll, expect, it } from "vitest";
+import { POST as start } from "@/app/api/demo/start/route";
+import { POST as exit } from "@/app/api/demo/exit/route";
+import { POST as reset } from "@/app/api/demo/reset/route";
+import { POST as createCustomer, GET as customers } from "@/app/api/customers/route";
+import { GET as me } from "@/app/api/auth/me/route";
+import { GET as summary } from "@/app/api/summary/route";
+import { POST as sendReminder } from "@/app/api/remind/send/route";
+import { POST as interpret } from "@/app/api/interpret/route";
+import { POST as createEntry } from "@/app/api/entries/route";
+import { getContext } from "@/server/context";
+import { demoContext, DEMO_TTL_MS, startDemo } from "@/server/demo";
+import { resetRateLimits } from "@/server/http";
+import { signSession } from "@/lib/auth";
+
+const saved = { ...process.env };
+const g = globalThis as unknown as { __dukaan?: unknown };
+const req = (path: string, cookie?: string, body?: unknown) => new Request(`http://localhost${path}`, { method: body === undefined ? "GET" : "POST", headers: { ...(cookie ? { cookie } : {}), ...(body === undefined ? {} : { "content-type": "application/json" }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+const cookieOf = (response: Response) => response.headers.get("set-cookie")!.split(";")[0];
+beforeAll(() => {
+  Object.assign(process.env, { DUKAAN_MODE: "shop", DUKAAN_TEST_MEMORY: "1", DUKAAN_DB_FILE: ":memory:", PROPOSAL_SECRET: "public-demo-test-secret-with-enough-length", SETUP_CODE: "test-code", WA_SERVICE_URL: "", WA_APP_KEY: "", WA_APP_SECRET: "" });
+  g.__dukaan = undefined; resetRateLimits();
+});
+afterAll(() => { process.env = { ...saved }; g.__dukaan = undefined; });
+
+it("offers isolated fictional stores without owner setup, real providers or WhatsApp delivery", async () => {
+  expect((await summary(req("/api/summary"))).status).toBe(401);
+  const a = await start(req("/api/demo/start", undefined, {}));
+  const b = await start(req("/api/demo/start", undefined, {}));
+  expect(a.status).toBe(200); expect(b.status).toBe(200);
+  expect(a.headers.get("set-cookie")).toContain("HttpOnly");
+  const ca = cookieOf(a); const cb = cookieOf(b);
+  expect(ca).not.toBe(cb);
+  const before = await (await customers(req("/api/customers", cb))).json();
+  expect((await createCustomer(req("/api/customers", ca, { name: "Fictional visitor one" }))).status).toBe(200);
+  expect((await (await customers(req("/api/customers", ca))).json()).customers).toHaveLength(before.customers.length + 1);
+  expect((await (await customers(req("/api/customers", cb))).json()).customers).toHaveLength(before.customers.length);
+  expect(await (await me(req("/api/auth/me", ca))).json()).toMatchObject({ authRequired: false, visitorDemo: true, isDemoShop: true, owner: null });
+  const context = demoContext(getContext(), ca)!;
+  expect(context.secret).not.toBe(demoContext(getContext(), cb)!.secret);
+  const proposal = (await (await interpret(req("/api/interpret", ca, { text: "Gupta ji ko 100 udhaar diye", source: "text" }))).json()).proposal;
+  const attempted = await createEntry(req("/api/entries", cb, { proposalToken: proposal.token, intentIndex: 0, confirmed: true, resolutions: [], customerId: proposal.intents[0].resolvedCustomerId, type: "credit_given", amountPaise: 10000, source: "text", idempotencyKey: "cross-demo-proposal-001" }));
+  expect(await attempted.json()).toMatchObject({ error: { code: "bad_proposal" } });
+  expect(context.wa).toBe(null); expect(context.llm).toBe(null); expect(context.store.kind).toBe("local"); expect(context.status.stt).toBe("local");
+  expect((await sendReminder(req("/api/remind/send", ca, {}))).status).toBe(503);
+  expect((await reset(req("/api/demo/reset", ca, {}))).status).toBe(200);
+  expect((await (await customers(req("/api/customers", ca))).json()).customers).toHaveLength(before.customers.length);
+  await exit(req("/api/demo/exit", ca, {}));
+  expect((await summary(req("/api/summary", ca))).status).toBe(401);
+  expect((await summary(req("/api/summary", cb))).status).toBe(200);
+});
+
+it("does not fall through to a real owner when a sample expires or is tampered with", async () => {
+  const base = getContext();
+  const mobile = "+91" + ["70000", "00861"].join("");
+  await base.store.createShop({ id: "real-demo-test", name: "Private test shop", upiVpa: "sample@invalid", isDemo: false });
+  await base.store.createOwner({ shopId: "real-demo-test", name: "Fictional owner", mobile, passcodeHash: "otp-only", authVersion: 0, createdAt: new Date().toISOString() });
+  const owner = `dd_session=${signSession({ shopId: "real-demo-test", mobile, authVersion: 0 }, { now: new Date(), secret: base.secret })}`;
+  const demo = await start(req("/api/demo/start", owner, {}));
+  const both = `${owner}; ${cookieOf(demo)}`;
+  expect(await (await me(req("/api/auth/me", both))).json()).toMatchObject({ loggedIn: false, visitorDemo: true });
+  await createCustomer(req("/api/customers", both, { name: "Only a sample person" }));
+  expect(await base.store.listCustomers("real-demo-test")).toEqual([]);
+  const invalid = both.slice(0, -2) + "xx";
+  expect(await (await createCustomer(req("/api/customers", invalid, { name: "Must not reach real shop" }))).json()).toMatchObject({ error: { code: "demo_expired" } });
+  const ended = await exit(req("/api/demo/exit", both, {}));
+  expect(ended.headers.get("set-cookie")).toContain("Max-Age=0");
+  expect(await (await me(req("/api/auth/me", owner))).json()).toMatchObject({ loggedIn: true, shopName: "Private test shop", isDemoShop: false });
+  const fixed = startDemo(base, null, Date.now());
+  expect(demoContext(base, `dd_demo=${fixed.token}`, Date.now() + DEMO_TTL_MS + 1)).toBe(null);
+});

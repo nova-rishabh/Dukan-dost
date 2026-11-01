@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { errorHint, LOCALE_COOKIE, translate, type Locale, type MessageKey } from "@/lib/i18n";
 
 interface LocaleContextValue {
@@ -12,6 +13,7 @@ interface LocaleContextValue {
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({ initialLocale, children }: { initialLocale: Locale; children: React.ReactNode }) {
+  const router = useRouter();
   const [locale, setLocaleState] = useState(initialLocale);
   useEffect(() => { document.documentElement.lang = locale; }, [locale]);
   const value = useMemo<LocaleContextValue>(() => ({
@@ -19,10 +21,11 @@ export function LocaleProvider({ initialLocale, children }: { initialLocale: Loc
     setLocale(next) {
       document.cookie = `${LOCALE_COOKIE}=${next}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
       setLocaleState(next);
+      router.refresh();
     },
     t: (key) => translate(locale, key),
     hint: (error, fallback) => errorHint(locale, error, fallback),
-  }), [locale]);
+  }), [locale, router]);
   return <LocaleContext value={value}>{children}</LocaleContext>;
 }
 
@@ -43,3 +46,11 @@ export function LanguageSelector() {
 }
 
 export function LocalizedText({ id }: { id: MessageKey }) { return useLocale().t(id); }
+
+/** UI copy only: never translate customer names, source sentences or other stored evidence. */
+export function useCopy() {
+  const { locale } = useLocale();
+  return useCallback((en: string, hi: string) => locale === "en" ? en : hi, [locale]);
+}
+
+export function Copy({ en, hi }: { en: string; hi: string }) { return useCopy()(en, hi); }

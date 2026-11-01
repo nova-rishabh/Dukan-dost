@@ -166,3 +166,22 @@ Format: Context, decision, alternatives, consequences, status. Add new entries a
 - Encrypt operator SQLite snapshots, validate restore into a new path, require signing-secret rotation before serving restored data. Off-host storage/scheduling remain operator work.
 - Production mode fails closed without durable shop storage unless explicitly a fictional demo. Bootstrap code persists beside the database.
 - Add typed English/Hinglish cookie-backed account preview. Preserve input text; migrate other screens in subsequent slices. This changes UI language support without changing money/confirmation rules.
+
+## ADR-028: public shop accounts and confirmed daily operations
+- Status: accepted by owner through “do 2,3,4,5,6,7” on 2026-11-01; details in docs/24_SHOP_OPERATIONS.md.
+- Existing WhatsApp service verifies signup and recovery. Browser/purpose-bound ten-minute proofs, durable attempt limits, atomic completion and normalized identity uniqueness precede session creation. Password is optional for verified signup; recovery rotates the session version. One owner/shop per mobile.
+- Resolve every protected request's shop from its verified session, with request-local context. Never accept a client tenant override. Existing operator bootstrap remains code-protected.
+- Customer edits/archive and shop UPI changes require review/confirmation. Archived histories remain accessible; archived customers cannot receive new ledger entries.
+- Quantities use integer pieces/grams/millilitres, explicit opening counts, optimistic versions and idempotent movement history. Negative stock is blocked. Reversals preserve originals; ledger money never implies a quantity movement.
+- Dashboard/statement periods use recorded timestamps in IST. Current outstanding and advances are separate. Voids have zero effect; period closing and current balance are distinct. Export CSV safely and offer browser print-to-PDF.
+- Complete English UI includes amount words, direction and confirmation while original customer names/input evidence remain unchanged. Use supplied Munshi art beside explanatory text.
+
+## ADR-029: complete the remaining pilot workflows with explicit recovery
+- Accepted through the owner's blanket remaining-work instruction on 2026-11-01. Implementation/research: docs/25_PILOT_COMPLETION.md; submission/rehearsal: docs/26_SUBMISSION.md.
+- Public trial is a bounded, signed, per-visitor fictional workspace with its own proposal secret and local-only providers. Expired/tampered sample state fails closed; a real sign-in explicitly exits practice.
+- Offline support caches public help/icons only. Opt-in typed drafts are tab/account/version scoped, restored explicitly and cleared across tabs on account transitions. No automatic queued financial or message writes.
+- Exact manual rupee strings become integer paise and signed tenant/customer/type/amount proposals. Keep whole-rupee speech interpretation conservative; route fractional balance collection through the exact form. Never round displayed final balances to whole rupees.
+- Versioned owner exports/imports exclude auth/tokens/contact fields, preview money totals and validate relationship/stock history. Import is additive, ID-remapped, idempotent and protected by a signed target fingerprint and fresh authentication.
+- UPI changes, import, erasure, mobile changes and closure require current password or fresh WhatsApp proof. Credential versions are checked inside destructive/sensitive commits, including erasure, to refuse a concurrent revocation race. New-number verification is purpose/browser/owner/version bound.
+- Persist authentication/send ceilings in SQLite with HMAC identity keys; trust forwarded IPs only with explicitly configured hops. Use per-request nonce CSP for dynamic HTML and bounded retry only for non-writing AI interpretation.
+- Readiness checks storage without exposing business records. Submission files are static artifacts with provenance, not user-adoption evidence. Staff, allocation/backdating and full accounting remain separate domain modules; external phone/provider/backup evidence is never fabricated.

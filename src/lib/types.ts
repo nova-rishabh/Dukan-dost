@@ -4,6 +4,7 @@ export type Clarification = "direction" | "amount" | "which_customer" | "new_cus
 export type EntrySource = "voice" | "text" | "sample";
 
 export interface Customer {
+  archivedAt?: string;
   id: string;
   shopId: string;
   /** short display name, e.g. "Amit Sharma" */
@@ -150,4 +151,45 @@ export interface ReminderDelivery {
   createdAt: string;
   messageId?: string;
   simulated?: boolean;
+}
+
+
+export interface RegistrationChallenge {
+  id: string;
+  browserHash: string;
+  mobile: string;
+  purpose: "signup" | "recovery" | "mobile_change";
+  ownerShopId?: string;
+  ownerAuthVersion?: number;
+  expiresAt: string;
+  state: "requested" | "verifying" | "verified" | "completed" | "failed";
+  providerVerified?: boolean;
+  verifyAttempts?: number;
+  resultShopId?: string;
+  resultAuthVersion?: number;
+}
+
+export interface Product {
+  id: string;
+  shopId: string;
+  name: string;
+  unit: "piece" | "kg" | "litre";
+  /** Integer pieces, grams or millilitres. null means no confirmed opening count. */
+  onHandMinor: number | null;
+  lowThresholdMinor: number;
+  version: number;
+  archivedAt?: string;
+}
+
+export interface StockMovement {
+  id: string;
+  shopId: string;
+  productId: string;
+  kind: "opening" | "in" | "out" | "adjustment" | "reversal";
+  quantityMinor: number;
+  deltaMinor: number;
+  reason: string;
+  idempotencyKey: string;
+  reversalOf?: string;
+  createdAt: string;
 }

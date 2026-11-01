@@ -1,5 +1,6 @@
 # Dukaan Dost completion roadmap
 
+> Current scope update (2026-11-01): owner-authorized pilot additions are implemented and verified in [completion/research report](25_PILOT_COMPLETION.md). Treat older gap/status and non-goal descriptions below as historical where superseded; broader accounting/staff modules and external release evidence remain explicitly separate.
 Date: 2026-11-01. Status: owner said Start on 2026-11-01; implementation underway in verified slices. Detailed future workflow/design decisions remain review gates. Evidence: repository inspection, product-manager review, workflow discovery, and independent account/security and reality checks. Skills: agency-product-manager and agency-workflow-architect, with their required review roles. No competitor claims or adoption figures are assumed.
 
 ## What users should get

@@ -1,5 +1,6 @@
 # WORKFLOW: independent shop signup
 
+> Implementation update (2026-11-01): owner approved items 2–7. See [shop operations](../24_SHOP_OPERATIONS.md) for the implemented APIs, policies and validation. Proposed contracts below are historical and must not be treated as current API documentation.
 Version 0.1; 2026-11-01; Draft. Implements roadmap G02/G04/G05. Owner confirmed public signup for many shops on 2026-11-01; the workflow remains Draft. This is behavior/design intent; endpoints below are proposed contracts, not existing APIs.
 
 Actors: visitor, verification service, account service, durable store, operator. Prerequisites: tenant authorization infrastructure (new membership is created during completion), rate limits, revocable sessions, provider configuration and durable atomic account/shop creation. Existing operator /setup remains protected and separate.

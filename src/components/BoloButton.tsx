@@ -1,5 +1,7 @@
 "use client";
 
+import { useCopy } from "./LocaleProvider";
+
 import { useEffect, useRef, useState } from "react";
 
 export type BoloState = "idle" | "recording" | "processing" | "error";
@@ -28,6 +30,7 @@ export function BoloButton({
   onAudio: (blob: Blob, mime: string) => void;
   onProblem: (message: string) => void;
 }) {
+  const L = useCopy();
   const btn = useRef<HTMLButtonElement>(null);
   const rec = useRef<MediaRecorder | null>(null);
   const stream = useRef<MediaStream | null>(null);
@@ -60,7 +63,7 @@ export function BoloButton({
   async function start() {
     if (rec.current || starting.current) return;
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
-      onProblem("Is browser mein mic nahi chalta. Likh kar bolo.");
+      onProblem(L("This browser does not support the microphone. Type your entry instead.", "Is browser mein mic nahi chalta. Likh kar bolo."));
       onState("error");
       return;
     }
@@ -82,7 +85,7 @@ export function BoloButton({
         rec.current = null;
         cleanup();
         if (blob.size < 800) {
-          onProblem("Kuch sunai nahi diya. Dobara bolo ya likho.");
+          onProblem(L("No speech was heard. Speak again or type your entry.", "Kuch sunai nahi diya. Dobara bolo ya likho."));
           onState("error");
           return;
         }
@@ -99,7 +102,7 @@ export function BoloButton({
       rec.current = null;
       cleanup();
       if (current !== generation.current) return;
-      onProblem("Mic band hai. Allow karo, ya neeche likh kar bolo.");
+      onProblem(L("Microphone access is blocked. Allow access or type below.", "Mic band hai. Allow karo, ya neeche likh kar bolo."));
       onState("error");
     } finally { starting.current = false; }
   }
@@ -139,7 +142,7 @@ export function BoloButton({
       data-state={state}
       data-testid="bolo"
       aria-pressed={state === "recording" || pressed}
-      aria-label={state === "recording" ? "Bol raha hoon, rokne ke liye dabao" : "Bolo"}
+      aria-label={state === "recording" ? L("Recording, press to stop", "Bol raha hoon, rokne ke liye dabao") : L("Speak", "Bolo")}
       disabled={state === "processing"}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -176,7 +179,7 @@ export function BoloButton({
           <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
         </svg>
       )}
-      <span className="text-sm">{state === "processing" ? "Ruko" : state === "error" ? "Dobara" : "Bolo"}</span>
+      <span className="text-sm">{state === "processing" ? L("Wait", "Ruko") : state === "error" ? L("Retry", "Dobara") : L("Speak", "Bolo")}</span>
     </button>
   );
 }

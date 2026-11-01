@@ -1,0 +1,34 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
+
+test.use({ baseURL: "http://localhost:3102", viewport: { width: 390, height: 844 } });
+test("public signup verifies WhatsApp, resumes verification, opens a private empty shop", async ({ page, request, context }) => {
+  await context.addCookies([{ name: "dukaan-locale", value: "en", domain: "localhost", path: "/" }]);
+  const captchaResponse = page.waitForResponse((r) => r.url().includes("/api/auth/wa/captcha") && r.ok());
+  await page.goto("/signup");
+  await expect(page.getByRole("heading", { name: "Open your shop" })).toBeVisible();
+  const cap = await (await captchaResponse).json();
+  const answer = (await (await request.get(`http://127.0.0.1:3201/__test/captcha/${cap.captchaId}`)).json()).code;
+  await page.getByLabel("WhatsApp number", { exact: true }).fill(["70000", "00901"].join(""));
+  await page.getByLabel("Characters in image").fill(answer);
+  await page.getByRole("button", { name: "Send WhatsApp code", exact: true }).click();
+  await expect(page.getByLabel("WhatsApp verification code")).toBeVisible();
+  const code = (await (await request.get("http://127.0.0.1:3201/__test/last-code")).json()).code;
+  await page.getByLabel("WhatsApp verification code").fill(code);
+  await page.getByRole("button", { name: "Verify code", exact: true }).click();
+  await expect(page.getByLabel("Your name", { exact: true })).toBeVisible();
+  await page.reload();
+  await page.getByLabel("Your name", { exact: true }).fill("Fictional public owner");
+  await page.getByLabel("Shop name", { exact: true }).fill("Fictional public shop");
+  const audit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  expect(audit.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
+  await page.screenshot({ path: ".goal/screenshots/signup-390.png", fullPage: true });
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Confirm and open shop", exact: true }).click();
+  await expect(page).toHaveURL(/\/shop$/);
+  await expect(page.getByRole("heading", { name: "Fictional public shop", exact: true })).toBeVisible();
+  expect((await (await page.request.get("/api/customers")).json()).customers).toEqual([]);
+  const metrics = await (await page.request.get("/api/dashboard")).json();
+  expect(metrics.outstandingPaise).toBe(0);
+  expect(metrics.entryCount).toBe(0);
+});

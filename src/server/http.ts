@@ -3,8 +3,9 @@ import { ZodError } from "zod";
 import { AuthError, type SessionPayload } from "@/lib/auth";
 import { LedgerError } from "@/lib/ledger";
 import { ProviderError } from "@/lib/providers/types";
-import { requireOwner } from "./auth";
-import { getContext } from "./context";
+import { requireOwner, readSession } from "./auth";
+import { getContext, withContext } from "./context";
+import { clearedDemoCookie, demoContext, exitDemo } from "./demo";
 
 export class HttpError extends Error {
   constructor(
@@ -105,11 +106,26 @@ export function route(name: string, handler: Handler, opts: { public?: boolean }
     try {
       assertSameOrigin(req);
       // a real shop needs the owner's login on every route except the ones marked public
-      const session = opts.public ? null : await requireOwner(req, getContext());
+      const deployment = getContext();
+      // Authentication routes always see the real account store. Sample business calls see only their own fictional store.
+      const demoAllowed = (!name.startsWith("auth.") || name === "auth.me") && !["demo.start", "demo.exit"].includes(name);
+      const sample = demoAllowed ? demoContext(deployment, req.headers.get("cookie")) : null;
+      if (demoAllowed && !sample && /(?:^|;\s*)dd_demo=/.test(req.headers.get("cookie") ?? "")) {
+        throw new HttpError(401, "demo_expired", "This sample shop expired", "Open the sample shop again, or exit it before returning to your real shop.");
+      }
+      const base = sample ?? deployment;
+      const session = opts.public ? await readSession(req, base) : await requireOwner(req, base);
+      const shop = session ? await base.store.getShop(session.shopId) : null;
+      const ctx = session ? { ...base, shopId: session.shopId, upiVpa: shop?.upiVpa ?? "" } : base;
       const params = (await routeCtx?.params) ?? {};
-      const out = await handler(req, { requestId, params, session });
+      const out = await withContext(ctx, () => handler(req, { requestId, params, session }));
       if (out instanceof Response) {
         status = out.status;
+        // A successful account transition leaves practice mode; never hide a new real account behind a sample cookie.
+        if (name.startsWith("auth.") && out.headers.get("set-cookie")?.startsWith("dd_session=")) {
+          exitDemo(deployment, req.headers.get("cookie"));
+          out.headers.append("set-cookie", clearedDemoCookie(req));
+        }
         out.headers.set("x-request-id", requestId);
         return out;
       }

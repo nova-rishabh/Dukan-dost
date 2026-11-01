@@ -16,7 +16,7 @@ main{transform-origin:0 0}
 <section class="slide" data-active>
 <h1 style="margin-top:170px">Dukaan Dost</h1>
 <p class="tagline" lang="hi" style="margin-top:20px">बोलो, लिखो मत।</p>
-<p class="lead" style="margin-top:40px">Kirana udhaar ledger jo aapki awaaz sunta hai. Pitch deck, demo data fictional hai.</p>
+<p class="lead" style="margin-top:40px">Kirana ka udhaar, aapki awaaz se. Hindi aur English. Har entry par aapki tasdeeq. Demo data fictional hai.</p>
 <span class="stamp" style="position:absolute;right:160px;top:560px"><span lang="hi">लिख लिया</span></span>
 <aside class="notes">Open with the line: bolo, likho mat. Say one sentence: a voice-first udhaar ledger for kirana shops. Do not claim we are first or better than any other ledger app. The demo shop and customers are fictional.</aside>
 </section>
@@ -42,7 +42,7 @@ main{transform-origin:0 0}
  <div style="flex:1;font-size:32px">
   <div class="card"><b>Parchi.</b> Jo suna, wahi dikhta hai. Aap padh kar tap karte hain.</div>
   <div class="card" style="margin-top:28px"><b>Stamp.</b> Tap ke baad hi <span lang="hi">लिख लिया</span> lagta hai.</div>
-  <div class="card" style="margin-top:28px"><b>Bahi page.</b> Entry bahi jaise page par chali jaati hai.</div>
+  <div class="card" style="margin-top:28px"><b>Aage ka hisaab.</b> Dashboard, measured stock aur customer statements. Har dukaan ka data alag.</div>
  </div>
 </div>
 <aside class="notes">Both images are real captures of the running app (demo mode, fictional shop). Left: the parchi shows what we heard, the amount in digits and words and the direction. Right: the confirm parchi with the stamp. The stamp lands only after the owner taps.</aside>
@@ -52,14 +52,14 @@ main{transform-origin:0 0}
 <p class="brand">Dukaan Dost</p>
 <h2 style="margin-top:50px">Abhi aap khud try kijiye.</h2>
 <div class="row" style="margin-top:60px;align-items:center">
- <div style="width:520px;height:520px;border:6px dashed var(--syahi);background:var(--safed);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-display);font-size:60px;line-height:1.3;padding:40px">QR after deploy</div>
+ <img src="img/trial-qr.svg" alt="Open the fictional trial at dukaan-dost.onrender.com/try" width="520" height="520" style="background:var(--safed);border:var(--border-card);padding:20px">
  <div>
   <p class="lead" style="margin-top:0">Bina login, bina mic. Paanch sample clip dabaiye ya apna sentence likhiye.</p>
-  <p style="margin-top:30px"><span class="pill">{{APP_URL}}</span></p>
-  <p class="small" style="margin-top:30px">Demo mode: fictional dukaan, paise nahi katte. Clips AI se bani awaaz hain (dramatisation).</p>
+  <p style="margin-top:30px"><span class="pill">dukaan-dost.onrender.com/try</span></p>
+  <p class="small" style="margin-top:30px">Fictional practice: koi asli message ya payment nahi. Clips AI awaaz hain. Release ke baad link verify karna hai.</p>
  </div>
 </div>
-<aside class="notes">The QR box is a placeholder: the owner replaces it and {{APP_URL}} after deploying. If the network fails, show docs screenshots and say so plainly. Mention that the sample clips are AI-made voices, a dramatisation.</aside>
+<aside class="notes">The QR encodes https://dukaan-dost.onrender.com/try. Verify the deployed trial after release before presenting; local implementation is not proof of deployment. If the network fails, show docs screenshots and say so plainly. Mention that the sample clips are AI-made voices, a dramatisation.</aside>
 </section>
 
 <section class="slide">
@@ -72,10 +72,10 @@ main{transform-origin:0 0}
  <div class="card"><b>Disha shabdon mein.</b><br>Paise mile ya udhaar diya, sirf rang nahi.</div>
  <div class="card"><b>Hata do, delete nahi.</b><br>Entry void hoti hai, record rehta hai.</div>
  <div class="card"><b>Audit.</b><br>Har badlaav ka nishaan, balance entries se banta hai.</div>
- <div class="card" style="background:var(--gulabi)"><b>Reminder sirf draft.</b><br>Send aap dabate hain. App khud nahi bhejta.</div>
+ <div class="card" style="background:var(--gulabi)"><b>Reminder par bhi aapka tap.</b><br>Draft dekho, recipient check karo, phir bhejo. Koi automatic send nahi.</div>
 </div>
 <p class="lead" style="margin-top:40px;font-size:40px;max-width:1700px">Hum yeh nahi kehte ki AI galti nahi karta. Hum kehte hain: tap ke bina galti save nahi hoti.</p>
-<aside class="notes">Walk through the five safety points: confirm, amount in words, direction in words, void not delete, audit trail. Add that reminders are drafts the owner sends through WhatsApp. Say: it cannot save a mistake without your tap. Never say AI never makes mistakes.</aside>
+<aside class="notes">Walk through the five safety points: confirm, amount in words, direction in words, void not delete, audit trail. Reminders support owner-confirmed sending through the configured WhatsApp service or a manual WhatsApp draft. The service is currently unofficial; no real delivery is claimed. Say: it cannot save a mistake without your tap. Never say AI never makes mistakes.</aside>
 </section>
 
 <section class="slide">
@@ -86,21 +86,21 @@ main{transform-origin:0 0}
  <div class="cols">
   <div><h3>Humne kya naapa</h3>
    <ul>
-    <li>20 mein se 20 utterance fixtures pass, offline</li>
-    <li>149 unit tests pass</li>
-    <li>22 end-to-end checks pass, 5 pages par accessibility checks bhi</li>
+    <li>Direction, confirmation aur duplicate checks</li>
+    <li>Shop isolation, recovery aur stock history</li>
+    <li>Unit, browser aur accessibility assertions</li>
    </ul></div>
   <div><h3>Abhi tak nahi naapa</h3>
    <ul>
-    <li>Asli speech-to-text aur Gemini ki live accuracy</li>
+    <li>Dukaan ke shor mein natural speech accuracy</li>
     <li>Asli phones</li>
     <li>Asli dukaandaar</li>
     <li>Paise dene ki ichchha</li>
    </ul></div>
  </div>
 </div>
-<p class="small" style="margin-top:28px">Yeh sab is build ke apne runs se hai.</p>
-<aside class="notes">All numbers are from our own runs on 2026-11-01. The 20 of 20 is the offline rules interpreter on our fixtures, not live accuracy with real speech-to-text and Gemini. Live accuracy is not yet measured. Willingness to pay is unproven; the next step is a test with real shops.</aside>
+<p class="small" style="margin-top:28px">Automated checks field evidence nahi hain. Latest run: repo ke verification report mein.</p>
+<aside class="notes">Automated scenarios are local checks, not field evidence. Read the current verification report for exact counts. Earlier two fictional live-provider smoke scenarios passed; that does not measure natural speech accuracy in a noisy shop. Willingness to pay is unproven; the next step is a test with real shops.</aside>
 </section>
 
 <section class="slide">
@@ -121,10 +121,10 @@ main{transform-origin:0 0}
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:60px">
  <div class="card"><b>Das dukaanon ka test.</b><br>Asli dukaandaar, unki sahmati se, asli awaaz. Tab live accuracy naapenge.</div>
  <div class="card"><b>Pricing test.</b><br>Dekhenge ki log kitna dene ko tayyar hain, ya bilkul nahi.</div>
- <div class="card"><b>WhatsApp API.</b><br>Aaj reminder sirf draft hai. API baad mein, owner ki manzoori ke saath.</div>
+ <div class="card"><b>Delivery ka saboot.</b><br>Authorized real-phone receipt aur restore rehearsal. Official WhatsApp migration ke liye credentials abhi chahiye.</div>
 </div>
-<p class="lead" style="margin-top:60px">Link: <span class="pill" style="font-size:40px">{{APP_URL}}</span></p>
-<aside class="notes">Close with the three next steps: ten-shop test, pricing test, WhatsApp API. Be explicit that none of the three is done. Invite the jury to try the demo through the link.</aside>
+<p class="lead" style="margin-top:60px">Link: <span class="pill" style="font-size:40px">dukaan-dost.onrender.com/try</span></p>
+<aside class="notes">Close with the three next steps: ten-shop test, pricing test, authorized real-phone delivery and recovery rehearsal. Be explicit that none of the three is done. Invite the jury to try the demo through the link.</aside>
 </section>
 
 </main>

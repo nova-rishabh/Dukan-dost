@@ -1,11 +1,13 @@
 "use client";
 
+import { useCopy } from "./LocaleProvider";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, type Me } from "@/lib/client/api";
 
 /** The open demo offers the sample shop; a real shop offers login or setup. */
 export function LandingCtas() {
+  const L = useCopy();
   const [me, setMe] = useState<Me | null>(null);
   useEffect(() => {
     api
@@ -16,13 +18,13 @@ export function LandingCtas() {
   const real = !!me?.authRequired;
   return (
     <div className="mt-6 flex min-h-[48px] flex-wrap gap-3">
-      {!real ? (
+      {(
         <Link href="/try" className="btn btn-primary" data-testid="try-sample">
-          Sample dukaan try karo
+          {L("Try sample shop", "Sample dukaan try karo")}
         </Link>
-      ) : null}
-      <Link href={real && !me?.loggedIn ? (me?.setupNeeded ? "/setup" : "/login") : "/shop"} className={real ? "btn btn-primary" : "btn"} data-testid="landing-shop">
-        {real && !me?.loggedIn ? (me?.setupNeeded ? "Dukaan set karo" : "Login") : "Meri dukaan"}
+      )}
+      <Link href={real && !me?.loggedIn ? "/signup" : "/shop"} className={real ? "btn btn-primary" : "btn"} data-testid="landing-shop">
+        {real && !me?.loggedIn ? L("Create account", "Naya account") : L("My shop", "Meri dukaan")}
       </Link>
     </div>
   );

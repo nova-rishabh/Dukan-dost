@@ -99,10 +99,13 @@ describe("a real shop on SQLite through the HTTP route handlers", () => {
     expect(before.isDemoShop).toBe(false);
     expect(before.summary.totalOutstandingPaise).toBe(10000);
 
-    expect((await erase.POST(post("/api/shop/erase", { confirmed: true, phrase: "nahi" }, cookie))).status).toBe(400);
+    expect((await erase.POST(post("/api/shop/erase", { confirmed: true, phrase: "nahi", passcode: "kirana-khata-2026" }, cookie))).status).toBe(400);
     expect((await erase.POST(post("/api/shop/erase", { confirmed: true, phrase: ERASE_PHRASE }))).status).toBe(401);
+    expect((await erase.POST(post("/api/shop/erase", { confirmed: true, phrase: ERASE_PHRASE }, cookie))).status).toBe(403);
+    expect((await erase.POST(post("/api/shop/erase", { confirmed: true, phrase: ERASE_PHRASE, passcode: "wrong-password" }, cookie))).status).toBe(403);
+    expect((await (await summary.GET(get("/api/summary", cookie))).json()).summary.customerCount).toBe(1);
 
-    const ok = await (await erase.POST(post("/api/shop/erase", { confirmed: true, phrase: ERASE_PHRASE }, cookie))).json();
+    const ok = await (await erase.POST(post("/api/shop/erase", { confirmed: true, phrase: ERASE_PHRASE, passcode: "kirana-khata-2026" }, cookie))).json();
     expect(ok.erased).toMatchObject({ customers: 1, entries: 1 });
 
     const after = await (await summary.GET(get("/api/summary", cookie))).json();

@@ -10,6 +10,7 @@ const WA_PORT = 3201;
  */
 const HERMETIC = {
   DUKAAN_MODE: "demo",
+  APP_PUBLIC_URL: "",
   ELEVENLABS_API_KEY: "",
   GEMINI_API_KEY: "",
   DUKAAN_DB_FILE: "",
@@ -36,7 +37,7 @@ export default defineConfig({
       port: PORT,
       reuseExistingServer: false,
       timeout: 120000,
-      env: { ...HERMETIC, DUKAAN_DATA_FILE: ".data/e2e-ledger.json", DEMO_RESET_ON_BOOT: "1", NEXT_PUBLIC_APP_URL: `http://localhost:${PORT}` },
+      env: { ...HERMETIC, DUKAAN_DATA_FILE: ".data/e2e-ledger.json", DEMO_RESET_ON_BOOT: "1", APP_PUBLIC_URL: `http://localhost:${PORT}`, NEXT_PUBLIC_APP_URL: `http://localhost:${PORT}` },
     },
     {
       // the real WA-USERAUTH daemon code with a recording stand-in for the WhatsApp socket
@@ -62,6 +63,7 @@ export default defineConfig({
         WA_SERVICE_URL: `http://127.0.0.1:${WA_PORT}`,
         WA_APP_KEY: "e2e_app",
         WA_APP_SECRET: "e2e_secret_value_for_tests_only_0123456789",
+        APP_PUBLIC_URL: `http://localhost:${REAL_PORT}`,
         NEXT_PUBLIC_APP_URL: `http://localhost:${REAL_PORT}`,
       },
     },

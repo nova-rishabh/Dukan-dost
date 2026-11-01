@@ -1,0 +1,81 @@
+import { afterAll, beforeAll, expect, it } from "vitest";
+import { GET as customers, POST as customerCreate } from "@/app/api/customers/route";
+import { PATCH as customerPatch } from "@/app/api/customers/[id]/route";
+import { GET as products, POST as productCreate } from "@/app/api/inventory/route";
+import { PATCH as productPatch } from "@/app/api/inventory/[id]/route";
+import { GET as movements, POST as move } from "@/app/api/inventory/[id]/movements/route";
+import { GET as profile, PATCH as profilePatch } from "@/app/api/shop/profile/route";
+import { GET as customerStatement } from "@/app/api/customers/[id]/statement/route";
+import { GET as dashboard } from "@/app/api/dashboard/route";
+import { POST as remind } from "@/app/api/remind/route";
+import { signSession } from "@/lib/auth";
+import { getContext } from "@/server/context";
+import { resetRateLimits } from "@/server/http";
+const saved = { ...process.env };
+const g = globalThis as unknown as { __dukaan?: unknown };
+let cookieA = ""; let cookieB = "";
+function req(path: string, cookie: string, data?: unknown, method = "POST") { return new Request(`http://localhost${path}`, { method: data === undefined ? "GET" : method, headers: { cookie, ...(data === undefined ? {} : { "content-type": "application/json" }) }, ...(data === undefined ? {} : { body: JSON.stringify(data) }) }); }
+const routeCtx = (id: string) => ({ params: Promise.resolve({ id }) });
+beforeAll(async () => {
+  Object.assign(process.env, { DUKAAN_MODE: "shop", DUKAAN_TEST_MEMORY: "1", DUKAAN_DB_FILE: ":memory:", PROPOSAL_SECRET: "operations-test-secret-with-enough-length", SETUP_CODE: "test-operator-code", WA_SERVICE_URL: "", WA_APP_KEY: "", WA_APP_SECRET: "" });
+  g.__dukaan = undefined; resetRateLimits(); const ctx = getContext();
+  for (const [i, shopId] of ["shop-a", "shop-b"].entries()) {
+    const mobile = "+91" + ["70000", `0030${i}`].join("");
+    await ctx.store.createShop({ id: shopId, name: shopId, upiVpa: "", isDemo: false });
+    await ctx.store.createOwner({ shopId, mobile, name: "Fictional owner", passcodeHash: "", authVersion: 0, createdAt: new Date().toISOString() });
+    const cookie = `dd_session=${signSession({ shopId, mobile, authVersion: 0, method: "otp" }, { secret: ctx.secret, now: new Date() })}`;
+    if (i === 0) cookieA = cookie; else cookieB = cookie;
+  }
+});
+afterAll(() => { process.env = { ...saved }; g.__dukaan = undefined; });
+it("owner scoped customer writes mask phones, require consent and preserve archived history", async () => {
+  const phone = "+91" + ["70000", "00377"].join("");
+  expect((await customerCreate(req("/api/customers", cookieA, { name: "Counter person", phoneE164: phone, confirmed: true }))).status).toBe(400);
+  const body = { name: "Counter person", area: "East lane", phoneE164: phone, phoneConsent: true, confirmed: true };
+  const created = await (await customerCreate(req("/api/customers", cookieA, body))).json();
+  expect(created.created).toBe(true); const id = created.customer.id;
+  expect((await customerCreate(req("/api/customers", cookieA, body))).status).toBe(409);
+  expect((await customerCreate(req("/api/customers", cookieA, { ...body, area: "West lane", separate: true }))).status).toBe(200);
+  const list = await (await customers(req("/api/customers", cookieA))).text();
+  expect(list).not.toContain(phone); expect(list).toContain("0377");
+  expect(await (await customers(req("/api/customers", cookieB))).json()).toMatchObject({ customers: [] });
+  expect((await customerStatement(req(`/api/customers/${id}/statement?format=csv`, cookieB), routeCtx(id))).status).toBe(404);
+  expect((await remind(req("/api/remind", cookieB, { customerId: id }))).status).toBe(404);
+  expect(await (await dashboard(req("/api/dashboard", cookieB))).json()).toMatchObject({ customers: [], outstandingPaise: 0 });
+  expect((await customerPatch(req(`/api/customers/${id}`, cookieB, { name: "Stolen", confirmed: true }, "PATCH"), routeCtx(id))).status).toBe(404);
+  expect((await customerPatch(req(`/api/customers/${id}`, cookieA, { name: body.name, area: body.area, archived: true, confirmed: true }, "PATCH"), routeCtx(id))).status).toBe(200);
+  const customer = (await getContext().store.listCustomers("shop-a")).find((c) => c.id === id)!;
+  expect(customer.archivedAt).toBeTruthy(); expect(customer.phoneE164).toBe(phone);
+  expect(JSON.stringify(await getContext().store.listAudit("shop-a", 100))).not.toContain(phone);
+});
+it("inventory guards ownership, baseline, version, duplicate requests and reversal", async () => {
+  const create = await productCreate(req("/api/inventory", cookieA, { name: "Measured rice", unit: "kg", lowThresholdMinor: 1000, confirmed: true }));
+  const p = (await create.json()).product;
+  expect(p.onHandMinor).toBe(null);
+  expect(await (await products(req("/api/inventory", cookieB))).json()).toMatchObject({ products: [] });
+  const body = { kind: "opening", quantityMinor: 1005, reason: "Counted", expectedVersion: 0, idempotencyKey: "opening-key-001", confirmed: true };
+  expect((await move(req(`/api/inventory/${p.id}/movements`, cookieB, body), routeCtx(p.id))).status).toBe(409);
+  expect((await move(req(`/api/inventory/${p.id}/movements`, cookieA, { ...body, kind: "out" }), routeCtx(p.id))).status).toBe(409);
+  expect((await move(req(`/api/inventory/${p.id}/movements`, cookieA, body), routeCtx(p.id))).status).toBe(200);
+  expect(await (await move(req(`/api/inventory/${p.id}/movements`, cookieA, body), routeCtx(p.id))).json()).toMatchObject({ created: false });
+  const out = { ...body, kind: "out", quantityMinor: 5, expectedVersion: 1, idempotencyKey: "stockout-key-001" };
+  expect((await move(req(`/api/inventory/${p.id}/movements`, cookieA, { ...out, expectedVersion: 0 }), routeCtx(p.id))).status).toBe(409);
+  expect((await move(req(`/api/inventory/${p.id}/movements`, cookieA, { ...out, quantityMinor: 1006 }), routeCtx(p.id))).status).toBe(409);
+  const moved = await (await move(req(`/api/inventory/${p.id}/movements`, cookieA, out), routeCtx(p.id))).json();
+  expect(moved.product.onHandMinor).toBe(1000);
+  const reverse = { ...body, kind: "reversal", quantityMinor: 0, expectedVersion: 2, idempotencyKey: "reversal-key-001", reversalOf: moved.movement.id };
+  expect((await move(req(`/api/inventory/${p.id}/movements`, cookieA, reverse), routeCtx(p.id))).status).toBe(200);
+  expect((await move(req(`/api/inventory/${p.id}/movements`, cookieA, { ...reverse, expectedVersion: 3, idempotencyKey: "reversal-key-002" }), routeCtx(p.id))).status).toBe(409);
+  expect((await movements(req(`/api/inventory/${p.id}/movements`, cookieB), routeCtx(p.id))).status).toBe(404);
+  expect((await productPatch(req(`/api/inventory/${p.id}`, cookieB, { name: "Stolen", lowThresholdMinor: 0, expectedVersion: 3, confirmed: true }, "PATCH"), routeCtx(p.id))).status).toBe(409);
+  expect(await getContext().store.listMovements("shop-a", p.id)).toHaveLength(3);
+});
+it("shop profile is confirmed, tenant scoped, and blank UPI prevents a payment draft", async () => {
+  const customer = await getContext().store.createCustomer({ shopId: "shop-b", name: "Fictional customer", nameRoman: "fictional customer", aliases: [] });
+  await getContext().store.insertEntry({ shopId: "shop-b", customerId: customer.id, type: "credit_given", amountPaise: 10000, source: "text", sourceText: "Confirmed credit", idempotencyKey: "profile-credit-001", confirmedAt: new Date().toISOString() });
+  expect((await remind(req("/api/remind", cookieB, { customerId: customer.id }))).status).toBe(409);
+  expect((await profilePatch(req("/api/shop/profile", cookieB, { name: "My shop", upiVpa: "sample@invalid", confirmed: false }, "PATCH"))).status).toBe(400);
+  expect((await profilePatch(req("/api/shop/profile", cookieB, { name: "My shop", upiVpa: "sample@invalid", confirmed: true }, "PATCH"))).status).toBe(200);
+  expect(await (await profile(req("/api/shop/profile", cookieA))).json()).toMatchObject({ shop: { name: "shop-a", upiVpa: "" } });
+  expect(await (await profile(req("/api/shop/profile", cookieB))).json()).toMatchObject({ shop: { name: "My shop", upiVpa: "sample@invalid" } });
+});
