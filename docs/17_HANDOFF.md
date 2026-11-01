@@ -123,3 +123,6 @@ Owner said Start and selected existing WhatsApp for signup verification. Branch 
 
 ## 14. Expanded verification (2026-11-01)
 On owner request, tested the implemented scope and added API authentication/non-mutation/read-burst checks. Final pnpm verify: VERIFY-PASS (222 unit/fixture, 48 daemon, 45 browser, 25 asset checks). Both 390/1440 screenshot runs and live ElevenLabs/Gemini smoke checks passed. Both production dependency audits reported no known vulnerabilities. See docs/21_TEST_REPORT.md for actual coverage and limitations. Real WhatsApp delivery, live deployment, production restore/off-host scheduling and physical-device review remain unverified.
+
+## 15. Simulated judging (2026-11-01)
+Owner requested subagent judges. docs/22_JURY_REVIEW.md aggregates investor75, creative72, AI74 (mean73.7/100); conditional future proof/package mean86 is hypothetical. Individual reports in docs/reviews/judging/. Original rubric prompt is ../ai_judge_prompt_v2.md; jury details in docs/00_INFO.md. Parent pnpm verify returned VERIFY-PASS again. Submission packaging and real-world proof outrank adding feature breadth for near-term contest points; long-term roadmap remains valid. No real judge opinion or public-link verification is claimed.

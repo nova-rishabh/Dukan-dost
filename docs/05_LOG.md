@@ -88,3 +88,9 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - Ran the complete suite, added three API regressions, corrected the new malformed-body test to send raw bytes, and reran pnpm verify: VERIFY-PASS (222 unit/fixture, 48 daemon, 45 browser, 25 asset checks).
 - pnpm shots passed at 390/1440; inspected refreshed stills. Live ElevenLabs TTS/Scribe and Gemini structured-output smoke scenarios both passed using fictional data. No real WhatsApp send. Both production dependency audits reported zero known advisories.
 - Final local summary read burst: 40 requests, concurrency 10, p95 14.7 ms/max 15.5 ms; no production capacity claim. Full report and untested boundaries: docs/21_TEST_REPORT.md.
+
+## 2026-11-01: simulated jury review
+- Found original proxy prompt at ../ai_judge_prompt_v2.md and jury/rubric notes in docs/00_INFO.md. On owner request, three separately tasked subagents evaluated investor, creative and AI-juror lenses; these are simulations, not actual judge opinions.
+- Current scores 75/72/74; equal-weight mean 73.7/100. Conditional proof/package scenario 87/84/87, mean 86, not earned or guaranteed. Five-link-only artifact diagnostic mean64.3; actual public-link access unverified.
+- Biggest priorities: public fictional demo and final5links, replace URL/QR placeholders, refresh stale deck claims/counts, sharp ad proof, timed pitch, consented shopkeeper evidence. /try on real shop redirects into protected shop; do not expose real ledger to solve demo access.
+- Parent pnpm verify rerun: VERIFY-PASS (222 unit/fixture,48daemon,45browser,25assets). Reports: docs/22_JURY_REVIEW.md and docs/reviews/judging/. No app changes.
