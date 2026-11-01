@@ -33,13 +33,13 @@ interface Line {
 }
 
 const LINES: Line[] = [
-  { file: "vo-1-hands", voice: NARRATOR, start: 0.7, text: "हाथ भरे हैं… और खाता दूर।", expect: ["हाथ", "खाता"] },
-  { file: "vo-2-says", voice: SHOPKEEPER, start: 5.0, text: "शर्मा जी ने पाँच सौ उधार लिए।", expect: ["शर्मा", "सौ", "उधार"] },
-  { file: "vo-3a-bolo", voice: NARRATOR, start: 9.5, text: "बोलो, या टाइप करो।", expect: ["बोलो", "टाइप"] },
-  { file: "vo-3b-parchi", voice: NARRATOR, start: 12.45, text: "पहले पर्ची दिखती है।", expect: ["पर्ची", "दिखती"] },
-  { file: "vo-4-likhdo", voice: NARRATOR, start: 16.05, text: "आप लिख दो दबाओ, तब लिखता है।", expect: ["लिख", "दबाओ"] },
-  { file: "vo-5-remind", voice: NARRATOR, start: 18.75, text: "बाक़ी रक़म अपडेट। याद दिलाओ, सेंड आप दबाओ।", expect: ["याद", "सेंड", "दबाओ"] },
-  { file: "vo-6-close", voice: NARRATOR, start: 24.85, text: "बोलो, लिखो मत। दुकान दोस्त।", expect: ["बोलो", "दोस्त"] },
+  { file: "vo-1-hands", voice: NARRATOR, start: 0.15, text: "हाथ भरे हैं… और खाता दूर।", expect: ["हाथ", "खाता"] },
+  { file: "vo-2-says", voice: SHOPKEEPER, start: 2.7, text: "शर्मा जी ने पाँच सौ उधार लिए।", expect: ["शर्मा", "सौ", "उधार"] },
+  { file: "vo-3a-bolo", voice: NARRATOR, start: 4.6, text: "बोलो, या टाइप करो।", expect: ["बोलो", "टाइप"] },
+  { file: "vo-3b-parchi", voice: NARRATOR, start: 6.25, text: "पहले पर्ची दिखती है।", expect: ["पर्ची", "दिखती"] },
+  { file: "vo-4-likhdo", voice: NARRATOR, start: 8.2, text: "आप लिख दो दबाओ, तब लिखता है।", expect: ["लिख", "दबाओ"] },
+  { file: "vo-5-remind", voice: NARRATOR, start: 10.25, text: "बाक़ी रक़म अपडेट। याद दिलाओ, सेंड आप दबाओ।", expect: ["याद", "सेंड", "दबाओ"] },
+  { file: "vo-6-close", voice: NARRATOR, start: 15.5, text: "बोलो, लिखो मत। दुकान दोस्त।", expect: ["बोलो", "दोस्त"] },
 ];
 
 const only = process.argv.includes("--only") ? process.argv[process.argv.indexOf("--only") + 1] : null;

@@ -7,9 +7,9 @@ import { ROOT } from "./lib/util";
 const AD = path.join(ROOT, "deliverables", "ad");
 const out = path.join(AD, "out", "dukaan-dost-ad-vertical.mp4");
 mkdirSync(path.dirname(out), { recursive: true });
-const quality = process.argv.includes("--draft") ? "draft" : "looks";
+const quality = process.argv.includes("--draft") ? "draft" : "delivery";
 const npx = process.platform === "win32" ? "npx.cmd" : "npx";
-const r = spawnSync(npx, ["hyperframes", "render", "--quality", quality, "--output", out], { cwd: AD, stdio: "inherit", shell: process.platform === "win32" });
+const r = spawnSync(npx, ["--yes", "hyperframes@0.8.223", "render", "--quality", quality, "--output", out], { cwd: AD, stdio: "inherit", shell: process.platform === "win32" });
 if (r.status !== 0 || !existsSync(out)) {
   console.error("Render failed. Run `npx hyperframes check --json` in deliverables/ad first.");
   process.exit(r.status ?? 1);

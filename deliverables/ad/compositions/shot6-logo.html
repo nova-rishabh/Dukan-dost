@@ -19,23 +19,23 @@
 #root .disp{font-family:'Yatra One','Hind',serif;font-weight:400}
 #root .tag{position:absolute;left:108px;top:1246px;padding:10px 22px;border:3px solid #16123A;border-radius:999px;background:#FFFFFF;font-size:30px;font-weight:600;line-height:1.2;color:#16123A}
   </style>
-  <div id="root" data-composition-id="shot6-logo" data-width="1080" data-height="1920">
-    <div class="bg" id="s6-bg" style="background:#FFC400"></div>
-    <div class="abs" id="s6-floor" style="left:0;right:0;top:1520px;bottom:0;background:#16123A"><div class="abs" style="left:0;right:0;top:56px;border-top:6px dashed #FFC400"></div></div>
-    <div id="s6-slab" class="abs" style="left:0;top:0;width:1080px;height:1920px;background:#2D46FF"></div>
+  <div data-hf-id="hf-mgnx" id="root" data-composition-id="shot6-logo" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-krds" class="bg" id="s6-bg" style="background:#FFC400"></div>
+
+    <div data-hf-id="hf-i6f9" id="s6-slab" class="abs" style="left:0;top:0;width:1080px;height:1920px;background:#2D46FF"></div>
 
     <!-- mark: a stamped circle, "दो" -->
-    <div id="s6-mark" class="abs" style="left:390px;top:300px;width:300px;height:300px;border-radius:999px;border:16px solid #FF3B2F;background:#FFFFFF;box-shadow:12px 12px 0 #16123A">
-      <div class="abs disp" style="left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:170px;line-height:1;color:#FF3B2F;padding-bottom:18px;background:#FFFFFF;border-radius:999px">दो</div>
+    <div data-hf-id="hf-10yw" id="s6-mark" class="abs" style="left:390px;top:300px;width:300px;height:300px;border-radius:999px;border:16px solid #FF3B2F;background:#FFFFFF;box-shadow:12px 12px 0 #16123A">
+      <div data-hf-id="hf-g4vp" class="abs disp" style="left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:170px;line-height:1;color:#FF3B2F;padding-bottom:18px;background:#FFFFFF;border-radius:999px">दो</div>
     </div>
-    <div id="s6-ink" class="abs" style="left:366px;top:276px;width:348px;height:348px;border-radius:999px;border:5px solid #FF3B2F;opacity:0"></div>
+    <div data-hf-id="hf-eifu" id="s6-ink" hidden class="abs" style="left:366px;top:276px;width:348px;height:348px;border-radius:999px;border:5px solid #FF3B2F;opacity:0"></div>
 
-    <div id="s6-word" class="abs disp" style="left:60px;right:60px;top:660px;text-align:center;font-size:150px;line-height:1.2;color:#16123A;opacity:0">Dukaan Dost</div>
-    <div id="s6-tag" class="abs disp" style="left:60px;right:60px;top:860px;text-align:center;font-size:116px;line-height:1.3;color:#16123A;opacity:0">बोलो, लिखो मत।</div>
-    <div id="s6-link" class="abs" style="left:240px;width:600px;top:1060px;opacity:0">
-      <div style="padding:18px 20px;text-align:center;background:#2D46FF;color:#FFFFFF;border:5px solid #16123A;border-radius:999px;box-shadow:8px 8px 0 #16123A;font-size:56px;font-weight:700;line-height:1.2">{{APP_URL}}</div>
+    <div data-hf-id="hf-2694" id="s6-word" class="abs disp" style="left:60px;right:60px;top:660px;text-align:center;font-size:150px;line-height:1.2;color:#16123A;opacity:0">Dukaan Dost</div>
+    <div data-hf-id="hf-l1cj" id="s6-tag" class="abs disp" style="left:60px;right:60px;top:860px;text-align:center;font-size:116px;line-height:1.3;color:#16123A;opacity:0">बोलो, लिखो मत।</div>
+    <div data-hf-id="hf-rpzi" id="s6-link" class="abs" style="left:108px;width:864px;top:1060px;opacity:0">
+      <div data-hf-id="hf-5rpi" style="padding:18px 20px;text-align:center;background:#2D46FF;color:#FFFFFF;border:5px solid #16123A;border-radius:999px;box-shadow:8px 8px 0 #16123A;font-size:52px;font-weight:700;line-height:1.2">dukaan-dost.onrender.com</div>
     </div>
-    <div id="s6-note" class="abs" style="left:108px;right:108px;top:1200px;text-align:center;font-size:32px;font-weight:600;line-height:1.3;color:#16123A;opacity:0">Demo data काल्पनिक है। Aapke tap ke bina kuch save nahi hota.</div>
+    <div data-hf-id="hf-s8m7" id="s6-note" class="abs" style="left:108px;right:108px;top:1200px;text-align:center;font-size:32px;font-weight:600;line-height:1.3;color:#16123A;opacity:0">Pehle dekho. Phir Likh do.</div>
   </div>
   <script>
     const tl = gsap.timeline({ paused: true });
@@ -49,8 +49,8 @@
     tl.fromTo("#s6-ink", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 0.4, duration: 0.4, ease: "power3.out" }, T);
     tl.fromTo("#s6-word", { opacity: 0, y: 40, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.25, ease: "power4.out" }, T + 0.25);
     tl.fromTo("#s6-tag", { opacity: 0, y: 40, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.25, ease: "power4.out" }, T + 0.7);
-    tl.fromTo("#s6-link", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.25, ease: "power4.out" }, T + 1.3);
-    tl.fromTo("#s6-note", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, T + 1.9);
+    tl.fromTo("#s6-link", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.25, ease: "power4.out" }, T + 0.8);
+    tl.fromTo("#s6-note", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, T + 1.2);
     window.__timelines["shot6-logo"] = tl;
   </script>
 </template>

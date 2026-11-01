@@ -17,34 +17,34 @@
 #root .bg{position:absolute;inset:0}
 #root .abs{position:absolute}
 #root .disp{font-family:'Yatra One','Hind',serif;font-weight:400}
-#root .tag{position:absolute;left:108px;top:1246px;padding:10px 22px;border:3px solid #16123A;border-radius:999px;background:#FFFFFF;font-size:30px;font-weight:600;line-height:1.2;color:#16123A}
-    #root .s4-cap { position: absolute; left: 108px; right: 108px; top: 186px; font-size: 88px; line-height: 1.22; color: #16123A; }
+#root .tag{position:absolute;left:108px;top:1320px;padding:10px 22px;border:3px solid #16123A;border-radius:999px;background:#FFFFFF;font-size:30px;font-weight:600;line-height:1.2;color:#16123A}
+    #root .s4-cap { position: absolute; left: 108px; right: 108px; top: 210px; font-size: 88px; line-height: 1.22; color: #16123A; }
     #root .s4-cap span { display: inline-block; }
-    #root #s4-card { position: absolute; left: 186px; top: 438px; width: 708px; height: 844px; }
+    #root #s4-card { position: absolute; left: 186px; top: 380px; width: 708px; height: 844px; }
     #root #s4-card img { position: absolute; left: 0; top: 0; width: 708px; }
     #root #s4-stamp { position: absolute; right: 36px; top: 559px; padding: 16px 32px; border: 8px solid #FF3B2F; border-radius: 16px; color: #FF3B2F; background: #FFFFFF; font-size: 57.6px; line-height: 1.2; white-space: nowrap; }
     #root #s4-ink { position: absolute; left: -16px; top: -16px; right: -16px; bottom: -16px; border: 4px solid #FF3B2F; border-radius: 28px; opacity: 0.35; }
   </style>
-  <div id="root" data-composition-id="shot4-stamp" data-width="1080" data-height="1920">
-    <div class="bg" id="s4-bg" style="background:#FFC400"></div>
-    <div class="abs" id="s4-floor" style="left:0;right:0;top:1520px;bottom:0;background:#16123A"><div class="abs" style="left:0;right:0;top:56px;border-top:6px dashed #FFC400"></div></div>
-    <div id="s4-shock" class="abs" style="left:90px;top:410px;width:900px;height:900px;border-radius:999px;border:18px solid #FF3B2F;opacity:0"></div>
+  <div data-hf-id="hf-dpn7" id="root" data-composition-id="shot4-stamp" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-ypdi" class="bg" id="s4-bg" style="background:#FFC400"></div>
 
-        <div id="s4-b" class="clip disp s4-cap" data-start="0.6" data-duration="2.7"><span id="s4-b-in">आपके टैप के बाद ही।</span></div>
+    <div data-hf-id="hf-up8p" hidden id="s4-shock" class="abs" style="left:90px;top:410px;width:900px;height:900px;border-radius:999px;border:18px solid #FF3B2F;opacity:0"></div>
 
-    <div id="s4-card">
-      <img id="s4-before" src="assets/captures/parchi-before.png" alt="" />
-      <img id="s4-after" src="assets/captures/parchi-after-nostamp.png" alt="" style="opacity:0" />
-      <div id="s4-dot" class="abs" style="left:142px;top:723px;width:40px;height:40px;border-radius:999px;background:#FF5CA8;border:4px solid #16123A;opacity:0"></div>
-      <div id="s4-tap" class="abs" style="left:102px;top:683px;width:120px;height:120px;border-radius:999px;border:8px solid #16123A;opacity:0"></div>
-      <div id="s4-stamp" class="disp" style="opacity:0">लिख लिया<div id="s4-ink"></div></div>
+        <div data-hf-id="hf-dy5b" id="s4-b" class="clip disp s4-cap" data-start="0.5" data-duration="2"><span data-hf-id="hf-2ybo" id="s4-b-in">आपके टैप के बाद ही।</span></div>
+
+    <div data-hf-id="hf-dm8r" id="s4-card">
+      <img data-hf-id="hf-7ttr" id="s4-before" src="assets/captures/parchi-before.png" alt="" />
+      <img data-hf-id="hf-ln41" id="s4-after" src="assets/captures/parchi-after-nostamp.png" alt="" style="opacity:0" />
+      <div data-hf-id="hf-wlrl" id="s4-dot" class="abs" style="left:142px;top:723px;width:40px;height:40px;border-radius:999px;background:#FF5CA8;border:4px solid #16123A;opacity:0"></div>
+      <div data-hf-id="hf-11jz" id="s4-tap" class="abs" style="left:102px;top:683px;width:120px;height:120px;border-radius:999px;border:8px solid #16123A;opacity:0"></div>
+      <div data-hf-id="hf-yaqv" id="s4-stamp" class="disp" style="opacity:0">लिख लिया<div data-hf-id="hf-5p7b" id="s4-ink"></div></div>
     </div>
 
-    <div class="tag" id="s4-tag">Real app capture, fictional demo data</div>
+    <div data-hf-id="hf-iyu7" class="tag" id="s4-tag">Real app capture, fictional demo data</div>
   </div>
   <script>
     const tl = gsap.timeline({ paused: true });
-    const HIT = 0.6; // seconds into this scene; scene starts at 15.0 s => stamp contact at 15.6 s (frame 468)
+    const HIT = 0.5; // seconds into this scene; scene starts at 7.5 s => stamp contact at 8.0 s (frame 240)
     gsap.set("#s4-card", { scale: 0.86, opacity: 0, transformOrigin: "50% 50%" });
     tl.to("#s4-card", { scale: 1.04, opacity: 1, duration: 0.2, ease: "power4.out" }, 0);
     // the tap

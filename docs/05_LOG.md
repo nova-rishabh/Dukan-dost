@@ -94,3 +94,9 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - Current scores 75/72/74; equal-weight mean 73.7/100. Conditional proof/package scenario 87/84/87, mean 86, not earned or guaranteed. Five-link-only artifact diagnostic mean64.3; actual public-link access unverified.
 - Biggest priorities: public fictional demo and final5links, replace URL/QR placeholders, refresh stale deck claims/counts, sharp ad proof, timed pitch, consented shopkeeper evidence. /try on real shop redirects into protected shop; do not expose real ledger to solve demo access.
 - Parent pnpm verify rerun: VERIFY-PASS (222 unit/fixture,48daemon,45browser,25assets). Reports: docs/22_JURY_REVIEW.md and docs/reviews/judging/. No app changes.
+
+## 2026-11-01: faster ad, music and supplied live URLs
+- User provided app and WhatsApp Render URLs. Read-only HTTP checks found app200 but setupNeeded=true, /try→/setup; service /admin200 login, root404. No pairing/delivery or setup action performed.
+- Used HyperFrames/media-use/product-motion skills for20-second recut (previous30s preserved),120BPM CC0 music, ducking, sharp fictional app captures and real product CTA. Stamp at8s; measuredpeak8.000113s. Final20s1080×1920/30fps MP4 rendered; -17.53LUFS/-1.81dBTP; seven VO lines recovered by transcription, no human listening claim.
+- HyperFrames check zero errors, one intentional wipe warning. pnpm verify returned VERIFY-PASS with222unit/fixture48daemon45browser and26asset checks; final changed balance timing also passed HyperFrames check and asset validation.
+- docs/23_PATH_TO_EXCEPTIONAL_SUBMISSION.md records full-rubric evidence targets, setup-gated public-demo gap, remaining packaging and real-user proof. No score100 is promised or newly assigned.

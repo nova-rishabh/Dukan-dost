@@ -24,3 +24,6 @@ The 30 s vertical ad renders and passes `verify:assets`, but it is not finished.
 - Desktop composition of "Kam hai" and "Safe kyun hai" (D27); a seeded low-stock item would help but changes test expectations.
 - Live accuracy run (`pnpm verify:live`) once keys exist; real phone and Lighthouse checks.
 - Hindi and Hinglish copy read by a native speaker.
+
+## Latest ad update (2026-11-01)
+20-second faster music cut rendered on codex/faster-ad. D10/D11: replaced soft/cropped footage sequences with sharper current app captures; D12: removed empty dark lower bands; D14: removed halo. Product URL is on ad end card. Original actor clips remain AI dramatisation; native-resolution footage, full-speed human listening/lip-sync and phone playback review remain open. Posts/deck still need final URLs/QR and regenerated exports. See deliverables/ad/REVIEW.md and docs/23_PATH_TO_EXCEPTIONAL_SUBMISSION.md. The app URL is reachable but still reported setupNeeded during read-only checks, so anonymous trial remains a blocker.

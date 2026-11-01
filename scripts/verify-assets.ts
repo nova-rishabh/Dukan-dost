@@ -60,7 +60,7 @@ check("ad mp4 (ffprobe)", () => {
   if (!v || v.width !== 1080 || v.height !== 1920) throw new Error(`expected 1080x1920, got ${v?.width}x${v?.height}`);
   const [n, d] = (v.r_frame_rate ?? "0/1").split("/").map(Number);
   if (Math.round(n / d) !== 30) throw new Error(`expected 30 fps, got ${v.r_frame_rate}`);
-  if (!(dur >= 28 && dur <= 32)) throw new Error(`expected 28 to 32 s, got ${dur.toFixed(2)}`);
+  if (!(dur >= 19.9 && dur <= 20.2)) throw new Error(`expected the approved 20-second cut, got ${dur.toFixed(2)}`);
   if (!a) throw new Error("no audio track");
   return `${v.width}x${v.height}, ${Math.round(n / d)} fps, ${dur.toFixed(2)} s, audio present`;
 });
@@ -88,10 +88,22 @@ check("ad voice-over (7 lines, each mounted, none over the stamp)", () => {
   for (const m of meta) {
     need(`deliverables/ad/assets/vo/${m.file}.mp3`);
     if (!html.includes(`src="assets/vo/${m.file}.mp3"`)) throw new Error(`${m.file} is not mounted in index.html`);
-    if (m.start < 15.3 && m.end > 15.3 && m.start < 16.0) throw new Error(`${m.file} runs over the stamp hit (15.6 s)`);
-    if (m.end > 30) throw new Error(`${m.file} runs past the end of the ad`);
+    if (m.start < 8.05 && m.end > 7.85) throw new Error(`${m.file} runs over the stamp contact window (8.0 s)`);
+    if (m.end > 20) throw new Error(`${m.file} runs past the end of the ad`);
   }
   return `${meta.length} lines, voices: ${[...new Set(meta.map((m) => m.voice))].join(" and ")}`;
+});
+check("ad CC0 music bed and real product CTA", () => {
+  const credits = JSON.parse(readFileSync(need("deliverables/ad/assets/music/CREDITS.json"), "utf8")) as Array<{ license: string; openverseId: string; landingUrl: string; file: string; edit: { derivedFile: string } }>;
+  const track = credits[0];
+  if (track?.license !== "cc0" || !track.openverseId || !track.landingUrl) throw new Error("Music provenance missing");
+  need(`deliverables/ad/assets/music/${track.file}`);
+  need(`deliverables/ad/assets/music/${track.edit.derivedFile}`);
+  const html = readFileSync(need("deliverables/ad/index.html"), "utf8");
+  if (!html.includes('id="music-bed"') || !html.includes("data-automation=")) throw new Error("Music bed or ducking envelope missing");
+  const end = readFileSync(need("deliverables/ad/compositions/shot6-logo.html"), "utf8");
+  if (end.includes("{{APP_URL}}") || !end.includes("dukaan-dost.onrender.com")) throw new Error("Ad product CTA is unfinished");
+  return "CC0 source and derived music present, volume envelope mounted, product URL shown";
 });
 check("ad FLOWS_PROMPTS.md", () => {
   const t = readFileSync(need("deliverables/ad/FLOWS_PROMPTS.md"), "utf8");
