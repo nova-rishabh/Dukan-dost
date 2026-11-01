@@ -66,9 +66,9 @@ pnpm samples:generate
 
 Writes `public/samples/*.mp3` (AI voices, labelled dramatisation). Only the open demo shows the sample clips; a real shop sends `/try` to its own login.
 
-## Step 9 [you]: the ad clips
+## Step 9 [done]: the ad
 
-You are making shots 1 and 2 in ElevenLabs Flows. Save them as `deliverables/ad/assets/clips/shot1.mp4` and `shot2.mp4`, then ask Claude to wire them into the ad. The list is in `docs/15_TODO.md`.
+Shots 1 and 2 are your Flows clips, and the voice-over is made with ElevenLabs (stock voices Kishan and Raju; the account's cloned voices are not used). To change a line, edit `scripts/ad-vo.ts`, run `pnpm ad:vo` (or `pnpm ad:vo -- --only vo-6-close`), copy the new start and duration from `deliverables/ad/assets/vo/VO.json` into `deliverables/ad/index.html`, then `pnpm ad:render`. `pnpm exec tsx scripts/ad-vo-check.ts <audio file>` transcribes an audio file with timings. Open items for the ad are in `docs/15_TODO.md`.
 
 ## Step 10 [you]: push to GitHub
 
