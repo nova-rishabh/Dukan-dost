@@ -27,6 +27,14 @@ h2{font-size:96px;max-width:1500px}
 .stamp{display:inline-block;border:8px solid var(--sindoor);color:var(--sindoor);border-radius:22px;padding:4px 40px;font-family:var(--font-display);font-size:84px;background:var(--safed);transform:rotate(-7deg)}
 .hyp{display:inline-block;border:var(--border-card);border-radius:999px;background:var(--gulabi);color:var(--syahi);padding:2px 26px;font-weight:700;font-size:30px}
 .n{font-family:var(--font-display);font-size:120px;line-height:1}
+.bahi{position:relative;margin-top:48px;background:var(--bahi-page);border:var(--border-card);box-shadow:var(--shadow-hard);padding:40px 50px 40px 150px;min-height:520px}
+.bahi .cloth{position:absolute;left:0;top:0;bottom:0;width:90px;background:var(--sindoor);border-right:var(--border-card)}
+.bahi .cloth::after{content:"";position:absolute;left:41px;top:16px;bottom:16px;border-left:5px dashed var(--syahi)}
+.bahi .cols{display:flex;gap:80px}
+.bahi .cols>div{flex:1}
+.bahi h3{font-family:var(--font-display);font-weight:400;font-size:56px;line-height:1.2}
+.bahi ul{list-style:none;margin-top:20px}
+.bahi li{font-size:38px;padding:12px 0;border-bottom:2px dashed var(--syahi)}
 @media print{
  @page{size:1920px 1080px;margin:0}
  html,body{background:var(--haldi)}

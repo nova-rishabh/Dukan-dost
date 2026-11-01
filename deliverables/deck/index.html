@@ -14,8 +14,7 @@ main{transform-origin:0 0}
 <main>
 
 <section class="slide" data-active>
-<p class="brand">Dukaan Dost</p>
-<h1 style="margin-top:120px">Dukaan Dost</h1>
+<h1 style="margin-top:170px">Dukaan Dost</h1>
 <p class="tagline" lang="hi" style="margin-top:20px">बोलो, लिखो मत।</p>
 <p class="lead" style="margin-top:40px">Kirana udhaar ledger jo aapki awaaz sunta hai. Pitch deck, demo data fictional hai.</p>
 <span class="stamp" style="position:absolute;right:160px;top:560px"><span lang="hi">लिख लिया</span></span>
@@ -37,13 +36,13 @@ main{transform-origin:0 0}
 <section class="slide">
 <p class="brand">Dukaan Dost</p>
 <h2 style="margin-top:30px;font-size:68px">Bolo, parchi banta hai, stamp lagta hai.</h2>
-<div class="row" style="margin-top:36px;align-items:flex-start">
- <div class="shot" style="width:450px;height:640px"><img src="img/try-390.png" alt="Parchi: Sharma ji ne 500 diye, Paise mile, amount in words" style="width:450px;margin-top:-595px"></div>
- <div class="shot" style="width:450px;height:640px"><img src="img/shop-home-390.png" alt="Parchi with the lik liya stamp, Gupta ji ko 500 udhaar diya" style="width:450px;margin-top:-1832px"></div>
- <div style="flex:1">
+<div class="row" style="margin-top:36px;align-items:flex-start;gap:36px">
+ <div class="shot" style="width:507px;height:700px"><img src="img/try-390.png" alt="Parchi: Sharma ji ne 500 diye, Paise mile, amount in words" style="width:507px;margin-top:-671px"></div>
+ <div class="shot" style="width:507px;height:700px"><img src="img/shop-home-390.png" alt="Parchi with the likh liya stamp, Gupta ji ko 500 udhaar diya" style="width:507px;margin-top:-2063px"></div>
+ <div style="flex:1;font-size:32px">
   <div class="card"><b>Parchi.</b> Jo suna, wahi dikhta hai. Aap padh kar tap karte hain.</div>
-  <div class="card" style="margin-top:30px"><b>Stamp.</b> Tap ke baad hi <span lang="hi">लिख लिया</span> lagta hai.</div>
-  <div class="card" style="margin-top:30px"><b>Bahi page.</b> Entry bahi jaise page par chali jaati hai.</div>
+  <div class="card" style="margin-top:28px"><b>Stamp.</b> Tap ke baad hi <span lang="hi">लिख लिया</span> lagta hai.</div>
+  <div class="card" style="margin-top:28px"><b>Bahi page.</b> Entry bahi jaise page par chali jaati hai.</div>
  </div>
 </div>
 <aside class="notes">Both images are real captures of the running app (demo mode, fictional shop). Left: the parchi shows what we heard, the amount in digits and words and the direction. Right: the confirm parchi with the stamp. The stamp lands only after the owner taps.</aside>
@@ -65,7 +64,8 @@ main{transform-origin:0 0}
 
 <section class="slide">
 <p class="brand">Dukaan Dost</p>
-<h2 style="margin-top:30px;font-size:78px">Model sujhata hai, aap tay karte hain.</h2>
+<span class="stamp" style="position:absolute;right:110px;top:70px;font-size:64px"><span lang="hi">लिख लिया</span></span>
+<h2 style="margin-top:30px;font-size:68px">Model sujhata hai, aap tay karte hain.</h2>
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:50px">
  <div class="card"><b>Confirm ke bina kuch save nahi.</b><br>Har entry par aapka tap.</div>
  <div class="card"><b>Rakam digits aur shabdon mein.</b><br>₹500, <span lang="hi">पाँच सौ रुपये</span>.</div>
@@ -74,23 +74,33 @@ main{transform-origin:0 0}
  <div class="card"><b>Audit.</b><br>Har badlaav ka nishaan, balance entries se banta hai.</div>
  <div class="card" style="background:var(--gulabi)"><b>Reminder sirf draft.</b><br>Send aap dabate hain. App khud nahi bhejta.</div>
 </div>
-<p class="lead" style="margin-top:50px;font-size:40px">Hum yeh nahi kehte ki AI galti nahi karta. Hum kehte hain: tap ke bina galti save nahi hoti.</p>
+<p class="lead" style="margin-top:40px;font-size:40px;max-width:1700px">Hum yeh nahi kehte ki AI galti nahi karta. Hum kehte hain: tap ke bina galti save nahi hoti.</p>
 <aside class="notes">Walk through the five safety points: confirm, amount in words, direction in words, void not delete, audit trail. Add that reminders are drafts the owner sends through WhatsApp. Say: it cannot save a mistake without your tap. Never say AI never makes mistakes.</aside>
 </section>
 
 <section class="slide">
 <p class="brand">Dukaan Dost</p>
-<h2 style="margin-top:30px">Humne kya test kiya, aur kya nahi.</h2>
-<div class="row" style="margin-top:50px;align-items:stretch">
- <div class="card" style="width:500px"><p class="n">20 / 20</p><p>utterance fixtures pass, offline, rules interpreter</p></div>
- <div class="card" style="width:500px"><p class="n">119</p><p>unit tests pass</p></div>
- <div class="card" style="width:560px"><p class="n">18</p><p>end-to-end checks pass (9 scripts plus axe accessibility on 5 pages)</p></div>
+<h2 style="margin-top:30px;font-size:78px">Sach, bina badhaye.</h2>
+<div class="bahi">
+ <div class="cloth"></div>
+ <div class="cols">
+  <div><h3>Humne kya naapa</h3>
+   <ul>
+    <li>20 mein se 20 utterance fixtures pass, offline</li>
+    <li>149 unit tests pass</li>
+    <li>22 end-to-end checks pass, 5 pages par accessibility checks bhi</li>
+   </ul></div>
+  <div><h3>Abhi tak nahi naapa</h3>
+   <ul>
+    <li>Asli speech-to-text aur Gemini ki live accuracy</li>
+    <li>Asli phones</li>
+    <li>Asli dukaandaar</li>
+    <li>Paise dene ki ichchha</li>
+   </ul></div>
+ </div>
 </div>
-<p class="small" style="margin-top:24px">Sab kuch is build ke apne runs se, 2026-11-01.</p>
-<div class="card" style="margin-top:36px;background:var(--bahi-page)">
- <b>Abhi naapa nahi gaya:</b> asli speech-to-text aur Gemini ke saath live accuracy (API keys chahiye). Asli dukaanon par test nahi hua. Paise dene ki ichchha (willingness to pay) saabit nahi hai.
-</div>
-<aside class="notes">All numbers are from our own runs on 2026-11-01. The 20 of 20 is the offline rules interpreter on our fixtures, not live accuracy with real speech-to-text and Gemini. Live accuracy is not yet measured. Willingness to pay is unproven; the next step is a test with ten shops.</aside>
+<p class="small" style="margin-top:28px">Yeh sab is build ke apne runs se hai.</p>
+<aside class="notes">All numbers are from our own runs on 2026-11-01. The 20 of 20 is the offline rules interpreter on our fixtures, not live accuracy with real speech-to-text and Gemini. Live accuracy is not yet measured. Willingness to pay is unproven; the next step is a test with real shops.</aside>
 </section>
 
 <section class="slide">
