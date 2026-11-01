@@ -1,5 +1,7 @@
 # Render Blueprint for Dukaan Dost.
-# Two services: the app (public) and the WhatsApp code service (private, only the app can reach it).
+# Two services: the app and the WhatsApp code service. The WhatsApp one is a web service only so its
+# /admin page opens in a browser for pairing; the app still reaches it over Render's internal address,
+# and every admin action needs ADMIN_PASSWORD.
 # Both need a paid instance because each keeps a disk (the shop ledger, and the paired WhatsApp session).
 # Render's repo checkout lives at /opt/render/project/src.
 
@@ -36,11 +38,11 @@ services:
         sync: false
       - key: WA_SERVICE_URL
         fromService:
-          type: pserv
+          type: web
           name: dukaan-wa
           property: hostport # arrives as host:port; the app adds http://
 
-  - type: pserv
+  - type: web
     name: dukaan-wa
     runtime: node
     plan: starter
