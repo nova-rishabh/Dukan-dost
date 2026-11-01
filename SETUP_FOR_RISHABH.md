@@ -83,3 +83,9 @@ The deployed link for jurors should be the **open demo** (no `DUKAAN_DB_FILE`, n
 ## Step 12 [you]: submit the five links
 
 Product (`/try` on the demo), website (landing), the three posts, the ad, the deck. Open each in a private window on mobile data first. Nothing here submits for you. When you are ready for the official WhatsApp API, the verified facts are in `docs/16_WHATSAPP_FACTS.md`.
+
+## Deploying on Render
+`render.yaml` in the repo root creates two services, `dukaan-dost` (the app) and `dukaan-wa` (the WhatsApp service). Both need the paid Starter plan because each keeps a disk. In Render choose New, Blueprint, pick the repo, and fill in the asked values:
+- App: `NEXT_PUBLIC_APP_URL`, `DEMO_UPI_VPA`, `GEMINI_API_KEY`, `ELEVENLABS_API_KEY`, `WA_APP_KEY`, `WA_APP_SECRET`.
+- WhatsApp service: `ADMIN_PASSWORD`, and `ALLOWED_APPS` written as `WA_APP_KEY:WA_APP_SECRET` (the same pair as the app, joined by a colon). If either is blank the service refuses to start and its log names the missing one.
+After it is running: open `https://<dukaan-wa address>/admin`, log in, scan the QR with the spare WhatsApp number within about 20 seconds, then open the app's `/setup`. Full state and next steps for an AI agent: `docs/17_HANDOFF.md`.

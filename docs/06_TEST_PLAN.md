@@ -147,4 +147,4 @@ Not run here (need keys or a device): STT accuracy on clean and noisy audio (sec
 
 The e2e script 3 (which Sharma) uses fixture 1 ("Sharma ji ne 500 rupaye udhaar liye"), because fixture 12 resolves both names exactly. Fixture 12 is covered by the fixture test.
 
-The WhatsApp service in `services/wa-userauth` has its own 43 tests (`pnpm wa:test`, part of `pnpm verify`). No test sends a real WhatsApp message or calls ElevenLabs or Gemini: test servers blank those variables on purpose.
+The WhatsApp service in `services/wa-userauth` has its own 48 tests (`pnpm wa:test`, part of `pnpm verify`). No test sends a real WhatsApp message or calls ElevenLabs or Gemini: test servers blank those variables on purpose.

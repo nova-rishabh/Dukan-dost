@@ -59,3 +59,8 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 
 ## 2026-11-01: login and WhatsApp
 - Owner login (passcode, WhatsApp code), first-run setup, session cookie, route protection (ADR-025). The supplied WA-USERAUTH zip is vendored and runs as its own localhost service; sending a reminder from the app is owner-confirmed. Both servers were started locally; nothing was pushed (remote added only).
+
+## 2026-11-01: voice-over, QR fix, Render
+- ElevenLabs voice-over added to the ad (seven lines, checked by transcription). Pairing QR reconnect storm fixed with backoff and a test (daemon now 48 tests). Both pushed to GitHub `master`.
+- Added `render.yaml` (app plus WhatsApp service as two web services with disks); the WhatsApp service is public so `/admin` opens for pairing. `WA_SERVICE_URL` now accepts `host:port`. The WhatsApp service names which production credential is missing. First Render deploy of the WhatsApp service crashed on missing credentials; waiting on the owner to correct the two fields.
+- Wrote `docs/17_HANDOFF.md` for the next agent.
