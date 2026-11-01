@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openMenu, setLanguage } from "./helpers";
 
 test.use({ viewport: { width: 390, height: 844 } });
 test.beforeEach(async ({ request, context }) => {
@@ -22,8 +23,9 @@ test("dashboard totals reconcile with statements and CSV is downloadable", async
   expect(dashboard.outstandingPaise).toBe(outstanding);
   expect(dashboard.advancesPaise).toBe(advances);
   await page.goto("/shop/dashboard");
-  await page.getByLabel("Language / Bhasha").selectOption("en");
+  await setLanguage(page, "en");
   await expect(page.getByRole("heading", { name: "Shop dashboard" })).toBeVisible();
+  await openMenu(page);
   const currentNav = page.getByRole("link", { name: "Dashboard", exact: true });
   await expect(currentNav).toHaveAttribute("aria-current", "page");
   await expect(currentNav).toHaveCSS("background-color", "rgb(22, 18, 58)");

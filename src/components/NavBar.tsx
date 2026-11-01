@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useLocale, useCopy } from "./LocaleProvider";
+import { useShopLinks } from "./ShopNav";
 import { api, post, ApiError, type Me } from "@/lib/client/api";
 
 /** Demo shop: the two sample links. Real shop: login, or the shop and logout. */
@@ -13,6 +15,8 @@ export function NavBar() {
   const [expiredDemo, setExpiredDemo] = useState(false);
   const [exitFailed, setExitFailed] = useState(false);
   const menu = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const shopLinks = useShopLinks();
   useEffect(() => {
     api
       .me()
@@ -69,6 +73,7 @@ export function NavBar() {
         <Link href="/login" className="btn btn-sm" data-testid="nav-login">{t("login")}</Link>
         </>
       )}
+      {pathname.startsWith("/shop") ? <div className="nav-shop">{shopLinks.map(([href, label]) => <Link href={href} key={href} className="menu-link" aria-current={pathname === href ? "page" : undefined}>{label}</Link>)}</div> : null}
       {exitFailed ? <p role="alert">{L("Could not exit the sample. Check your connection and try again.", "Sample se bahar nahi nikle. Connection check karke dobara karo.")}</p> : null}
       </div>
     </nav>

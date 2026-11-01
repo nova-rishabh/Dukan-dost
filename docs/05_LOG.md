@@ -130,3 +130,7 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 
 ## 2026-11-01: header rework
 - Header: removed the visible "Bhasha" label, language select moved to the far right (shows Hinglish / English), nav buttons smaller (.btn-sm, 40 px), phone width uses a menu button that opens a popover panel. Install prompt is now a slim bar with a compact button instead of a large button in the connection box. Pixel 7 e2e tests open the menu before using logout/Exit sample. Full Playwright run: 59 passed. Full pnpm verify not rerun; visual check at 390 px and 1440 px.
+
+## 2026-11-01: sidebar, compact language menu, longer homepage, footer
+- Language control is now a small "H/E" button with a menu (Hinglish, English) at the top right; the explanatory note under it is gone. Shop pages use a left sidebar on desktop; on phones the same links sit in the header menu. Homepage gained a four-step section, FAQ, closing sample-shop band and a site-wide footer (fictional-data and draft-only notes; no new numbers or claims).
+- Tests: new tests/e2e/helpers.ts (setLanguage, openMenu). pnpm verify: VERIFY-PASS (typecheck, lint, unit, WA daemon, build, 59 browser tests, slop, secrets, assets). Checked by screenshot at 1440 and 390 px. Not checked on a real phone.

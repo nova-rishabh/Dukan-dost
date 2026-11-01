@@ -1,13 +1,14 @@
 import { Copy } from "@/components/LocaleProvider";
 import { Assistant } from "@/components/Assistant";
 import { LandingCtas } from "@/components/LandingCtas";
+import { HowItWorks, Questions, StartBand } from "@/components/HomeSections";
 
 const HERO_SENTENCE = "Amit Sharma ne 500 rupaye udhaar liye";
 
 export default function Landing() {
   return (
     <>
-      <section className="mx-auto grid max-w-6xl gap-8 px-4 pb-10 pt-4 md:grid-cols-12 md:px-8 md:pt-10">
+      <section className="mx-auto grid max-w-6xl gap-10 px-4 pb-14 pt-6 md:grid-cols-12 md:px-8 md:pb-20 md:pt-16">
         <div className="md:col-span-5">
           <h1 className="text-[clamp(44px,8vw,72px)] leading-[1.1]">
             <span className="block">
@@ -25,7 +26,9 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="bg-neel px-4 py-10 text-safed md:px-8" aria-labelledby="teen-kaam">
+      <HowItWorks />
+
+      <section className="bg-neel px-4 py-14 text-safed md:px-8" aria-labelledby="teen-kaam">
         <div className="mx-auto max-w-6xl">
           <h2 id="teen-kaam" className="text-[28px]">
             <Copy en="Three tasks, one sentence" hi="Teen kaam, ek bol mein" />
@@ -118,6 +121,9 @@ export default function Landing() {
           </p>
         </div>
       </section>
+      <Questions />
+
+      <StartBand />
     </>
   );
 }

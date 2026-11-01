@@ -238,6 +238,7 @@ test("12 the CSP header is sent and no page breaks under it", async ({ page, req
 
 test("13 the demo shop shows the retention note and no erase button", async ({ page }) => {
   await page.goto("/shop");
+  await page.getByTestId("menu-button").click();
   await page.getByRole("link", { name: "Settings", exact: true }).click();
   await expect(page.getByTestId("retention-note")).toContainText("Awaaz kabhi save nahi hoti");
   await expect(page.getByTestId("erase-open")).toHaveCount(0);

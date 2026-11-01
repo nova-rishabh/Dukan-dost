@@ -18,6 +18,7 @@ import "@fontsource/kalam/devanagari-400.css";
 import "@fontsource/kalam/devanagari-700.css";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: { default: "Dukaan Dost: बोलो, लिखो मत।", template: "%s | Dukaan Dost" },
@@ -42,6 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </a>
         <Header />
         <main id="main">{children}</main>
+        <Footer />
         </LocaleProvider>
       </body>
     </html>

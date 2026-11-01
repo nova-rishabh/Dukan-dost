@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { setLanguage } from "./helpers";
 
 test.beforeEach(async ({ page, context }) => {
   const request = page.request;
@@ -10,7 +11,7 @@ test.beforeEach(async ({ page, context }) => {
 test("customers require review, separate people deliberately, and retain archived ledgers", async ({ page }) => {
   const request = page.request;
   await page.goto("/shop/customers");
-  await page.getByLabel("Language / Bhasha").selectOption("en");
+  await setLanguage(page, "en");
   await page.getByLabel("Name", { exact: true }).fill("Counter customer");
   await page.getByLabel("Area or identifying note").fill("East lane");
   await page.getByRole("button", { name: "Review customer", exact: true }).click();
@@ -34,7 +35,7 @@ test("customers require review, separate people deliberately, and retain archive
 test("inventory uses measured counts and reverses an out movement without erasing it", async ({ page }) => {
   const request = page.request;
   await page.goto("/shop/inventory");
-  await page.getByLabel("Language / Bhasha").selectOption("en");
+  await setLanguage(page, "en");
   await page.getByLabel("Item name", { exact: true }).fill("Measured rice");
   await page.getByRole("combobox", { name: "Unit (cannot change later)", exact: true }).selectOption("kg");
   await page.getByRole("button", { name: "Review item", exact: true }).click();

@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { openMenu, setLanguage } from "./helpers";
 
 test("English mode persists on reload and does not translate input", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -7,13 +8,12 @@ test("English mode persists on reload and does not translate input", async ({ pa
     ok: true, authRequired: true, setupNeeded: false, loggedIn: false, owner: null, waLogin: true, isDemoShop: false, shopName: null,
   } }));
   await page.goto("/login");
-  await page.getByLabel("Language / Bhasha", { exact: true }).selectOption("en");
+  await setLanguage(page, "en");
   await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
-  await expect(page.getByTestId("language-scope")).toContainText("Your original entries stay as entered");
   await page.getByLabel("Password", { exact: true }).fill("दुकान का पासवर्ड");
-  await page.getByLabel("Language / Bhasha", { exact: true }).selectOption("hi-Latn");
+  await setLanguage(page, "hi-Latn");
   await expect(page.getByLabel("Passcode", { exact: true })).toHaveValue("दुकान का पासवर्ड");
-  await page.getByLabel("Language / Bhasha", { exact: true }).selectOption("en");
+  await setLanguage(page, "en");
   await expect(page.getByLabel("Password", { exact: true })).toHaveValue("दुकान का पासवर्ड");
   await page.reload();
   await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
@@ -29,8 +29,9 @@ test("English mode persists on reload and does not translate input", async ({ pa
 test("English ledger keeps Hindi evidence and confirms amounts, direction and stamp in English", async ({ page, request }) => {
   expect((await request.post("/api/demo/reset")).ok()).toBeTruthy();
   await page.goto("/shop");
-  await page.getByLabel("Language / Bhasha", { exact: true }).selectOption("en");
+  await setLanguage(page, "en");
   await expect(page.getByRole("heading", { name: "Total outstanding" })).toBeVisible();
+  await openMenu(page);
   for (const name of ["Dashboard", "Customers", "Inventory"]) await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
   const evidence = "Gupta ji ne 500 rupaye udhaar liye";
   await page.getByLabel("Type here", { exact: true }).fill(evidence);
@@ -55,7 +56,7 @@ test("English reminder drafts and pay pages retain review and payment honesty", 
   const list = await (await request.get("/api/customers")).json();
   const customer = list.customers.find((c: { name: string }) => c.name === "Gupta ji");
   await page.goto(`/shop/${customer.id}`);
-  await page.getByLabel("Language / Bhasha", { exact: true }).selectOption("en");
+  await setLanguage(page, "en");
   await page.getByRole("button", { name: "Send reminder", exact: true }).click();
   await expect(page.getByTestId("remind-text")).toHaveValue(/Hello Gupta ji,.*outstanding balance is ₹1,200/);
   const edited = "नमस्ते Gupta ji, please check your balance.";

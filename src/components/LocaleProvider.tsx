@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { errorHint, LOCALE_COOKIE, translate, type Locale, type MessageKey } from "@/lib/i18n";
 
 interface LocaleContextValue {
@@ -37,14 +37,21 @@ export function useLocale() {
 
 export function LanguageSelector() {
   const { locale, setLocale } = useLocale();
-  return <select aria-label="Language / Bhasha" className="input input-sm" value={locale} onChange={(e) => setLocale(e.target.value === "en" ? "en" : "hi-Latn")}>
-    <option value="hi-Latn">Hinglish</option><option value="en">English</option>
-  </select>;
-}
-
-export function LanguageScopeNote() {
-  const { locale, t } = useLocale();
-  return locale === "en" ? <p className="w-full text-base" data-testid="language-scope">{t("languageScope")}</p> : null;
+  const menu = useRef<HTMLDivElement>(null);
+  function pick(next: Locale) {
+    try { menu.current?.hidePopover(); } catch { /* already closed */ }
+    if (next !== locale) setLocale(next);
+  }
+  return <>
+    <button type="button" className="btn btn-sm lang-toggle" popoverTarget="lang-menu" aria-label="Language / Bhasha" data-testid="language-button">
+      <span aria-hidden="true">{locale === "en" ? "E" : "H"}</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+    </button>
+    <div id="lang-menu" popover="auto" ref={menu} className="lang-menu" role="menu">
+      <button type="button" role="menuitemradio" aria-checked={locale === "hi-Latn"} className="menu-link" onClick={() => pick("hi-Latn")}>Hinglish</button>
+      <button type="button" role="menuitemradio" aria-checked={locale === "en"} className="menu-link" onClick={() => pick("en")}>English</button>
+    </div>
+  </>;
 }
 
 export function LocalizedText({ id }: { id: MessageKey }) { return useLocale().t(id); }
