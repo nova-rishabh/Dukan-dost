@@ -158,3 +158,11 @@ Format: Context, decision, alternatives, consequences, status. Add new entries a
 - Decision: use owner-supplied transparent Munshi art as decorative guidance alongside text. Keep the stamp as the success moment; never use the illustrated QR as a payment or pairing QR.
 - Add customer name/area search and balance filters without modifying ledger values. Move WhatsApp, passcode and privacy controls into /shop/settings; add /shop/help for voice, direction and confirmation guidance.
 - Existing confirmation, integer-paise storage, void history and owner-triggered reminder rules remain unchanged. No new staff, payment settlement or automatic reminder behavior.
+
+## ADR-027: reliable first slice before public accounts
+- Owner said Start on the roadmap and chose existing WhatsApp verification for public signup. Public accounts require tenant isolation and browser/purpose-bound registration proofs before being exposed; existing operator setup remains protected.
+- Add durable owner auth versions. Password reset/change and confirmed logout-all revoke old cookies; legacy session version is invalidated on deployment.
+- Reserve WhatsApp delivery per reviewed pay token before sending. Unknown/pending outcomes never retry automatically; changed balances/expired drafts require a fresh preview. Exactly-once external delivery is not claimed.
+- Encrypt operator SQLite snapshots, validate restore into a new path, require signing-secret rotation before serving restored data. Off-host storage/scheduling remain operator work.
+- Production mode fails closed without durable shop storage unless explicitly a fictional demo. Bootstrap code persists beside the database.
+- Add typed English/Hinglish cookie-backed account preview. Preserve input text; migrate other screens in subsequent slices. This changes UI language support without changing money/confirmation rules.

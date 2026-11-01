@@ -14,7 +14,7 @@ function cookieValue(header: string | null, name: string): string | null {
 const isHttps = (req: Request) => new URL(req.url).protocol === "https:" || req.headers.get("x-forwarded-proto") === "https";
 
 export function sessionCookie(req: Request, owner: OwnerPublic, ctx: AppContext, method: LoginMethod): string {
-  const token = signSession({ mobile: owner.mobile, shopId: owner.shopId, method }, { now: new Date(), secret: ctx.secret });
+  const token = signSession({ mobile: owner.mobile, shopId: owner.shopId, authVersion: owner.authVersion, method }, { now: new Date(), secret: ctx.secret });
   return `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}${isHttps(req) ? "; Secure" : ""}`;
 }
 
@@ -30,7 +30,7 @@ export async function readSession(req: Request, ctx: AppContext): Promise<(Sessi
   const s = verifySession(token, { now: new Date(), secret: ctx.secret });
   if (!s || s.shopId !== ctx.shopId) return null;
   const owner = await ctx.store.getOwner(ctx.shopId);
-  return owner && owner.mobile === s.mobile ? s : null;
+  return owner && owner.mobile === s.mobile && owner.authVersion === s.authVersion ? s : null;
 }
 
 /** Throws unless this is the demo (no login) or a valid owner session. */

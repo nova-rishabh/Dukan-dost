@@ -28,7 +28,8 @@
     "samples:generate": "tsx scripts/samples-generate.ts",
     "ad:render": "tsx scripts/ad-render.ts",
     "ad:vo": "tsx scripts/ad-vo.ts",
-    "ad:sync-sounds": "tsx scripts/ad-sync-sounds.ts"
+    "ad:sync-sounds": "tsx scripts/ad-sync-sounds.ts",
+    "db:backup": "tsx scripts/db-backup.ts"
   },
   "dependencies": {
     "@fontsource/hind": "^5.3.0",

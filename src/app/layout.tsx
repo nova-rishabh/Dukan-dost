@@ -1,3 +1,6 @@
+import { cookies } from "next/headers";
+import { LocaleProvider, LocalizedText } from "@/components/LocaleProvider";
+import { LOCALE_COOKIE, readLocale } from "@/lib/i18n";
 import type { Metadata, Viewport } from "next";
 import "@fontsource/yatra-one/latin-400.css";
 import "@fontsource/yatra-one/devanagari-400.css";
@@ -28,15 +31,18 @@ export const viewport: Viewport = {
   themeColor: "#FFC400",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = readLocale((await cookies()).get(LOCALE_COOKIE)?.value);
   return (
-    <html lang="hi-Latn">
+    <html lang={locale}>
       <body>
+        <LocaleProvider initialLocale={locale}>
         <a href="#main" className="skip-link">
-          Seedha kaam par jao
+          <LocalizedText id="skip" />
         </a>
         <Header />
         <main id="main">{children}</main>
+        </LocaleProvider>
       </body>
     </html>
   );

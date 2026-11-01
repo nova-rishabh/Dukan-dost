@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { SEED_CUSTOMERS, SEED_ENTRIES, SEED_SHOP, SEED_STOCK } from "../seed";
 import { retentionCutoff, UNCONFIRMED_AUDIT_KIND } from "./retention";
-import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, Shop, StockFlag } from "../types";
+import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
 import type { LedgerStore } from "./types";
 
 interface State {
@@ -15,6 +15,7 @@ interface State {
   audit: AuditEvent[];
   nextAuditId: number;
   owners: OwnerRecord[];
+  deliveries: ReminderDelivery[];
 }
 
 const seedState = (): State => ({
@@ -26,6 +27,7 @@ const seedState = (): State => ({
   audit: [],
   nextAuditId: 1,
   owners: [],
+  deliveries: [],
 });
 
 /** In-memory store with optional JSON-file persistence. The keyless demo default and the test double; SqliteStore is the durable store. */
@@ -44,6 +46,8 @@ export class LocalStore implements LedgerStore {
       try {
         const loaded = JSON.parse(readFileSync(this.file, "utf8")) as State;
         loaded.owners ??= [];
+        loaded.deliveries ??= [];
+        for (const owner of loaded.owners) owner.authVersion ??= 0;
         return loaded;
       } catch {
         // corrupt file: fall through to the seed
@@ -128,6 +132,24 @@ export class LocalStore implements LedgerStore {
     return this.state.tokens.find((t) => t.token === token) ?? null;
   }
 
+  async getReminderDelivery(shopId: string, token: string) {
+    return this.state.deliveries.find((d) => d.shopId === shopId && d.token === token) ?? null;
+  }
+
+  async claimReminderDelivery(delivery: ReminderDelivery) {
+    const existing = this.state.deliveries.find((d) => d.shopId === delivery.shopId && d.token === delivery.token);
+    if (existing) return { delivery: existing, claimed: false };
+    this.state.deliveries.push({ ...delivery });
+    this.persist();
+    return { delivery, claimed: true };
+  }
+
+  async finishReminderDelivery(shopId: string, token: string, result: Pick<ReminderDelivery, "status" | "messageId" | "simulated">) {
+    const delivery = this.state.deliveries.find((d) => d.shopId === shopId && d.token === token);
+    if (delivery) Object.assign(delivery, result);
+    this.persist();
+  }
+
   async appendAudit(shopId: string, kind: string, payload: Record<string, unknown>, at: string) {
     this.state.audit.push({ id: this.state.nextAuditId++, shopId, kind, payload, createdAt: at });
     const cutoff = retentionCutoff(at);
@@ -148,6 +170,7 @@ export class LocalStore implements LedgerStore {
     s.customers = s.customers.filter((x) => x.shopId !== shopId);
     s.entries = s.entries.filter((x) => x.shopId !== shopId);
     s.stock = s.stock.filter((x) => x.shopId !== shopId);
+    s.deliveries = s.deliveries.filter((x) => x.shopId !== shopId);
     s.tokens = s.tokens.filter((x) => x.shopId !== shopId);
     s.audit = s.audit.filter((x) => x.shopId !== shopId);
     this.persist();
@@ -169,7 +192,8 @@ export class LocalStore implements LedgerStore {
   }
 
   async getOwner(shopId: string) {
-    return this.state.owners.find((o) => o.shopId === shopId) ?? null;
+    const owner = this.state.owners.find((o) => o.shopId === shopId);
+    return owner ? { ...owner } : null;
   }
 
   async createOwner(owner: OwnerRecord) {
@@ -180,7 +204,13 @@ export class LocalStore implements LedgerStore {
 
   async setPasscodeHash(shopId: string, passcodeHash: string) {
     const o = this.state.owners.find((x) => x.shopId === shopId);
-    if (o) o.passcodeHash = passcodeHash;
+    if (o) { o.passcodeHash = passcodeHash; o.authVersion++; }
+    this.persist();
+  }
+
+  async revokeOwnerSessions(shopId: string) {
+    const owner = this.state.owners.find((o) => o.shopId === shopId);
+    if (owner) owner.authVersion++;
     this.persist();
   }
 

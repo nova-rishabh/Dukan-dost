@@ -1,6 +1,5 @@
-import { randomBytes } from "node:crypto";
-import { mkdirSync, writeFileSync } from "node:fs";
-import path from "node:path";
+import { makeSetupCode } from "./bootstrap";
+import { validateRuntimeMode } from "@/lib/runtime-mode";
 import { AttemptLimiter } from "@/lib/auth";
 import { adapterStatus, type AdapterStatus } from "@/lib/config";
 import { createElevenLabsStt, createElevenLabsTts } from "@/lib/providers/elevenlabs";
@@ -34,24 +33,10 @@ export interface AppContext {
 
 const g = globalThis as unknown as { __dukaan?: AppContext };
 
-function makeSetupCode(env: NodeJS.ProcessEnv, authRequired: boolean): string {
-  if (env.SETUP_CODE?.trim()) return env.SETUP_CODE.trim();
-  const code = randomBytes(5).toString("hex");
-  if (authRequired) {
-    // the owner reads it from this file on the machine that runs the app
-    try {
-      const file = path.resolve(".data", "setup-code.txt");
-      mkdirSync(path.dirname(file), { recursive: true });
-      writeFileSync(file, `${code}\n`);
-    } catch {
-      // read-only disk: the code is then only valid until restart; set SETUP_CODE instead
-    }
-  }
-  return code;
-}
 
 function build(): AppContext {
   const env = process.env;
+  validateRuntimeMode(env);
   const status = adapterStatus(env);
   const shopId = env.DEMO_SHOP_ID || SEED_SHOP_ID;
   const upiVpa = env.DEMO_UPI_VPA || "demo.shop@invalid";

@@ -11,36 +11,36 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-wtrm" id="root" data-composition-id="main" data-start="0" data-duration="20" data-width="1080" data-height="1920">
       <!-- Shots 1-2: AI-generated clips (assets/clips/shot1.mp4, shot2.mp4) mounted in their scene files -->
-      <div id="shot1" class="clip" data-composition-id="shot1-hands" data-composition-src="compositions/shot1-hands.html" data-start="0" data-duration="4.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:1"></div>
-      <div id="shot2" class="clip" data-composition-id="shot2-speak" data-composition-src="compositions/shot2-speak.html" data-start="4" data-duration="5.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:2"></div>
+      <div data-hf-id="hf-7kym" id="shot1" class="clip" data-composition-id="shot1-hands" data-composition-src="compositions/shot1-hands.html" data-start="0" data-duration="2.5" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:1"></div>
+      <div data-hf-id="hf-xy4k" id="shot2" class="clip" data-composition-id="shot2-speak" data-composition-src="compositions/shot2-speak.html" data-start="2.5" data-duration="2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:2"></div>
       <!-- Shots 3-6: real captures of the running app -->
-      <div id="shot3" class="clip" data-composition-id="shot3-parchi" data-composition-src="compositions/shot3-parchi.html" data-start="9" data-duration="6.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:3"></div>
-      <div id="shot4" class="clip" data-composition-id="shot4-stamp" data-composition-src="compositions/shot4-stamp.html" data-start="15" data-duration="3.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:4"></div>
-      <div id="shot5" class="clip" data-composition-id="shot5-balance" data-composition-src="compositions/shot5-balance.html" data-start="18" data-duration="6.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
-      <div id="shot6" class="clip" data-composition-id="shot6-logo" data-composition-src="compositions/shot6-logo.html" data-start="24" data-duration="6" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:6"></div>
+      <div data-hf-id="hf-xl2d" id="shot3" class="clip" data-composition-id="shot3-parchi" data-composition-src="compositions/shot3-parchi.html" data-start="4.5" data-duration="3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:3"></div>
+      <div data-hf-id="hf-w5ta" id="shot4" class="clip" data-composition-id="shot4-stamp" data-composition-src="compositions/shot4-stamp.html" data-start="7.5" data-duration="2.5" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:4"></div>
+      <div data-hf-id="hf-d3ef" id="shot5" class="clip" data-composition-id="shot5-balance" data-composition-src="compositions/shot5-balance.html" data-start="10" data-duration="5" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
+      <div data-hf-id="hf-43om" id="shot6" class="clip" data-composition-id="shot6-logo" data-composition-src="compositions/shot6-logo.html" data-start="15" data-duration="5" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:6"></div>
 
-      <!-- shot1.mp4 ambience at low level (measured: steady about -35 dBFS RMS, peak -8.3 dBFS; volume 0.26 puts its peak near -20 dBFS, about 18 dB under the effects). Ends at 4.0 s, before the first effect at 8.94 s. -->
-      <audio id="amb-shot1" src="assets/clips/shot1.mp4" data-start="0" data-duration="4" data-media-start="0" data-track-index="8" data-volume="0.26" data-fade-in="0.3" data-fade-out="0.5"></audio>
-      <audio id="silence-bed" src="assets/silence.wav" data-start="0" data-duration="30" data-track-index="9" data-volume="1"></audio>
+      <!-- Retimed 20-second cut. shot1.mp4 ambience at low level (measured: steady about -35 dBFS RMS, peak -8.3 dBFS; volume 0.26 puts its peak near -20 dBFS, about 18 dB under the effects). Ends at 2.5 seconds. -->
+      <audio data-hf-id="hf-ev57" id="amb-shot1" src="assets/clips/shot1.mp4" data-start="0" data-duration="4" data-media-start="0" data-track-index="8" data-volume="0.26" data-fade-in="0.3" data-fade-out="0.5"></audio>
+      <audio data-hf-id="hf-cwli" id="music-bed" src="assets/music/upbeat-bed-120bpm.mp3" data-start="0" data-duration="20" data-track-index="7" data-volume="1" data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":0.75},{"t":0.12,"v":0.4},{"t":2.4,"v":0.4},{"t":2.48,"v":0.8},{"t":2.65,"v":0.4},{"t":4.02,"v":0.4},{"t":4.12,"v":0.8},{"t":4.55,"v":0.4},{"t":7.5,"v":0.4},{"t":7.65,"v":0.65},{"t":7.82,"v":0.08},{"t":8.12,"v":0.08},{"t":8.25,"v":0.4},{"t":10.03,"v":0.4},{"t":10.12,"v":0.8},{"t":10.24,"v":0.4},{"t":13.95,"v":0.4},{"t":14.08,"v":0.8},{"t":15.42,"v":0.8},{"t":15.5,"v":0.4},{"t":17.65,"v":0.4},{"t":17.8,"v":0.8},{"t":20,"v":0.8}]}]}'></audio>
       <!-- SFX:BEGIN (written by scripts/ad-sync-sounds.ts from assets/sounds/CREDITS.json) -->
-      <audio id="sfx-whoosh-into-app" src="assets/sounds/whoosh-into-app.mp3" data-start="8.941" data-duration="0.448" data-media-start="0.000" data-track-index="10" data-volume="0.45"></audio>
-      <audio id="sfx-ui-tick-parchi" src="assets/sounds/ui-tick-parchi.mp3" data-start="12.043" data-duration="0.159" data-media-start="0.000" data-track-index="11" data-volume="3.98"></audio>
-      <audio id="sfx-ui-tick-tap" src="assets/sounds/ui-tick-tap.mp3" data-start="15.124" data-duration="0.123" data-media-start="0.000" data-track-index="12" data-volume="1.39"></audio>
-      <audio id="sfx-stamp-thunk" src="assets/sounds/stamp-thunk.mp3" data-start="15.381" data-duration="0.951" data-media-start="0.000" data-track-index="13" data-volume="3.93"></audio>
-      <audio id="sfx-whoosh-into-balance" src="assets/sounds/whoosh-into-balance.mp3" data-start="17.930" data-duration="0.490" data-media-start="0.000" data-track-index="14" data-volume="1.03"></audio>
-      <audio id="sfx-message-tick" src="assets/sounds/message-tick.mp3" data-start="22.614" data-duration="0.952" data-media-start="0.000" data-track-index="15" data-volume="2.21"></audio>
-      <audio id="sfx-logo-sting" src="assets/sounds/logo-sting.mp3" data-start="23.839" data-duration="0.761" data-media-start="0.000" data-track-index="16" data-volume="3.98"></audio>
+      <audio data-hf-id="hf-qd70" id="sfx-whoosh-into-app" src="assets/sounds/whoosh-into-app.mp3" data-start="4.441" data-duration="0.448" data-media-start="0.000" data-track-index="10" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-x1x6" id="sfx-ui-tick-parchi" src="assets/sounds/ui-tick-parchi.mp3" data-start="4.743" data-duration="0.159" data-media-start="0.000" data-track-index="11" data-volume="3.98"></audio>
+      <audio data-hf-id="hf-9kwy" id="sfx-ui-tick-tap" src="assets/sounds/ui-tick-tap.mp3" data-start="7.624" data-duration="0.123" data-media-start="0.000" data-track-index="12" data-volume="1.39"></audio>
+      <audio data-hf-id="hf-bc5s" id="sfx-stamp-thunk" src="assets/sounds/stamp-thunk.mp3" data-start="7.781" data-duration="0.951" data-media-start="0.000" data-track-index="13" data-volume="3.93"></audio>
+      <audio data-hf-id="hf-mcyk" id="sfx-whoosh-into-balance" src="assets/sounds/whoosh-into-balance.mp3" data-start="9.930" data-duration="0.490" data-media-start="0.000" data-track-index="14" data-volume="1.03"></audio>
+      <audio data-hf-id="hf-2tvi" id="sfx-message-tick" src="assets/sounds/message-tick.mp3" data-start="13.147" data-duration="0.952" data-media-start="0.000" data-track-index="15" data-volume="2.21"></audio>
+      <audio data-hf-id="hf-7cml" id="sfx-logo-sting" src="assets/sounds/logo-sting.mp3" data-start="14.839" data-duration="0.761" data-media-start="0.000" data-track-index="16" data-volume="3.98"></audio>
       <!-- SFX:END -->
       <!-- VO:BEGIN (ElevenLabs stock voices via scripts/ad-vo.ts; timings from assets/vo/VO.json; each line sits in a gap between the sound effects) -->
-      <audio id="vo-1-hands" src="assets/vo/vo-1-hands.mp3" data-start="0.700" data-duration="2.220" data-media-start="0" data-track-index="20" data-volume="1"></audio>
-      <audio id="vo-2-says" src="assets/vo/vo-2-says.mp3" data-start="5.000" data-duration="1.270" data-media-start="0" data-track-index="21" data-volume="1"></audio>
-      <audio id="vo-3a-bolo" src="assets/vo/vo-3a-bolo.mp3" data-start="9.500" data-duration="1.580" data-media-start="0" data-track-index="22" data-volume="1"></audio>
-      <audio id="vo-3b-parchi" src="assets/vo/vo-3b-parchi.mp3" data-start="12.450" data-duration="1.250" data-media-start="0" data-track-index="23" data-volume="1"></audio>
-      <audio id="vo-4-likhdo" src="assets/vo/vo-4-likhdo.mp3" data-start="16.050" data-duration="1.810" data-media-start="0" data-track-index="24" data-volume="1"></audio>
-      <audio id="vo-5-remind" src="assets/vo/vo-5-remind.mp3" data-start="18.750" data-duration="3.610" data-media-start="0" data-track-index="25" data-volume="1"></audio>
-      <audio id="vo-6-close" src="assets/vo/vo-6-close.mp3" data-start="24.850" data-duration="2.130" data-media-start="0" data-track-index="26" data-volume="1"></audio>
+      <audio data-hf-id="hf-mep5" id="vo-1-hands" src="assets/vo/vo-1-hands.mp3" data-start="0.15" data-duration="2.220" data-media-start="0" data-track-index="20" data-volume="1"></audio>
+      <audio data-hf-id="hf-qe27" id="vo-2-says" src="assets/vo/vo-2-says.mp3" data-start="2.7" data-duration="1.270" data-media-start="0" data-track-index="21" data-volume="1"></audio>
+      <audio data-hf-id="hf-abtt" id="vo-3a-bolo" src="assets/vo/vo-3a-bolo.mp3" data-start="4.6" data-duration="1.580" data-media-start="0" data-track-index="22" data-volume="1"></audio>
+      <audio data-hf-id="hf-voyp" id="vo-3b-parchi" src="assets/vo/vo-3b-parchi.mp3" data-start="6.25" data-duration="1.250" data-media-start="0" data-track-index="23" data-volume="1"></audio>
+      <audio data-hf-id="hf-sydl" id="vo-4-likhdo" src="assets/vo/vo-4-likhdo.mp3" data-start="8.2" data-duration="1.810" data-media-start="0" data-track-index="24" data-volume="1"></audio>
+      <audio data-hf-id="hf-vpla" id="vo-5-remind" src="assets/vo/vo-5-remind.mp3" data-start="10.25" data-duration="3.610" data-media-start="0" data-track-index="25" data-volume="1"></audio>
+      <audio data-hf-id="hf-bzi2" id="vo-6-close" src="assets/vo/vo-6-close.mp3" data-start="15.5" data-duration="2.130" data-media-start="0" data-track-index="26" data-volume="1"></audio>
       <!-- VO:END -->
     </div>
     <script>

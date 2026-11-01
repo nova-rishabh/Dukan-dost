@@ -136,5 +136,18 @@ export interface OwnerRecord {
   /** E.164, for example +91XXXXXXXXXX */
   mobile: string;
   passcodeHash: string;
+  /** Incremented atomically when credentials change or all device sessions are revoked. */
+  authVersion: number;
   createdAt: string;
+}
+
+/** One send attempt per reviewed pay-link draft; no recipient or text is persisted here. */
+export interface ReminderDelivery {
+  shopId: string;
+  token: string;
+  fingerprint: string;
+  status: "pending" | "sent" | "unknown";
+  createdAt: string;
+  messageId?: string;
+  simulated?: boolean;
 }

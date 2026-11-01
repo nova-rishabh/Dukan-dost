@@ -76,3 +76,27 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - On owner instruction, committed the verified improvements (4b2df73), merged with --no-ff (b6a1ce9), and pushed master. pnpm verify returned VERIFY-PASS: 187 unit tests, 48 daemon tests, 34 browser tests.
 - Used agency-product-manager and agency-workflow-architect skills with independent reality/security reviews to produce docs/19_COMPLETION_ROADMAP.md and docs/workflows drafts. Identified 24 product/operational gaps, priorities, dependencies and release gates. No proposed new product features are implemented by this planning change.
 - Public signup/account model remains an owner decision. Roadmap is Draft; deployment and live WhatsApp delivery remain unverified.
+
+## 2026-11-01: first roadmap implementation
+- Owner approved starting and selected the existing WhatsApp service for public signup. Work on codex/phase-zero-reliability.
+- Added session revocation/logout-all, login/CAPTCHA retry, request deadlines, durable reminder-send reservation and stale draft rejection, encrypted DB backup/restore CLI and synthetic rehearsal, production DB guard, persistent bootstrap code and CI workflow.
+- Added English account/header/security preview with persisted language choice; other shop surfaces remain Hinglish.
+- pnpm verify: VERIFY-PASS (222 unit/fixture tests, 48 daemon tests, 42 browser tests). English account screenshot inspected at 390 px; axe/overflow/input-preservation checks passed.
+- docs/20_OPERATIONS.md records backup, restore, secret rotation and release requirements. No hosted CI, live deployment or real WhatsApp delivery verified. Tenant-safe public signup, full locale coverage, dashboard and inventory remain ahead.
+
+## 2026-11-01: test everything request
+- Ran the complete suite, added three API regressions, corrected the new malformed-body test to send raw bytes, and reran pnpm verify: VERIFY-PASS (222 unit/fixture, 48 daemon, 45 browser, 25 asset checks).
+- pnpm shots passed at 390/1440; inspected refreshed stills. Live ElevenLabs TTS/Scribe and Gemini structured-output smoke scenarios both passed using fictional data. No real WhatsApp send. Both production dependency audits reported zero known advisories.
+- Final local summary read burst: 40 requests, concurrency 10, p95 14.7 ms/max 15.5 ms; no production capacity claim. Full report and untested boundaries: docs/21_TEST_REPORT.md.
+
+## 2026-11-01: simulated jury review
+- Found original proxy prompt at ../ai_judge_prompt_v2.md and jury/rubric notes in docs/00_INFO.md. On owner request, three separately tasked subagents evaluated investor, creative and AI-juror lenses; these are simulations, not actual judge opinions.
+- Current scores 75/72/74; equal-weight mean 73.7/100. Conditional proof/package scenario 87/84/87, mean 86, not earned or guaranteed. Five-link-only artifact diagnostic mean64.3; actual public-link access unverified.
+- Biggest priorities: public fictional demo and final5links, replace URL/QR placeholders, refresh stale deck claims/counts, sharp ad proof, timed pitch, consented shopkeeper evidence. /try on real shop redirects into protected shop; do not expose real ledger to solve demo access.
+- Parent pnpm verify rerun: VERIFY-PASS (222 unit/fixture,48daemon,45browser,25assets). Reports: docs/22_JURY_REVIEW.md and docs/reviews/judging/. No app changes.
+
+## 2026-11-01: faster ad, music and supplied live URLs
+- User provided app and WhatsApp Render URLs. Read-only HTTP checks found app200 but setupNeeded=true, /try→/setup; service /admin200 login, root404. No pairing/delivery or setup action performed.
+- Used HyperFrames/media-use/product-motion skills for20-second recut (previous30s preserved),120BPM CC0 music, ducking, sharp fictional app captures and real product CTA. Stamp at8s; measuredpeak8.000113s. Final20s1080×1920/30fps MP4 rendered; -17.53LUFS/-1.81dBTP; seven VO lines recovered by transcription, no human listening claim.
+- HyperFrames check zero errors, one intentional wipe warning. pnpm verify returned VERIFY-PASS with222unit/fixture48daemon45browser and26asset checks; final changed balance timing also passed HyperFrames check and asset validation.
+- docs/23_PATH_TO_EXCEPTIONAL_SUBMISSION.md records full-rubric evidence targets, setup-gated public-demo gap, remaining packaging and real-user proof. No score100 is promised or newly assigned.

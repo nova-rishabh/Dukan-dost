@@ -1,15 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocale } from "./LocaleProvider";
 import { api, ApiError, type Me } from "@/lib/client/api";
 
 type Mode = "passcode" | "whatsapp";
 
-const msg = (e: unknown, fallback: string) => (e instanceof ApiError ? e.hint : fallback);
 const svgSrc = (svg: string) => `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 
 /** Two ways in: passcode, or a code sent to the owner's WhatsApp by the WhatsApp service. */
 export function LoginClient() {
+  const { t, hint } = useLocale();
   const [me, setMe] = useState<Me | null>(null);
   const [mode, setMode] = useState<Mode>("passcode");
   const [mobile, setMobile] = useState("");
@@ -20,31 +21,46 @@ export function LoginClient() {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [captchaState, setCaptchaState] = useState<"idle" | "loading" | "ready" | "failed">("idle");
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const captchaPending = useRef(false);
 
-  useEffect(() => {
-    api
-      .me()
-      .then((m) => {
-        setMe(m);
-        if (m.setupNeeded) window.location.assign("/setup");
-        else if (m.loggedIn || !m.authRequired) window.location.assign("/shop");
-      })
-      .catch(() => setError("Net nahi hai. Thodi der baad try karo."));
-  }, []);
+  const loadMe = useCallback(async () => {
+    setLoadError(null);
+    try {
+      const m = await api.me();
+      setMe(m);
+      if (m.setupNeeded) window.location.assign("/setup");
+      else if (m.loggedIn || !m.authRequired) window.location.assign("/shop");
+    } catch (e) {
+      setLoadError(hint(e, "loginLoadFailed"));
+    }
+  }, [hint]);
+
+  useEffect(() => { void loadMe(); }, [loadMe]);
 
   const loadCaptcha = useCallback(async () => {
+    if (captchaPending.current) return;
+    captchaPending.current = true;
+    setCaptchaState("loading");
+    setCaptchaError(null);
+    setCaptcha(null);
     setCaptchaCode("");
     try {
       setCaptcha(await api.waCaptcha());
+      setCaptchaState("ready");
     } catch (e) {
-      setCaptcha(null);
-      setError(msg(e, "Photo wala code nahi aaya. Dobara try karo."));
+      setCaptchaState("failed");
+      setCaptchaError(hint(e, "captchaFailed"));
+    } finally {
+      captchaPending.current = false;
     }
-  }, []);
+  }, [hint]);
 
   useEffect(() => {
-    if (mode === "whatsapp" && step === "details" && !captcha) void loadCaptcha();
-  }, [mode, step, captcha, loadCaptcha]);
+    if (mode === "whatsapp" && step === "details" && captchaState === "idle") void loadCaptcha();
+  }, [mode, step, captchaState, loadCaptcha]);
 
   async function run(fn: () => Promise<void>) {
     setBusy(true);
@@ -52,7 +68,7 @@ export function LoginClient() {
     try {
       await fn();
     } catch (e) {
-      setError(msg(e, "Kuch gadbad hui. Dobara try karo."));
+      setError(hint(e, "requestFailed"));
     } finally {
       setBusy(false);
     }
@@ -66,7 +82,7 @@ export function LoginClient() {
 
   const sendCode = () =>
     run(async () => {
-      if (!captcha) throw new ApiError("captcha", "no captcha", "Pehle photo ke akshar likho.", 0);
+      if (!captcha) throw new ApiError("captcha", "no captcha", t("captchaRequired"), 0);
       try {
         await api.waSend(mobile, captcha.captchaId, captchaCode);
         setStep("code");
@@ -83,22 +99,23 @@ export function LoginClient() {
     });
 
   if (!me) {
-    return (
-      <p aria-busy="true" role="status">
-        Khul raha hai…
-      </p>
-    );
+    return loadError ? (
+      <div className="grid gap-3">
+        <p className="sticker p-3 font-semibold" role="alert" data-testid="login-load-error">{loadError}</p>
+        <button type="button" className="btn w-fit" onClick={() => void loadMe()}>{t("retry")}</button>
+      </div>
+    ) : <p aria-busy="true" role="status">{t("loading")}</p>;
   }
 
   return (
     <div className="grid gap-4">
       {me.waLogin ? (
-        <div role="group" aria-label="Login ka tareeka" className="flex flex-wrap gap-2">
+        <div role="group" aria-label={t("loginMethod")} className="flex flex-wrap gap-2">
           <button type="button" className="chip" aria-pressed={mode === "passcode"} onClick={() => { setMode("passcode"); setError(null); }}>
-            Passcode se
+            {t("passwordMode")}
           </button>
           <button type="button" className="chip" aria-pressed={mode === "whatsapp"} onClick={() => { setMode("whatsapp"); setStep("details"); setError(null); }} data-testid="mode-whatsapp">
-            WhatsApp code se
+            {t("whatsappMode")}
           </button>
         </div>
       ) : null}
@@ -112,15 +129,15 @@ export function LoginClient() {
           }}
         >
           <label className="font-semibold" htmlFor="login-mobile">
-            Mobile number
+            {t("mobile")}
           </label>
           <input id="login-mobile" className="input" type="tel" inputMode="tel" autoComplete="tel" value={mobile} onChange={(e) => setMobile(e.target.value)} />
           <label className="font-semibold" htmlFor="login-passcode">
-            Passcode
+            {t("password")}
           </label>
           <input id="login-passcode" className="input" type="password" autoComplete="current-password" value={passcode} onChange={(e) => setPasscode(e.target.value)} />
           <button type="submit" className="btn btn-primary w-fit" disabled={busy || !mobile.trim() || !passcode} data-testid="login-submit">
-            Login karo
+            {t("signIn")}
           </button>
         </form>
       ) : step === "details" ? (
@@ -132,26 +149,27 @@ export function LoginClient() {
           }}
         >
           <label className="font-semibold" htmlFor="wa-mobile">
-            Mobile number (jis par WhatsApp hai)
+            {t("whatsappMobile")}
           </label>
           <input id="wa-mobile" className="input" type="tel" inputMode="tel" autoComplete="tel" value={mobile} onChange={(e) => setMobile(e.target.value)} />
           <div className="sticker flex items-center justify-between gap-3 p-3">
             {captcha ? (
               /* an SVG data URL in an <img>: images cannot run scripts */
-              <img src={svgSrc(captcha.svg)} alt="Photo mein likhe hue akshar" width={180} height={60} data-testid="wa-captcha" />
+              <img src={svgSrc(captcha.svg)} alt={t("captchaAlt")} width={180} height={60} data-testid="wa-captcha" />
             ) : (
-              <span aria-busy="true">Photo aa raha hai…</span>
+              <span aria-busy={captchaState === "loading"}>{captchaState === "failed" ? t("captchaMissing") : t("captchaLoading")}</span>
             )}
-            <button type="button" className="chip" onClick={() => void loadCaptcha()}>
-              Naya photo
+            <button type="button" className="chip" disabled={captchaState === "loading" || busy} onClick={() => void loadCaptcha()}>
+              {t("newImage")}
             </button>
           </div>
+          {captchaError ? <p role="alert" data-testid="captcha-error">{captchaError}</p> : null}
           <label className="font-semibold" htmlFor="wa-captcha-code">
-            Photo mein jo likha hai
+            {t("captchaLabel")}
           </label>
           <input id="wa-captcha-code" className="input" autoComplete="off" autoCapitalize="characters" maxLength={8} value={captchaCode} onChange={(e) => setCaptchaCode(e.target.value)} data-testid="wa-captcha-code" />
           <button type="submit" className="btn btn-reminder w-fit" disabled={busy || !mobile.trim() || !captcha || !captchaCode.trim()} data-testid="wa-send">
-            Code bhejo
+            {t("sendCode")}
           </button>
         </form>
       ) : (
@@ -162,17 +180,17 @@ export function LoginClient() {
             void verifyCode();
           }}
         >
-          <p>Agar yeh number sahi hai to WhatsApp par 6 ank ka code aaya hoga. 5 minute mein khatam ho jaata hai.</p>
+          <p>{t("codeSent")}</p>
           <label className="font-semibold" htmlFor="wa-code">
-            6 ank ka code
+            {t("sixDigitCode")}
           </label>
           <input id="wa-code" className="input" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} data-testid="wa-code" />
           <div className="flex flex-wrap gap-3">
             <button type="submit" className="btn btn-primary" disabled={busy || code.length !== 6} data-testid="wa-verify">
-              Login karo
+              {t("signIn")}
             </button>
-            <button type="button" className="btn" onClick={() => { setStep("details"); setCaptcha(null); setCode(""); setError(null); }}>
-              Naya code mangao
+            <button type="button" className="btn" onClick={() => { setStep("details"); setCaptcha(null); setCaptchaState("idle"); setCode(""); setError(null); }}>
+              {t("newCode")}
             </button>
           </div>
         </form>

@@ -26,7 +26,7 @@ export const POST = route(
     if (ctx.loginLimiter.count(key, now) >= ctx.loginLimiter.max) throw new AuthError("locked", "Too many wrong setup codes", "Bahut galat koshish. 15 minute baad try karo.", 429);
     if (!same(body.setupCode.trim(), ctx.setupCode)) {
       ctx.loginLimiter.fail(key, now);
-      throw new AuthError("bad_credentials", "Setup code is wrong", "Setup code galat hai. Woh .data/setup-code.txt mein hai.", 403);
+      throw new AuthError("bad_credentials", "Setup code is wrong", "Setup code galat hai. Operator se setup code lo.", 403);
     }
     const owner = await setupOwner(ctx.store, {
       shopId: ctx.shopId,

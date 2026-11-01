@@ -48,6 +48,8 @@ describe("a real shop on SQLite through the HTTP route handlers", () => {
   beforeEach(() => {
     g.__dukaan = undefined;
     resetRateLimits();
+    process.env.DUKAAN_MODE = "shop";
+    process.env.DUKAAN_TEST_MEMORY = "1";
     process.env.DUKAAN_DB_FILE = ":memory:";
     process.env.PROPOSAL_SECRET = "route-test-secret-route-test-secret";
     process.env.SETUP_CODE = "setup-code-for-tests";

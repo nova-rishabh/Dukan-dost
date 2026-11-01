@@ -17,24 +17,52 @@ export class ApiError extends Error {
   }
 }
 
-async function call<T>(url: string, init?: RequestInit): Promise<T> {
-  let res: Response;
+/** One deadline includes headers and body consumption. Requests are never retried here. */
+export const CLIENT_REQUEST_TIMEOUT_MS = 30_000;
+
+async function request<T>(url: string, init: RequestInit | undefined, read: (response: Response) => Promise<T>): Promise<T> {
+  const controller = new AbortController();
+  let timedOut = false;
+  const cancel = () => controller.abort();
+  const signal = init?.signal;
+  if (signal?.aborted) controller.abort();
+  else signal?.addEventListener("abort", cancel, { once: true });
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+      reject(new Error("Request deadline exceeded"));
+    }, CLIENT_REQUEST_TIMEOUT_MS);
+  });
   try {
-    res = await fetch(url, init);
-  } catch {
-    throw new ApiError("network", "Network error", "Net nahi hai. Thodi der baad try karo.", 0);
+    return await Promise.race([fetch(url, { ...init, signal: controller.signal }).then(read), deadline]);
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    const write = init?.method !== undefined && !["GET", "HEAD"].includes(init.method.toUpperCase());
+    const code = timedOut ? "timeout" : controller.signal.aborted ? "aborted" : "network";
+    throw new ApiError(code, timedOut ? "Request timed out" : "Request interrupted", write
+      ? "Jawab nahi mila. Kaam hua ho sakta hai. Dobara dabane se pehle khata ya status check karo."
+      : timedOut ? "Jawab der se aa raha hai. Dobara kholo." : "Net nahi hai. Connection check karke dobara kholo.", 0);
+  } finally {
+    if (timer) clearTimeout(timer);
+    signal?.removeEventListener("abort", cancel);
   }
-  const json = (await res.json().catch(() => null)) as ({ ok: boolean; error?: ApiFailure } & Record<string, unknown>) | null;
-  if (!res.ok || !json || json.ok === false) {
-    const e = json?.error;
-    // a real shop needs the owner's login: send the browser to the right screen instead of showing a raw error
-    if (res.status === 401 && typeof window !== "undefined" && (e?.code === "auth_required" || e?.code === "setup_required")) {
-      const target = e.code === "setup_required" ? "/setup" : "/login";
-      if (window.location.pathname !== target) window.location.assign(target);
+}
+
+async function call<T>(url: string, init?: RequestInit): Promise<T> {
+  return request(url, init, async (res) => {
+    const json = (await res.json().catch(() => null)) as ({ ok: boolean; error?: ApiFailure } & Record<string, unknown>) | null;
+    if (!res.ok || !json || json.ok === false) {
+      const e = json?.error;
+      if (res.status === 401 && typeof window !== "undefined" && (e?.code === "auth_required" || e?.code === "setup_required")) {
+        const target = e.code === "setup_required" ? "/setup" : "/login";
+        if (window.location.pathname !== target) window.location.assign(target);
+      }
+      throw new ApiError(e?.code ?? "unknown", e?.message ?? "Request failed", e?.hint ?? "Thodi der baad try karo.", res.status);
     }
-    throw new ApiError(e?.code ?? "unknown", e?.message ?? "Request failed", e?.hint ?? "Thodi der baad try karo.", res.status);
-  }
-  return json as unknown as T;
+    return json as unknown as T;
+  });
 }
 
 const post = <T>(url: string, body: unknown) =>
@@ -86,6 +114,7 @@ export const api = {
   setup: (body: { setupCode: string; shopName: string; name: string; mobile: string; passcode: string; upiVpa?: string }) => post<{ owner: { name: string } }>("/api/auth/setup", body),
   login: (mobile: string, passcode: string) => post<{ owner: { name: string } }>("/api/auth/login", { mobile, passcode }),
   logout: () => post<Record<string, never>>("/api/auth/logout", {}),
+  logoutAll: () => post<{ revoked: boolean }>("/api/auth/logout-all", { confirmed: true }),
   changePasscode: (next: string, current?: string) => post<{ changed: boolean }>("/api/auth/passcode", { current, next }),
   waCaptcha: () => call<{ captchaId: string; svg: string }>("/api/auth/wa/captcha"),
   waSend: (mobile: string, captchaId: string, captchaCode: string) => post<{ sent: boolean }>("/api/auth/wa/send", { mobile, captchaId, captchaCode }),
@@ -117,8 +146,9 @@ export const api = {
   resetDemo: () => post<{ reset: boolean }>("/api/demo/reset", {}),
   debug: () => call<{ events: Array<{ id: number; createdAt: string; payload: Record<string, unknown> }> }>("/api/debug"),
   async speak(text: string): Promise<Blob | null> {
-    const res = await fetch("/api/speak", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ text }) });
-    if (!res.ok || !(res.headers.get("content-type") ?? "").startsWith("audio/")) return null;
-    return res.blob();
+    return request("/api/speak", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ text }) }, async (res) => {
+      if (!res.ok || !(res.headers.get("content-type") ?? "").startsWith("audio/")) return null;
+      return res.blob();
+    });
   },
 };

@@ -147,3 +147,31 @@ test("delete-my-data erases the business data after the typed phrase and keeps t
   expect(list.customers).toEqual([]);
   expect((await page.request.get("/api/summary")).status()).toBe(200);
 });
+
+test("password change and logout-all revoke copied device cookies", async ({ page, browser }) => {
+  await signIn(page);
+  const otherDevice = await browser.newContext({ baseURL: "http://localhost:3102" });
+  const saved = (await page.context().cookies()).filter((c) => c.name === "dd_session");
+  await otherDevice.addCookies(saved);
+  expect((await otherDevice.request.get("/api/summary")).status()).toBe(200);
+  const next = "replacement-passcode-for-test";
+  const changed = await page.request.post("/api/auth/passcode", { data: { current: PASS, next } });
+  expect(changed.status()).toBe(200);
+  expect((await page.request.get("/api/summary")).status()).toBe(401);
+  expect((await otherDevice.request.get("/api/summary")).status()).toBe(401);
+  const login = await page.request.post("/api/auth/login", { data: { mobile: TEN, passcode: next } });
+  expect(login.status()).toBe(200);
+  // Restore the fixture passcode while proving the new credential can authorize a change.
+  expect((await page.request.post("/api/auth/passcode", { data: { current: next, next: PASS } })).status()).toBe(200);
+  await signIn(page);
+  await otherDevice.addCookies((await page.context().cookies()).filter((c) => c.name === "dd_session"));
+  expect((await page.request.post("/api/auth/logout-all", { data: {} })).status()).toBe(400);
+  expect((await page.request.get("/api/summary")).status()).toBe(200);
+  await page.goto("/shop/settings");
+  await page.getByTestId("logout-all").click();
+  await page.getByTestId("logout-all-confirm").click();
+  await expect(page.getByText("Sab device se logout ho gaya. Dobara login karo.")).toBeVisible();
+  expect((await otherDevice.request.get("/api/summary")).status()).toBe(401);
+  expect((await page.request.get("/api/summary")).status()).toBe(401);
+  await otherDevice.close();
+});

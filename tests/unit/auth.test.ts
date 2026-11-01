@@ -49,7 +49,7 @@ describe("passcodes", () => {
 });
 
 describe("session tokens", () => {
-  const payload = { mobile: OWNER, shopId: SHOP };
+  const payload = { mobile: OWNER, shopId: SHOP, authVersion: 0 };
   it("round-trips and carries the owner and shop", () => {
     const t = signSession(payload, { now: NOW, secret: SIGNING });
     expect(verifySession(t, { now: later(60_000), secret: SIGNING })).toMatchObject(payload);

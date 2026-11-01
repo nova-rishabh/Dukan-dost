@@ -1,6 +1,6 @@
 # Dukaan Dost completion roadmap
 
-Date: 2026-11-01. Status: draft for owner review; authorizes no new app implementation. Evidence: repository inspection, product-manager review, workflow discovery, and independent account/security and reality checks. Skills: agency-product-manager and agency-workflow-architect, with their required review roles. No competitor claims or adoption figures are assumed.
+Date: 2026-11-01. Status: owner said Start on 2026-11-01; implementation underway in verified slices. Detailed future workflow/design decisions remain review gates. Evidence: repository inspection, product-manager review, workflow discovery, and independent account/security and reality checks. Skills: agency-product-manager and agency-workflow-architect, with their required review roles. No competitor claims or adoption figures are assumed.
 
 ## What users should get
 
@@ -8,9 +8,9 @@ A shopkeeper can choose English or Hindi/Hinglish, open their own secure shop wi
 
 ## Decisions that change the scope
 
-1. Account model: current code serves one configured shop per deployment. Proposed public product: many owners, each with one independent shop. Multiple shops per owner and staff roles come later. This assumption needs owner confirmation before account architecture is built. If only one shop is wanted, retain protected first-run setup and skip tenant signup work.
+1. Account model: current code serves one configured shop per deployment. Owner confirmed public signup for many shops on 2026-11-01. Plan for many owners, each with one independent shop initially. Multiple shops per owner and staff roles come later. Tenant isolation is a prerequisite for public registration.
 2. “Pass to create an account” may mean the operator setup code or the mandatory password. They are different. Proposed public signup removes the operator-code requirement by creating a new isolated shop after verified identity; passwordless signup depends on reliable verification and recovery. Never remove protection from the existing shared shop.
-3. Inventory and public signup expand explicit v1 non-goals in docs/01_PRD.md. Amend that PRD and the relevant ADRs with owner approval before implementation. The existing planning-skill waiver was for the previous app plan; this is a new draft for review.
+3. Inventory and public signup expand explicit v1 non-goals in docs/01_PRD.md. Amend that PRD and the relevant ADRs with owner approval before implementation. Owner instructed Start after reviewing this roadmap; this authorizes the first implementation slices. Future domain/schema decisions still need concrete review before enabling public signup.
 4. Proposed completion target: a reliable pilot for independent shop owners, not GST accounting or an ERP. Inventory tracks physical movements; the credit ledger is not a sales register.
 
 ## Gap audit
@@ -96,10 +96,16 @@ Measure setup completion, time to first confirmed entry, correction/void rate, s
 - Replace {{APP_URL}} in deliverables after the final URL is verified; fix ad review D10–D14, listen to voice-over and re-render/test outputs. See docs/15_TODO.md. This is a separate media workstream.
 - Official WhatsApp migration remains owner-led with provided credentials. Use the manual WhatsApp draft flow when service delivery is unavailable; never introduce automatic reminders by implication.
 - Staff roles, multiple shops per owner, billing/GST, full purchases/expenses/profit, automatic reconciliation, loyalty and supplier automation are later scope. Revisit from pilot evidence rather than adding all of them to the first release.
-- Next concrete slice: phase 0 and language foundation, with account-model decision in parallel. Approve the roadmap and individual workflow/design drafts before starting new implementation.
+- Next concrete slice: phase 0 and language foundation, with tenant-safe account design in parallel. Approve the roadmap and individual workflow/design drafts before starting new implementation.
 
 Workflow reference: docs/workflows/REGISTRY.md. Signup and inventory have separate draft workflow documents; other planned workflows need detailed contracts before their implementation phase. This is a prioritized completion roadmap, not a claim that every future workflow is build-ready.
 
 ## Independent review
 
 Reality-checker review confirmed source findings and requested consistent effort totals, exact-paise before prices, signup proof-based membership creation, lost-response recovery and explicit unknown stock rules. Security review requested browser/purpose-bound verification, durable identity uniqueness, atomic proof claim and recovery as a launch gate. These corrections are incorporated in this roadmap and the two workflow drafts. Status remains Draft; no public-launch certification is implied.
+
+## Progress: first implementation slice
+
+2026-11-01, codex/phase-zero-reliability: persistent session revocation and logout-all, login/CAPTCHA recovery, bounded client requests, durable per-draft reminder reservations with stale/expired protection, encrypted snapshot/restore CLI, durable bootstrap code, fail-closed production DB validation and CI workflow implemented. pnpm verify returned VERIFY-PASS: 222 unit/fixture tests, 48 daemon tests, 42 browser tests. Backup recovery was rehearsed only on synthetic data; hosted CI, off-host scheduling and live deployment remain unverified. See docs/20_OPERATIONS.md.
+
+English/Hinglish cookie/catalog foundation plus header/account/security screens implemented and labelled English preview. Remaining shop/khata/help/reminder/pay copy and read-back are not fully localized. Owner chose the existing WhatsApp service for public-signup verification. Registration-purpose challenge/proof, durable identity uniqueness, tenant-aware request context and migration/isolation remain the next account slice; public signup is not exposed yet.

@@ -13,3 +13,9 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 .claude/
 .next-verify
+deliverables/ad/.thumbnails/
+deliverables/ad/.waveform-cache/
+deliverables/ad/.hyperframes/preview/
+deliverables/ad/.hyperframes/history-turn.json
+deliverables/ad/.hyperframes/hf-ids-stamped.json
+deliverables/ad/.hyperframes/artifacts/checks/

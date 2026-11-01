@@ -1,6 +1,6 @@
 # WORKFLOW: independent shop signup
 
-Version 0.1; 2026-11-01; Draft. Implements roadmap G02/G04/G05. Public multi-owner model is an unconfirmed assumption. This is behavior/design intent; endpoints below are proposed contracts, not existing APIs.
+Version 0.1; 2026-11-01; Draft. Implements roadmap G02/G04/G05. Owner confirmed public signup for many shops on 2026-11-01; the workflow remains Draft. This is behavior/design intent; endpoints below are proposed contracts, not existing APIs.
 
 Actors: visitor, verification service, account service, durable store, operator. Prerequisites: tenant authorization infrastructure (new membership is created during completion), rate limits, revocable sessions, provider configuration and durable atomic account/shop creation. Existing operator /setup remains protected and separate.
 
@@ -24,4 +24,4 @@ Resources: challenge and verification proof expire; incomplete onboarding expire
 
 Required tests: stolen challenge/onboarding IDs in a different browser; lost verification response; concurrent completion with different keys; duplicate normalized identity; first signup; invalid/expired/replayed proof; provider timeout; resend budget; concurrent duplicate completion; response lost after commit; interrupted onboarding; duplicate identity; cross-tenant ID substitution across customer/entry/stock/pay/export/message routes; session expiry/revocation; restore existing owner's shop; operator bootstrap cannot be claimed publicly. Password reset, lost-phone recovery and mobile change need a separate security-reviewed workflow before implementation, not a support bypass based on name/balance.
 
-Assumptions: owner chooses public multi-owner product and provides an approved verification channel. No choice of auth vendor, database migration or phone-number ownership policy is finalized. Public signup must not ship while tenant scope or recovery remains undefined.
+Confirmed scope: public signup for many shops. Owner selected the existing WhatsApp service for verification. Registration-purpose proof/session handling is still to be implemented separately from owner-only login. No choice of auth vendor, database migration or phone-number ownership policy is finalized. Public signup must not ship while tenant scope or recovery remains undefined.

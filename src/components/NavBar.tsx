@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useLocale } from "./LocaleProvider";
 import { api, type Me } from "@/lib/client/api";
 
 /** Demo shop: the two sample links. Real shop: login, or the shop and logout. */
 export function NavBar() {
+  const { t } = useLocale();
   const [me, setMe] = useState<Me | null>(null);
   useEffect(() => {
     api
@@ -23,28 +25,28 @@ export function NavBar() {
   }
 
   return (
-    <nav aria-label="Main" className="flex min-h-[48px] w-full flex-wrap items-center gap-2 md:w-auto">
+    <nav aria-label={t("mainNav")} className="flex min-h-[48px] w-full flex-wrap items-center gap-2 md:w-auto">
       {!me || !me.authRequired ? (
         <>
           <Link href="/try" className="btn">
-            Sample dukaan
+            {t("sampleShop")}
           </Link>
           <Link href="/shop" className="btn btn-primary">
-            Meri dukaan
+            {t("myShop")}
           </Link>
         </>
       ) : me.loggedIn ? (
         <>
           <Link href="/shop" className="btn btn-primary">
-            Meri dukaan
+            {t("myShop")}
           </Link>
           <button type="button" className="btn" onClick={logout} data-testid="logout">
-            Logout
+            {t("logout")}
           </button>
         </>
       ) : (
         <Link href={me.setupNeeded ? "/setup" : "/login"} className="btn btn-primary" data-testid="nav-login">
-          {me.setupNeeded ? "Dukaan set karo" : "Login"}
+          {me.setupNeeded ? t("setup") : t("login")}
         </Link>
       )}
     </nav>

@@ -1,0 +1,31 @@
+[
+  {
+    "role": "music-bed",
+    "title": "Upbeat loop",
+    "creator": "mistermender",
+    "source": "Openverse / Freesound",
+    "openverseId": "12966e50-ea5e-4600-9359-892b35661602",
+    "openverseSearchUrl": "https://api.openverse.org/v1/audio/?q=upbeat%20loop&license=cc0&page_size=20",
+    "landingUrl": "https://freesound.org/people/mistermender/sounds/512340/",
+    "downloadUrl": "https://cdn.freesound.org/previews/512/512340_5332360-hq.mp3",
+    "license": "cc0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "file": "upbeat-loop-125bpm.mp3",
+    "durationSeconds": 57.640249,
+    "sourceBpm": 125,
+    "bpmEvidence": "The creator's Freesound page tags the track 125bpm.",
+    "sha256": "6aa87f759c943ee361d37549b63dc587113bea54df4e33daee39ebbda79a217a",
+    "retrievedOn": "2026-11-01",
+    "notes": "Original CC0 source preview, unmodified. Source is categorized Music / Multiple instruments. Full-speed listening and vocal absence were not verified by this sourcing agent. Mix processing and timeline placement are recorded by the editor separately.",
+    "edit": {
+      "derivedFile": "upbeat-bed-120bpm.mp3",
+      "operations": [
+        "atempo=0.96 (125 to 120 BPM, pitch preserved)",
+        "trim20seconds",
+        "loudnorm -18 LUFS / -3 dBTP",
+        "50ms fade in / 1.2s fade out"
+      ],
+      "mix": "timeline volume automation ducks under VO and stamp"
+    }
+  }
+]

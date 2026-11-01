@@ -38,6 +38,8 @@ beforeEach(() => {
   resetRateLimits();
   daemon.sent.length = 0;
   Object.assign(process.env, {
+    DUKAAN_MODE: "shop",
+    DUKAAN_TEST_MEMORY: "1",
     DUKAAN_DB_FILE: ":memory:",
     PROPOSAL_SECRET: "route-test-secret-route-test-secret",
     SETUP_CODE: SETUP,
