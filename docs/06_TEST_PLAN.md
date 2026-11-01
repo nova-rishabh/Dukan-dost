@@ -136,7 +136,7 @@ All P0 acceptance criteria in 01_PRD.md pass; the 20-fixture gate passes; the re
 | Gate | Result | How to re-run |
 |---|---|---|
 | 20 utterance fixtures, offline rules interpreter | 20 of 20 pass; plus a test that no flagged intent is ever writable (21 tests in the file) | `pnpm vitest run tests/fixtures` |
-| Unit tests (number table, money, resolve via fixtures, ledger, proposal tokens, remind, UPI, pay tokens, adapters with mocked HTTP, gates, contrast) | 197 tests in 14 files pass (includes the 21 fixture tests, the store contract run against both stores, login and route protection, and the real WhatsApp daemon code in-process) | `pnpm test` |
+| Unit tests (number table, money, resolve via fixtures, ledger, proposal tokens, remind, UPI, pay tokens, adapters with mocked HTTP, gates, contrast) | 187 tests in 13 files pass (includes the 21 fixture tests, the store contract run against both stores, login and route protection, and the real WhatsApp daemon code in-process) | `pnpm test` |
 | End to end (Playwright, 390 px, keyless app) | 27 pass: the nine scripts in section 5 (script 8 split into three), Badlo edit, forged proposal and cross-site POST refused, CSP check, retention note, a real SQLite shop that needs setup then login (passcode and WhatsApp code with CAPTCHA), sends a reminder only after confirmation, and erases its data, plus axe on 7 pages | `pnpm test:e2e` |
 | axe (WCAG 2.2 A and AA tags) on landing, shop home, customer page, pay page, /try | no serious or critical violations | included above |
 | Design-token contrast | all pairs meet the minimums in 03 section 3 | `pnpm test` |
