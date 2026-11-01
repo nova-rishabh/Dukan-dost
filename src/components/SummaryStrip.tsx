@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { api, type Summary } from "@/lib/client/api";
 import { formatINR } from "@/lib/money";
 import { CountUp } from "./CountUp";
 
 export function SummaryStrip({ summary, onChanged }: { summary: Summary; onChanged: () => void }) {
+  const [pending, setPending] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
   return (
     <section aria-label="Aaj ka hisaab" className="grid gap-3 md:grid-cols-3" data-testid="summary">
       <div className="sticker bg-sindoor p-4" style={{ background: "var(--sindoor)" }}>
@@ -29,6 +32,7 @@ export function SummaryStrip({ summary, onChanged }: { summary: Summary; onChang
       </div>
       <div className="sticker p-4" style={{ background: "var(--bahi-page)" }}>
         <h2 className="text-xl">Kam hai</h2>
+        {error ? <p role="alert">{error}</p> : null}
         {summary.lowStock.length === 0 ? (
           <p>Abhi koi cheez kam nahi.</p>
         ) : (
@@ -41,9 +45,13 @@ export function SummaryStrip({ summary, onChanged }: { summary: Summary; onChang
                 <button
                   type="button"
                   className="btn"
+                  disabled={pending.includes(f.id)}
                   onClick={async () => {
-                    await api.resolveStock(f.id);
-                    onChanged();
+                    setPending((p) => [...p, f.id]);
+                    setError(null);
+                    try { await api.resolveStock(f.id); onChanged(); }
+                    catch { setError("Note nahi hata. Dobara Mangwa liya dabao."); }
+                    finally { setPending((p) => p.filter((id) => id !== f.id)); }
                   }}
                 >
                   Mangwa liya

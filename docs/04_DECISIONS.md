@@ -152,3 +152,9 @@ Format: Context, decision, alternatives, consequences, status. Add new entries a
 - **Cleaned from the zip:** `AGENTS.md`, the upstream README (it held a personal-looking number), the shipped `data/users.json` (a real-looking person's name, number and email), the demo page and browser script. Details in `services/wa-userauth/NOTICE.md`.
 - **Later:** the official WhatsApp Business Cloud API replaces the vendored client for real use (`docs/16_WHATSAPP_FACTS.md`); only `waSendMessage` and the OTP calls change.
 - **Still true:** one owner per shop, no staff accounts; the session is stateless (logout clears the cookie, changing `PROPOSAL_SECRET` signs everyone out); lockout counters are per process.
+
+## ADR-026: Munshi guidance and daily khata navigation
+- Status: accepted by owner on 2026-11-01 through approval of docs/18_AUDIT_AND_IMPROVEMENT_PLAN.md and waiver of the unavailable planning skill.
+- Decision: use owner-supplied transparent Munshi art as decorative guidance alongside text. Keep the stamp as the success moment; never use the illustrated QR as a payment or pairing QR.
+- Add customer name/area search and balance filters without modifying ledger values. Move WhatsApp, passcode and privacy controls into /shop/settings; add /shop/help for voice, direction and confirmation guidance.
+- Existing confirmation, integer-paise storage, void history and owner-triggered reminder rules remain unchanged. No new staff, payment settlement or automatic reminder behavior.

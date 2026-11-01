@@ -9,10 +9,12 @@ import { BahiPage } from "./BahiPage";
 import { BalanceChip } from "./BalanceChip";
 import { Parchi } from "./Parchi";
 import { ReminderSheet } from "./ReminderSheet";
+import { Munshi } from "./Munshi";
 import { Toast } from "./Toast";
 
 export function CustomerView({ id }: { id: string }) {
   const [data, setData] = useState<{ name: string; area?: string; rows: LedgerRow[]; balance: number } | null>(null);
+  const [loadError, setLoadError] = useState(false);
   const [missing, setMissing] = useState(false);
   const [sheet, setSheet] = useState(false);
   const [mark, setMark] = useState<Proposal | null>(null);
@@ -22,9 +24,12 @@ export function CustomerView({ id }: { id: string }) {
   const load = useCallback(async () => {
     try {
       const r = await api.customer(id);
+      setLoadError(false);
+      setMissing(false);
       setData({ name: r.customer.name, area: r.customer.area, rows: r.entries, balance: r.balancePaise });
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) setMissing(true);
+      else setLoadError(true);
     }
   }, [id]);
 
@@ -53,6 +58,7 @@ export function CustomerView({ id }: { id: string }) {
         </Link>
       </div>
     );
+  if (loadError) return <div className="mx-auto grid max-w-3xl gap-4 px-4 py-8" role="alert"><Munshi pose="retry" /><h1 className="text-[28px]">Khata nahi khula</h1><p>Connection check karke dobara try karo.</p><button className="btn w-fit" onClick={() => void load()}>Dobara kholo</button><Link href="/shop" className="btn w-fit">Sab customer</Link></div>;
   if (!data) return <p className="px-4 py-8" aria-busy="true">Khata khul raha hai…</p>;
 
   return (

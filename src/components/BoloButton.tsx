@@ -31,16 +31,26 @@ export function BoloButton({
   const btn = useRef<HTMLButtonElement>(null);
   const rec = useRef<MediaRecorder | null>(null);
   const stream = useRef<MediaStream | null>(null);
+  const context = useRef<AudioContext | null>(null);
+  const starting = useRef(false);
+  const generation = useRef(0);
   const chunks = useRef<Blob[]>([]);
   const startedAt = useRef(0);
   const raf = useRef(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pressed, setPressed] = useState(false);
 
-  useEffect(() => () => cleanup(), []);
+  useEffect(() => () => {
+    generation.current++;
+    const r = rec.current;
+    if (r) { r.onstop = null; r.ondataavailable = null; if (r.state !== "inactive") r.stop(); }
+    rec.current = null;
+    cleanup();
+  }, []);
 
   function cleanup() {
     cancelAnimationFrame(raf.current);
+    if (context.current) { void context.current.close().catch(() => undefined); context.current = null; }
     if (timer.current) clearTimeout(timer.current);
     stream.current?.getTracks().forEach((t) => t.stop());
     stream.current = null;
@@ -48,16 +58,19 @@ export function BoloButton({
   }
 
   async function start() {
-    if (rec.current) return;
+    if (rec.current || starting.current) return;
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
       onProblem("Is browser mein mic nahi chalta. Likh kar bolo.");
       onState("error");
       return;
     }
+    starting.current = true;
+    const current = generation.current;
     try {
       const s = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1, sampleRate: 16000 },
       });
+      if (current !== generation.current) { s.getTracks().forEach((t) => t.stop()); return; }
       stream.current = s;
       const mime = pickMime();
       const r = new MediaRecorder(s, mime ? { mimeType: mime } : undefined);
@@ -83,15 +96,18 @@ export function BoloButton({
       timer.current = setTimeout(stop, MAX_MS);
       meter(s);
     } catch {
+      rec.current = null;
       cleanup();
+      if (current !== generation.current) return;
       onProblem("Mic band hai. Allow karo, ya neeche likh kar bolo.");
       onState("error");
-    }
+    } finally { starting.current = false; }
   }
 
   function meter(s: MediaStream) {
     try {
       const ctx = new AudioContext();
+      context.current = ctx;
       const src = ctx.createMediaStreamSource(s);
       const an = ctx.createAnalyser();
       an.fftSize = 256;
@@ -135,7 +151,15 @@ export function BoloButton({
         setPressed(false);
         if (rec.current && Date.now() - startedAt.current > HOLD_MS) stop();
       }}
-      onPointerCancel={() => setPressed(false)}
+      onPointerCancel={() => {
+        setPressed(false);
+        generation.current++;
+        const r = rec.current;
+        if (r) { r.onstop = null; r.ondataavailable = null; if (r.state !== "inactive") r.stop(); }
+        rec.current = null;
+        cleanup();
+        onState("idle");
+      }}
       onClick={(e) => {
         // keyboard activation (Enter / Space) arrives as click with detail 0
         if (e.detail === 0) {
