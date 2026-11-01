@@ -1,0 +1,27 @@
+# WORKFLOW: independent shop signup
+
+Version 0.1; 2026-11-01; Draft. Implements roadmap G02/G04/G05. Public multi-owner model is an unconfirmed assumption. This is behavior/design intent; endpoints below are proposed contracts, not existing APIs.
+
+Actors: visitor, verification service, account service, durable store, operator. Prerequisites: tenant authorization infrastructure (new membership is created during completion), rate limits, revocable sessions, provider configuration and durable atomic account/shop creation. Existing operator /setup remains protected and separate.
+
+| Step / states | Action and proposed contract | Failure/recovery and observability |
+|---|---|---|
+| 1. anonymous → verification requested | POST /api/registration/challenge {mobile, locale, requestKey}; 202 {challengeId, retryAfterSeconds}. Verification send budget: 10s. | Invalid input 400; abuse 429 with retry delay; service unavailable 503. UI shows retry/cooldown, no account created. Persist challenge, expiry, attempt budget and request ID; logs omit mobile/code. A timeout does not assert “sent”; inspect/resume challenge rather than repeatedly sending. |
+| 2. requested → verified | POST /api/registration/verify {challengeId, code}; 200 {onboardingId, expiresAt}; request budget 10s. | Invalid/expired/used OTP gives typed generic error and controlled resend; repeated attempts lock challenge. OTP is consumed atomically and produces a short-lived purpose-bound onboarding proof. If identity already exists, resume authorized account/sign-in; do not expose another owner's details. |
+| 3. verified → shop active | POST /api/registration/complete {onboardingId, shopName, ownerName, locale, idempotencyKey}; 201 {shopId, nextPath}, session cookie; request budget 15s. UPI optional later. | Expired proof requires reverify. Repeat key returns original result. Conflicting completion cannot make a second shop. Commit account, membership and shop atomically; on storage error roll back active records and expose retry. Interrupted verified session resumes pending setup. Timeout-after-commit retrieves original result before retry. |
+| 4. active → first entry | Show onboarding with skip option and empty real shop; no demo seed in real shop. | Navigation/reload retains account and setup state. First money write still uses signed proposal and explicit confirmation. |
+
+Verification security and recovery requirements:
+- Bind challenge and onboarding proof to the initiating browser through a secure HttpOnly onboarding session or equivalent secret. Public IDs alone cannot claim an account. Bind proof to purpose and verified identity; never log proof/session/OTP.
+- A lost verification response can resume the verified result via an idempotent status request authorized by that same browser session; do not require OTP reuse or expose status using challengeId alone.
+- Enforce normalized verified identity uniqueness and one-shop entitlement durably. Different concurrent request keys cannot create duplicate accounts/shops.
+- Completion atomically claims the onboarding proof, creates account/shop/membership and stores the replay result. Derive owner identity from proof, never request fields. Result lookup remains authorized after completion.
+- Existing-account sign-in requires recent verification bound to that account/purpose. Password reset, lost-phone recovery and mobile change are separate required specs and hard public-launch gates.
+
+Common response error: {ok:false,error:{code,hint,retryable},requestId}. Hints localized; server selects authorized account/shop from proof/session, never client shopId alone. Budgets are proposed requirements, not current provider guarantees. Passwordless creation is conditional on reliable verification/recovery; a password can be optional only after identity is verified. Do not weaken current password rules silently.
+
+Resources: challenge and verification proof expire; incomplete onboarding expires under a documented retention policy. Cleanup revokes proofs and removes only incomplete records. Never delete an active shop after an ambiguous response. Logs expose request/state/error categories to operator without OTPs, sessions or identity data. Visitor sees requested/verified/creating/ready/retry/expired, never a false completion.
+
+Required tests: stolen challenge/onboarding IDs in a different browser; lost verification response; concurrent completion with different keys; duplicate normalized identity; first signup; invalid/expired/replayed proof; provider timeout; resend budget; concurrent duplicate completion; response lost after commit; interrupted onboarding; duplicate identity; cross-tenant ID substitution across customer/entry/stock/pay/export/message routes; session expiry/revocation; restore existing owner's shop; operator bootstrap cannot be claimed publicly. Password reset, lost-phone recovery and mobile change need a separate security-reviewed workflow before implementation, not a support bypass based on name/balance.
+
+Assumptions: owner chooses public multi-owner product and provides an approved verification channel. No choice of auth vendor, database migration or phone-number ownership policy is finalized. Public signup must not ship while tenant scope or recovery remains undefined.
