@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Offer poster" };
 export default function PosterPage() {
   return (
     <div className="mx-auto grid max-w-3xl gap-4 px-4 pb-8 pt-2 md:px-8">
-      <Link href="/shop" className="font-semibold underline">
+      <Link href="/shop" className="btn w-fit">
         Meri dukaan
       </Link>
       <h1 className="text-[40px] leading-tight">Kal ka offer poster</h1>

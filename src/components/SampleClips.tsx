@@ -35,10 +35,11 @@ export function SampleClips({ onPick, disabled, showNotes }: { onPick: (id: stri
         ))}
       </ul>
       {showNotes ? (
-        <ul className="mt-4 grid gap-1 text-base">
+        <ul className="mt-4 grid gap-3 text-base">
           {SAMPLE_CLIPS.map((c) => (
             <li key={c.id}>
-              <span className="font-semibold">{c.label}:</span> {c.note}
+              <span className="block font-semibold">{c.label}</span>
+              <span className="block">{c.note}</span>
             </li>
           ))}
         </ul>

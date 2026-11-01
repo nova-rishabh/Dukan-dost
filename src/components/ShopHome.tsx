@@ -36,7 +36,7 @@ export function ShopHome() {
     <div className="mx-auto grid max-w-5xl gap-5 px-4 pb-40 pt-2 md:px-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-[40px] leading-tight">{shopName || "Meri dukaan"}</h1>
-        <Link href="/shop/poster" className="btn btn-reminder">
+        <Link href="/shop/poster" className="btn">
           Offer poster banao
         </Link>
       </div>
