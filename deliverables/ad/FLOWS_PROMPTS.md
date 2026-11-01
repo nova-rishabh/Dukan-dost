@@ -1,6 +1,6 @@
 # ElevenLabs Flows prompt pack: shots 1 and 2
 
-Status: prompts only. Nothing here has been run in Flows. Until you drop the clips in, the ad uses typographic stand-ins (a flat scale-and-queue picture for shot 1, a mic and speech card for shot 2), each tagged "Dramatisation: stand-in for an AI clip".
+Status: the clips made from these prompts are in place and wired into the ad (tag: "Dramatisation: AI-generated scene").
 
 Rules that apply to both shots (from docs/07 section 10):
 - Indian kirana counter, daylight, handheld. No readable brand names, no readable shop signs, no logos on packets (blur or turn labels away).
@@ -18,7 +18,6 @@ deliverables/ad/assets/clips/shot1.mp4   (0:00 to 0:04, 4 s)
 deliverables/ad/assets/clips/shot2.mp4   (0:04 to 0:09, 5 s)
 ```
 
-Then tell Claude "the clips are in", and the composition swaps the stand-ins for the clips (mute their audio or keep ambience at low volume; the ad's own sound design sits on top).
 
 ## Shot 1: busy hands, the khata out of reach (4 s)
 

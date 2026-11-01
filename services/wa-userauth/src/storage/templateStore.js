@@ -2,10 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { config } from '../config.js';
 
-export const DEFAULT_OTP_TEMPLATE = `Your WA-USERAUTH verification code is {{otp}}.
+export const DEFAULT_OTP_TEMPLATE = `Dukaan Dost login code: {{otp}}
 
-Enter this code in the login window to continue.
-This code expires in 5 minutes. Do not share it with anyone.`;
+Yeh code 5 minute mein khatam ho jaata hai. Kisi ko mat batao.`;
 
 export class TemplateStore {
   /**

@@ -1,4 +1,4 @@
 {
-  "template": "Your WA-USERAUTH verification code is {{otp}}.\n\nEnter this code in the login window to continue.\nThis code expires in 5 minutes. Do not share it with anyone.",
+  "template": "Dukaan Dost login code: {{otp}}\n\nYeh code 5 minute mein khatam ho jaata hai. Kisi ko mat batao.",
   "updatedAt": "2026-10-12T17:53:04.311Z"
 }

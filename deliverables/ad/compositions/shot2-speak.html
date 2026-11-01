@@ -17,77 +17,30 @@
 #root .bg{position:absolute;inset:0}
 #root .abs{position:absolute}
 #root .disp{font-family:'Yatra One','Hind',serif;font-weight:400}
-#root .tag{position:absolute;left:108px;top:1246px;padding:10px 22px;border:3px solid #16123A;border-radius:999px;background:#FFFFFF;font-size:30px;font-weight:600;line-height:1.2;color:#16123A}
-    #root .s2-word { display: inline-block; margin-right: 18px; opacity: 0; }
+#root .tag{position:absolute;left:108px;top:1506px;padding:10px 22px;border:3px solid #16123A;border-radius:999px;background:#FFFFFF;font-size:30px;font-weight:600;line-height:1.2;color:#16123A}
+    #root .s2-word { display: inline-block; margin-right: 16px; opacity: 0; }
+    #root .band { position: absolute; left: 0; right: 0; top: 1480px; bottom: 0; background: #16123A; border-top: 6px solid #FFC400; }
+    #root .vid { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
   </style>
   <div id="root" data-composition-id="shot2-speak" data-width="1080" data-height="1920">
     <div class="bg" id="s2-bg" style="background:#2D46FF"></div>
+    <!-- AI-generated clip, no audio track -->
+    <video id="s2-vid" class="clip vid" src="assets/clips/shot2.mp4" muted playsinline data-start="0" data-duration="5.04" data-track-index="0"></video>
 
-    <div class="abs" id="s2-floor" style="left:0;right:0;top:1520px;bottom:0;background:#16123A"><div class="abs" style="left:0;right:0;top:56px;border-top:6px dashed #FFC400"></div></div>
-    <!-- Bolo mic -->
-    <div id="s2-ring1" class="abs" style="left:420px;top:230px;width:240px;height:240px;border-radius:999px;border:6px solid #FFFFFF;opacity:0"></div>
-    <div id="s2-ring2" class="abs" style="left:420px;top:230px;width:240px;height:240px;border-radius:999px;border:6px solid #FFFFFF;opacity:0"></div>
-    <div id="s2-mic" class="abs" style="left:420px;top:230px;width:240px;height:240px;border-radius:999px;background:#FFC400;border:6px solid #16123A;box-shadow:10px 10px 0 #16123A">
-      <svg width="228" height="228" viewBox="0 0 228 228" class="abs" style="left:0;top:0">
-        <rect x="90" y="48" width="48" height="84" rx="24" fill="#16123A"/>
-        <path d="M70 108 Q70 154 114 154 Q158 154 158 108" fill="none" stroke="#16123A" stroke-width="10" stroke-linecap="round"/>
-        <line x1="114" y1="154" x2="114" y2="182" stroke="#16123A" stroke-width="10" stroke-linecap="round"/>
-        <line x1="88" y1="182" x2="140" y2="182" stroke="#16123A" stroke-width="10" stroke-linecap="round"/>
-      </svg>
+    <div class="band" id="s2-band"></div>
+    <div class="tag" id="s2-tag">Dramatisation: AI-generated scene</div>
+    <div class="abs" id="s2-hing" style="left:108px;right:108px;top:1572px;font-size:62px;line-height:1.2;font-weight:700;color:#FFFFFF;white-space:nowrap">
+      <span class="s2-word" id="s2-w0">Sharma</span><span class="s2-word" id="s2-w1">ji</span><span class="s2-word" id="s2-w2">ne</span><span class="s2-word" id="s2-w3">500</span><span class="s2-word" id="s2-w4">udhaar</span><span class="s2-word" id="s2-w5">liye</span>
     </div>
-
-    <!-- sound bars -->
-    <div id="s2-bars" class="abs" style="left:150px;top:560px;width:780px;height:150px"></div>
-
-    <!-- speech card -->
-    <div id="s2-card" class="abs" style="left:108px;top:760px;width:864px;height:400px;background:#FFFFFF;border:6px solid #16123A;box-shadow:12px 12px 0 #16123A">
-      <div class="abs" id="s2-hing" style="left:44px;top:34px;right:44px;font-size:70px;line-height:1.2;font-weight:700;color:#16123A">
-        <span class="s2-word" id="s2-w0">Sharma</span><span class="s2-word" id="s2-w1">ji</span><span class="s2-word" id="s2-w2">ne</span><span class="s2-word" id="s2-w3">500</span><span class="s2-word" id="s2-w4">udhaar</span><span class="s2-word" id="s2-w5">liye</span>
-      </div>
-      <div class="abs" style="left:44px;right:44px;top:208px;border-top:4px dashed rgba(22,18,58,0.3)"></div>
-      <div class="abs disp" id="s2-dev" style="left:44px;top:236px;right:44px;font-size:62px;line-height:1.3;color:#16123A;opacity:0">शर्मा जी ने 500 उधार लिए</div>
-    </div>
-
-    <div class="tag" id="s2-tag">Dramatisation: stand-in for an AI clip</div>
+    <div class="abs disp" id="s2-dev" style="left:108px;right:108px;top:1662px;font-size:54px;line-height:1.3;color:#FFC400;opacity:0;white-space:nowrap">शर्मा जी ने 500 उधार लिए</div>
   </div>
   <script>
     const tl = gsap.timeline({ paused: true });
-    // seeded wave bars
-    const N = 19;
-    const host = document.getElementById("s2-bars");
-    const bars = [];
-    for (let i = 0; i < N; i++) {
-      const b = document.createElement("div");
-      b.style.cssText = "position:absolute;bottom:0;width:26px;height:150px;background:#FFFFFF;border:4px solid #16123A;left:" + (i * 42) + "px;transform-origin:50% 100%";
-      host.appendChild(b);
-      bars.push(b);
-    }
-    const rnd = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
-    bars.forEach((b, i) => {
-      tl.set(b, { scaleY: 0.08 }, 0);
-      let t = 0.5 + i * 0.012;
-      let k = 0;
-      while (t < 4.3) {
-        const amp = 0.18 + 0.82 * rnd(i * 31 + k * 7.3);
-        const d = 0.14 + 0.12 * rnd(i * 17 + k * 3.1);
-        tl.to(b, { scaleY: amp, duration: d, ease: "sine.inOut" }, t);
-        t += d; k++;
-      }
-      tl.to(b, { scaleY: 0.08, duration: 0.25, ease: "power2.out" }, 4.3);
-    });
-    // rings pulse out of the mic
-    [["#s2-ring1", 0.5], ["#s2-ring2", 1.05]].forEach(([r, t0]) => {
-      for (let c = 0; c < 3; c++) {
-        tl.fromTo(r, { scale: 1, opacity: 0.9 }, { scale: 1.7, opacity: 0, duration: 1.1, ease: "power2.out" }, t0 + c * 1.1);
-      }
-    });
-    tl.fromTo("#s2-mic", { scale: 0.9 }, { scale: 1, duration: 0.25, ease: "power3.out" }, 0.1);
-    tl.fromTo("#s2-card", { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power4.out" }, 0.3);
-    // words land as spoken
+    // words land as spoken (the clip has no sound, so the caption carries the line)
     for (let i = 0; i < 6; i++) {
       tl.fromTo("#s2-w" + i, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.14, ease: "power3.out" }, 1.0 + i * 0.34);
     }
-    tl.fromTo("#s2-dev", { opacity: 0, y: 30, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.25, ease: "power4.out" }, 3.2);
+    tl.fromTo("#s2-dev", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.25, ease: "power4.out" }, 3.2);
     window.__timelines["shot2-speak"] = tl;
   </script>
 </template>

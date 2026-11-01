@@ -75,3 +75,16 @@ export const config = {
     databasePath: path.resolve(rootDir, process.env.BERRY_SQLITE_PATH || process.env.WHATSAPP_DATABASE_PATH || 'data/berry_store.db')
   }
 };
+
+// Added for Dukaan Dost: never run in production on the well-known defaults.
+if (config.nodeEnv === 'production') {
+  const weak =
+    config.adminPassword === 'admin_password_123' ||
+    config.adminSessionSecret.startsWith('dev_admin_session_secret') ||
+    config.allowedApps.has('app_default_demo');
+  if (weak) {
+    throw new Error(
+      'Refusing to start in production with the default admin password, session secret or demo app credentials. Set ADMIN_PASSWORD, ADMIN_SESSION_SECRET and ALLOWED_APPS in services/wa-userauth/.env.'
+    );
+  }
+}

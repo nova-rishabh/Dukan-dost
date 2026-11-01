@@ -12,7 +12,7 @@
   </head>
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1080" data-height="1920">
-      <!-- Shots 1-2: typographic stand-ins for the AI clips (assets/clips/shot1.mp4, shot2.mp4) -->
+      <!-- Shots 1-2: AI-generated clips (assets/clips/shot1.mp4, shot2.mp4) mounted in their scene files -->
       <div id="shot1" class="clip" data-composition-id="shot1-hands" data-composition-src="compositions/shot1-hands.html" data-start="0" data-duration="4.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:1"></div>
       <div id="shot2" class="clip" data-composition-id="shot2-speak" data-composition-src="compositions/shot2-speak.html" data-start="4" data-duration="5.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:2"></div>
       <!-- Shots 3-6: real captures of the running app -->
@@ -21,6 +21,8 @@
       <div id="shot5" class="clip" data-composition-id="shot5-balance" data-composition-src="compositions/shot5-balance.html" data-start="18" data-duration="6.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
       <div id="shot6" class="clip" data-composition-id="shot6-logo" data-composition-src="compositions/shot6-logo.html" data-start="24" data-duration="6" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:6"></div>
 
+      <!-- shot1.mp4 ambience at low level (measured: steady about -35 dBFS RMS, peak -8.3 dBFS; volume 0.26 puts its peak near -20 dBFS, about 18 dB under the effects). Ends at 4.0 s, before the first effect at 8.94 s. -->
+      <audio id="amb-shot1" src="assets/clips/shot1.mp4" data-start="0" data-duration="4" data-media-start="0" data-track-index="8" data-volume="0.26" data-fade-in="0.3" data-fade-out="0.5"></audio>
       <audio id="silence-bed" src="assets/silence.wav" data-start="0" data-duration="30" data-track-index="9" data-volume="1"></audio>
       <!-- SFX:BEGIN (written by scripts/ad-sync-sounds.ts from assets/sounds/CREDITS.json) -->
       <audio id="sfx-whoosh-into-app" src="assets/sounds/whoosh-into-app.mp3" data-start="8.941" data-duration="0.448" data-media-start="0.000" data-track-index="10" data-volume="0.45"></audio>

@@ -20,7 +20,9 @@ export function generateAlphanumericCode(length = 5) {
 export function generateCaptchaSvg(code) {
   const width = 180;
   const height = 52;
-  const colors = ['#34d399', '#38bdf8', '#f59e0b', '#ec4899', '#a78bfa', '#e2e8f0'];
+  // Dukaan Dost palette: ink and blue for the letters (readable on the yellow page), red and ink for the noise
+  const colors = ['#16123A', '#2D46FF'];
+  const noiseColors = ['#FF3B2F', '#16123A'];
 
   // Random noise lines
   let noiseLines = '';
@@ -29,7 +31,7 @@ export function generateCaptchaSvg(code) {
     const y1 = crypto.randomInt(10, height - 10);
     const x2 = crypto.randomInt(width - 30, width);
     const y2 = crypto.randomInt(10, height - 10);
-    const stroke = colors[crypto.randomInt(0, colors.length)];
+    const stroke = noiseColors[crypto.randomInt(0, noiseColors.length)];
     const strokeWidth = (Math.random() * 1.5 + 1).toFixed(1);
     const qx = crypto.randomInt(40, width - 40);
     const qy = crypto.randomInt(5, height - 5);
@@ -42,7 +44,7 @@ export function generateCaptchaSvg(code) {
     const cx = crypto.randomInt(5, width - 5);
     const cy = crypto.randomInt(5, height - 5);
     const r = (Math.random() * 1.5 + 0.8).toFixed(1);
-    const fill = colors[crypto.randomInt(0, colors.length)];
+    const fill = noiseColors[crypto.randomInt(0, noiseColors.length)];
     noiseDots += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" opacity="0.3"/>`;
   }
 
@@ -66,8 +68,8 @@ export function generateCaptchaSvg(code) {
     `;
   }
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="background:#090d16; border-radius:8px; border:1px solid #334155; user-select:none;">
-    <rect width="${width}" height="${height}" fill="#090d16" rx="8"/>
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="background:#FFE98A; border:2px solid #16123A; user-select:none;">
+    <rect width="${width}" height="${height}" fill="#FFE98A"/>
     ${noiseLines}
     ${noiseDots}
     ${charElements}
