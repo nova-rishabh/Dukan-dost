@@ -132,6 +132,27 @@ for (const [name, make] of makers) {
       expect(await s.getShop(SEED_SHOP_ID)).not.toBeNull();
     });
 
+    it("creates a shop, one owner, and updates the passcode hash", async () => {
+      const s = make();
+      const id = "00000000-0000-4000-8000-0000000000aa";
+      await s.createShop({ id, name: "Naya", upiVpa: "x@y", isDemo: false });
+      await s.createShop({ id, name: "Dusra naam", upiVpa: "x@y", isDemo: false });
+      expect((await s.getShop(id))?.name).toBe("Naya");
+      expect(await s.getOwner(id)).toBeNull();
+      await s.createOwner({ shopId: id, name: "Ramesh", mobile: "+15550000001", passcodeHash: "h1", createdAt: NOW });
+      expect(await s.getOwner(id)).toMatchObject({ name: "Ramesh", mobile: "+15550000001", passcodeHash: "h1" });
+      await expect(s.createOwner({ shopId: id, name: "Mallory", mobile: "+15550000002", passcodeHash: "h2", createdAt: NOW })).rejects.toThrow();
+      await s.setPasscodeHash(id, "h3");
+      expect((await s.getOwner(id))?.passcodeHash).toBe("h3");
+    });
+
+    it("erasing business data keeps the owner login", async () => {
+      const s = make();
+      await s.createOwner({ shopId: SEED_SHOP_ID, name: "Ramesh", mobile: "+15550000001", passcodeHash: "h1", createdAt: NOW });
+      await s.eraseShop(SEED_SHOP_ID);
+      expect(await s.getOwner(SEED_SHOP_ID)).not.toBeNull();
+    });
+
     it("reset puts the seeded demo shop back", async () => {
       const s = make();
       await s.eraseShop(SEED_SHOP_ID);

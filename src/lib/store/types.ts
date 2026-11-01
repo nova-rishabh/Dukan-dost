@@ -1,4 +1,4 @@
-import type { AuditEvent, Customer, Entry, PayToken, Shop, StockFlag } from "../types";
+import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, Shop, StockFlag } from "../types";
 
 export interface EraseCounts {
   customers: number;
@@ -29,8 +29,14 @@ export interface LedgerStore {
   /** Appending also drops "proposal_shown" events (raw sentences nobody confirmed) older than 30 days. */
   appendAudit(shopId: string, kind: string, payload: Record<string, unknown>, at: string): Promise<void>;
   listAudit(shopId: string, limit: number): Promise<AuditEvent[]>;
-  /** The owner's delete-my-data: removes every row that belongs to the shop and keeps the shop itself. */
+  /** The owner's delete-my-data: removes the business data of the shop and keeps the shop row and the owner login. */
   eraseShop(shopId: string): Promise<EraseCounts>;
+  /** Creates the shop row if it does not exist yet (first-run setup of a real shop). */
+  createShop(shop: Shop): Promise<void>;
+  getOwner(shopId: string): Promise<OwnerRecord | null>;
+  /** One owner per shop; throws if one already exists. */
+  createOwner(owner: OwnerRecord): Promise<void>;
+  setPasscodeHash(shopId: string, passcodeHash: string): Promise<void>;
   /** back to the seeded demo shop (demo only) */
   reset(): Promise<void>;
 }

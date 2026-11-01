@@ -3,7 +3,7 @@ import { mkdirSync } from "node:fs";
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { SEED_CUSTOMERS, SEED_ENTRIES, SEED_SHOP, SEED_STOCK } from "../seed";
-import type { AuditEvent, Customer, Entry, PayToken, Shop, StockFlag } from "../types";
+import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, Shop, StockFlag } from "../types";
 import { retentionCutoff, UNCONFIRMED_AUDIT_KIND } from "./retention";
 import type { EraseCounts, LedgerStore } from "./types";
 
@@ -75,6 +75,13 @@ create table if not exists audit_events (
   created_at text not null
 );
 create index if not exists audit_shop on audit_events(shop_id, id);
+create table if not exists owners (
+  shop_id text primary key references shops(id) on delete cascade,
+  name text not null,
+  mobile text not null,
+  passcode_hash text not null,
+  created_at text not null
+);
 `;
 
 type Row = Record<string, unknown>;
@@ -255,9 +262,26 @@ export class SqliteStore implements LedgerStore {
     });
   }
 
+  async createShop(shop: Shop) {
+    this.db.prepare("insert or ignore into shops (id, name, upi_vpa, is_demo) values (?, ?, ?, ?)").run(shop.id, shop.name, shop.upiVpa, shop.isDemo ? 1 : 0);
+  }
+
+  async getOwner(shopId: string) {
+    const r = this.db.prepare("select * from owners where shop_id = ?").get(shopId) as Row | undefined;
+    return r ? ({ shopId: r.shop_id, name: r.name, mobile: r.mobile, passcodeHash: r.passcode_hash, createdAt: r.created_at } as OwnerRecord) : null;
+  }
+
+  async createOwner(o: OwnerRecord) {
+    this.db.prepare("insert into owners (shop_id, name, mobile, passcode_hash, created_at) values (?, ?, ?, ?, ?)").run(o.shopId, o.name, o.mobile, o.passcodeHash, o.createdAt);
+  }
+
+  async setPasscodeHash(shopId: string, passcodeHash: string) {
+    this.db.prepare("update owners set passcode_hash = ? where shop_id = ?").run(passcodeHash, shopId);
+  }
+
   async reset() {
     this.tx(() => {
-      for (const t of ["pay_tokens", "entries", "stock_flags", "audit_events", "customers", "shops"]) this.db.exec(`delete from ${t}`);
+      for (const t of ["owners", "pay_tokens", "entries", "stock_flags", "audit_events", "customers", "shops"]) this.db.exec(`delete from ${t}`);
     });
     if (this.seedDemo) this.seed();
   }

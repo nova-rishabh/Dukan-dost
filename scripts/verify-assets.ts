@@ -108,10 +108,10 @@ check("docs/12_VISUAL_REVIEW.md", () => {
 });
 check(".env.example (names only)", () => {
   const t = readFileSync(need(".env.example"), "utf8");
-  for (const n of ["ELEVENLABS_API_KEY", "GEMINI_API_KEY", "PROPOSAL_SECRET", "DUKAAN_DB_FILE", "DUKAAN_SHOP_NAME", "NEXT_PUBLIC_APP_URL", "DEMO_SHOP_ID", "DEMO_UPI_VPA"]) {
+  for (const n of ["ELEVENLABS_API_KEY", "GEMINI_API_KEY", "PROPOSAL_SECRET", "DUKAAN_DB_FILE", "WA_SERVICE_URL", "WA_APP_KEY", "WA_APP_SECRET", "NEXT_PUBLIC_APP_URL", "DEMO_SHOP_ID", "DEMO_UPI_VPA"]) {
     if (!new RegExp(`^${n}=\\s*$`, "m").test(t)) throw new Error(`${n} missing or has a value`);
   }
-  return "8 names, no values";
+  return "10 names, no values";
 });
 check("SETUP_FOR_RISHABH.md", () => {
   const t = readFileSync(need("SETUP_FOR_RISHABH.md"), "utf8");

@@ -128,3 +128,13 @@ export interface LlmProvider {
   readonly name: string;
   interpret(text: string, ctx: { customerNames: string[] }): Promise<RawIntent[]>;
 }
+
+/** The single signed-in person of a shop. The passcode is only ever stored as a salted scrypt hash. */
+export interface OwnerRecord {
+  shopId: string;
+  name: string;
+  /** E.164, for example +91XXXXXXXXXX */
+  mobile: string;
+  passcodeHash: string;
+  createdAt: string;
+}

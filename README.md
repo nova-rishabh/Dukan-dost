@@ -10,6 +10,7 @@ Built for the AI Builder Challenge (Roobaroo AI Camp, with Developers' Society, 
 Built and verified locally (2026-11-01): the app runs with no API keys in Demo mode (typed input, five sample clips, local ledger, rules interpreter). Real ElevenLabs and Gemini adapters are written and tested against mocked HTTP only; they have not been run with live keys. Data lives in memory plus a JSON file (demo) or in a SQLite database file you choose; there is no database account to create. Not deployed. See [SETUP_FOR_RISHABH.md](SETUP_FOR_RISHABH.md).
 
 ## Run it
+Real shop on this computer: double-click `start-local.cmd`, then follow [SETUP_FOR_RISHABH.md](SETUP_FOR_RISHABH.md) (pair WhatsApp, set up the shop, log in). Open demo: leave `DUKAAN_DB_FILE` empty.
 ```bash
 pnpm install
 pnpm dev          # http://localhost:3000

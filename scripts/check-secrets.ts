@@ -13,6 +13,8 @@ const KEY_PATTERNS: Array<[string, RegExp]> = [
   ["private key block", /-----BEGIN [A-Z ]*PRIVATE KEY-----/],
   ["assigned secret", /\b(api[_-]?key|secret|service[_-]?role[_-]?key|access[_-]?token)\b\s*[:=]\s*["'][A-Za-z0-9_\-/+]{24,}["']/i],
 ];
+/** The vendored daemon's own tests use obviously fake sample numbers (its adapter even treats them as dummies). Key patterns still apply there. */
+const PHONE_EXEMPT = /^services\/wa-userauth\/tests\//;
 const PHONE = /(?<![\d.])(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}(?![\d])/;
 
 const problems: string[] = [];
@@ -22,7 +24,7 @@ for (const f of files) {
   const lines = readFileSync(f, "utf8").split(/\r?\n/);
   lines.forEach((line, i) => {
     for (const [name, re] of KEY_PATTERNS) if (re.test(line)) problems.push(`${f}:${i + 1}: ${name}`);
-    if (PHONE.test(line)) problems.push(`${f}:${i + 1}: phone-number pattern`);
+    if (!PHONE_EXEMPT.test(f) && PHONE.test(line)) problems.push(`${f}:${i + 1}: phone-number pattern`);
   });
 }
 

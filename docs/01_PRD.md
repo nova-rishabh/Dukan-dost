@@ -46,7 +46,7 @@ Evidence we still need (see section 13): one real shopkeeper using it unaided.
 | Real payment settlement or payment collection | We generate a UPI link and QR; money moves between customer and shop UPI apps. Never claim a payment was received because a link was sent |
 | Auto-sending reminders without the owner | Embarrassing a customer is the owner's call, and it is a trust risk |
 | Stock quantities and reorder automation | The AI must not invent quantities; v1 only flags "low" |
-| Multi-shop, staff roles, login system | Demo tenant only; a real auth layer is v2 |
+| Multi-shop, staff roles | One owner per shop. A single-owner login (passcode or WhatsApp code) is built (ADR-025); staff and multi-shop are v2 |
 | Voice cloning or any cloned voice | Out of scope and not needed |
 | Languages beyond Hindi, Hinglish and English | Bengali is a stretch goal (section 13, open question) |
 

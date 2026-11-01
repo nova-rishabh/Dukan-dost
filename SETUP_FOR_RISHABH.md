@@ -1,86 +1,83 @@
 # Setup for Rishabh
 
-The app already runs with no keys: `pnpm install`, then `pnpm dev`. Typed input, the five sample clips, the pay page and reminders all work, and a "Demo mode" tag shows. These steps add the real services and finish the content only you can make.
+Two ways to run the same app:
 
-Legend: **[you]** needs your account or hands. **[done]** already built and verified here.
+- **Your real shop (this computer):** `DUKAAN_DB_FILE` is set in `.env`. Data lives in `.data/ledger.sqlite` on this machine. You set up one owner, and everything needs a login.
+- **The open demo (for jurors):** leave `DUKAAN_DB_FILE` empty. A fictional shop, no login, sample clips, `/try`.
 
-## Step 1 [you]: copy the env file
+Legend: **[you]** needs you. **[done]** already built and verified.
 
-```bash
-copy .env.example .env.local
-```
+## What WhatsApp is used for
 
-Open `.env.local` in an editor. Never paste keys into chat or commit this file (it is git-ignored).
+1. **The reminder draft (always available):** "WhatsApp kholo" opens your own WhatsApp with the message typed (a `wa.me` link). You press Send.
+2. **Sending from the app (needs the WhatsApp service paired):** "WhatsApp se bhejo", then "Haan, bhejo". It goes out from the paired phone. Only when you tap; never automatic.
+3. **Login codes (needs the WhatsApp service paired):** "WhatsApp code se" on the login page. A picture CAPTCHA first, then a 6-digit code to your number.
 
-## Step 2 [you]: get the keys
+Items 2 and 3 use the WA-USERAUTH service in `services/wa-userauth` (read its `NOTICE.md`). It uses an unofficial WhatsApp client, so use a spare number and expect it to be testing-only.
 
-- `ELEVENLABS_API_KEY`: ElevenLabs, Profile, API keys.
-- `GEMINI_API_KEY`: Google AI Studio, Get API key.
-- `PROPOSAL_SECRET`: any long random string you make up (for example 40 random characters). **Required once `DUKAAN_DB_FILE` is set**: the app refuses to start without it, because it signs the confirm cards with it.
-- `DUKAAN_DB_FILE`: path of the database file, for example `.data/ledger.sqlite` (step 3). Leave empty to keep the demo shop.
-- `DUKAAN_SHOP_NAME`: set it to run your own empty shop instead of the fictional demo shop.
-- `DEMO_UPI_VPA`: leave empty for the fake demo id, or a UPI id you own for the later test.
-- `DEMO_SHOP_ID`: leave empty (uses the seeded shop id).
-- `NEXT_PUBLIC_APP_URL`: after step 9.
+## Step 1 [done]: keys and settings
 
-## Step 3 [you]: choose where the data lives
-
-There is no database account to create. Supabase was removed (ADR-023).
-
-- **Demo (default):** leave `DUKAAN_DB_FILE` empty. The fictional shop lives in memory and a JSON file in `.data/`.
-- **Your own shop, kept on disk:** set `DUKAAN_DB_FILE=.data/ledger.sqlite`, `DUKAAN_SHOP_NAME=Your shop name`, a `PROPOSAL_SECRET`, and your own UPI id in `DEMO_UPI_VPA`. The app creates the file and an empty shop on first start. Back the file up by copying it.
-- It needs a disk that survives restarts (your own computer, a small server, a Docker volume). Vercel's serverless disk does not, so the deployed demo stays on the in-memory demo shop unless you host it somewhere with a persistent disk.
-- The database uses Node's built-in `node:sqlite`, which Node marks experimental, so keep Node at the version in `package.json` / this machine (24.x).
-
-## Step 4: check which services are active
+`.env` holds your ElevenLabs and Gemini keys, `PROPOSAL_SECRET`, `DUKAAN_DB_FILE`, and the connection to the WhatsApp service (`WA_SERVICE_URL`, `WA_APP_KEY`, `WA_APP_SECRET`). `.env` is gitignored. `.env.example` lists the names. Check:
 
 ```bash
 pnpm setup:check
 ```
 
-It lists missing variable names and says honestly which adapters are local. **[done]** locally it reports every adapter as local.
+## Step 2 [you]: start both servers
 
-## Step 5 [you]: test the real services once
+Double-click `start-local.cmd` (opens two windows: the WhatsApp service on 127.0.0.1:3001 and the app on 127.0.0.1:3000), or run in two terminals:
+
+```bash
+pnpm wa:start
+pnpm exec next start -H 127.0.0.1 -p 3000
+```
+
+Run `pnpm build` first after any code change. Both listen on this computer only; use `-H 0.0.0.0` for the app if you want to test from a phone on your Wi-Fi.
+
+## Step 3 [you, once]: pair the WhatsApp number
+
+Open `http://127.0.0.1:3001/admin`. The admin password is the `ADMIN_PASSWORD` line in `services/wa-userauth/.env`. Scan the QR with WhatsApp: Settings, Linked devices, Link a device. Use a spare number. The status on the shop page turns to "WhatsApp jura hua hai".
+
+## Step 4 [you, once]: set up your shop
+
+Open `http://localhost:3000`. It sends you to Dukaan set karo. Fill the shop name, your name, your WhatsApp mobile number and a passcode. The setup code is the text inside `.data/setup-code.txt` on this computer (it stops a stranger claiming your shop). You are signed in when it finishes.
+
+## Step 5 [you]: log in later
+
+Passcode, or "WhatsApp code se" (CAPTCHA, then a code on WhatsApp). Five wrong passcodes lock logins for 15 minutes. After a WhatsApp-code login you can set a new passcode without the old one (Passcode badlo on the shop page).
+
+## Step 6 [you]: send a reminder
+
+Customer page, Yaad dilao, type the customer's number with the country code, "WhatsApp se bhejo", then "Haan, bhejo". If the phone is not paired, use "WhatsApp kholo" instead.
+
+## Step 7 [you]: test the live keys
 
 ```bash
 pnpm verify:live
 ```
 
-It does a Scribe round trip and a Gemini structured-output call. The SQLite store needs no key and is covered by `pnpm test`. Not verified yet: no keys existed during the build, so the vendor request shapes are covered only by mocked-HTTP tests. The facts used are in `docs/14_API_FACTS.md`; the model ids sit in `src/lib/config.ts` marked VERIFY.
+It does a Scribe round trip and a Gemini structured-output call. Not verified yet: the live calls were never run during the build, so the vendor request shapes are covered by mocked-HTTP tests only (`docs/14_API_FACTS.md`).
 
-## Step 6 [you]: make the sample clip audio
+## Step 8 [you]: sample clip audio for the demo
 
 ```bash
 pnpm samples:generate
 ```
 
-Writes `public/samples/*.mp3` (AI voices, labelled dramatisation in the app). For a truly noisy "Shor mein" clip mix noise in with ffmpeg (see `docs/06_TEST_PLAN.md` section 4).
+Writes `public/samples/*.mp3` (AI voices, labelled dramatisation). Only the open demo shows the sample clips; a real shop sends `/try` to its own login.
 
-## Step 7 [you]: voice-over and re-render the ad
+## Step 9 [you]: the ad clips
 
-```bash
-pnpm ad:vo
-pnpm ad:render
-```
+You are making shots 1 and 2 in ElevenLabs Flows. Save them as `deliverables/ad/assets/clips/shot1.mp4` and `shot2.mp4`, then ask Claude to wire them into the ad. The list is in `docs/15_TODO.md`.
 
-`ad:vo` makes the Hindi line with ElevenLabs (no cloning) into `deliverables/ad/assets/vo/`. Adding that audio to the composition is a manual edit (ask Claude). The ad already renders without it. **[done]** a render exists at `deliverables/ad/out/dukaan-dost-ad-vertical.mp4`.
+## Step 10 [you]: push to GitHub
 
-## Step 8 [you]: make shots 1 and 2 in ElevenLabs Flows
+The remote is already set to `https://github.com/nova-rishabh/Dukan-dost.git`. Nothing has been pushed. When you say so, run `git push -u origin master` (or ask Claude to). Check that `.env`, `.data/` and `services/wa-userauth/.env` are not in the push: they are gitignored.
 
-Open `deliverables/ad/FLOWS_PROMPTS.md`, paste each shot's prompts into the node chain it suggests, and save the results as `deliverables/ad/assets/clips/shot1.mp4` and `shot2.mp4`. **Dropping the files in is not enough yet:** the composition (`deliverables/ad/index.html`, shots 1 and 2) still uses typographic stand-ins and does not read `assets/clips/` automatically. Ask Claude to wire the two clips into the composition, then run `pnpm ad:render`. Keep the small "dramatisation" tag. Do not present AI footage as a real customer.
+## Step 11 [you]: where the public demo lives
 
-## Step 9 [you]: connect GitHub and Vercel, deploy
-
-Create the GitHub repo and push (nothing was pushed by the build). In Vercel import it, set the env vars from step 2 (leave `DUKAAN_DB_FILE` empty there, see step 3), deploy, then set `NEXT_PUBLIC_APP_URL` to the live URL and redeploy. Replace `{{APP_URL}}` in `deliverables/social/captions.md`, the post sources (`deliverables/social/_src/*.html`, then `node deliverables/social/_src/render.mjs`), the deck (`deliverables/deck/index.html`, then `node deliverables/deck/export.mjs`) and the ad end card. Until you do, the five links show the literal `{{APP_URL}}`.
-
-## Step 10 [you]: test on a real Android phone
-
-Open the live URL in Chrome: allow the mic, say the hero sentence, tap Likh do, open a customer, tap Yaad dilao (WhatsApp should open with the text), open the pay link and the UPI button. Check glare outdoors and one-handed use.
-
-## Step 11 [you]: re-run the judge prompt
-
-Apply `../ai_judge_prompt_v2.md` to the five final links in two AIs. Our own honest self-assessment is in `docs/13_SELF_REVIEW.md`.
+The deployed link for jurors should be the **open demo** (no `DUKAAN_DB_FILE`, no WhatsApp service). Vercel's serverless disk cannot keep a SQLite file or run the WhatsApp service, so your real shop stays on this computer (or a small server you control). Replace `{{APP_URL}}` in the posts, captions, deck and ad after you have the public URL (see `docs/15_TODO.md`).
 
 ## Step 12 [you]: submit the five links
 
-Product (`/try`), website (landing), the three posts, the ad, the deck. Open each in a private window on mobile data first. Nothing here submits for you.
+Product (`/try` on the demo), website (landing), the three posts, the ad, the deck. Open each in a private window on mobile data first. Nothing here submits for you. When you are ready for the official WhatsApp API, the verified facts are in `docs/16_WHATSAPP_FACTS.md`.

@@ -27,6 +27,11 @@ async function call<T>(url: string, init?: RequestInit): Promise<T> {
   const json = (await res.json().catch(() => null)) as ({ ok: boolean; error?: ApiFailure } & Record<string, unknown>) | null;
   if (!res.ok || !json || json.ok === false) {
     const e = json?.error;
+    // a real shop needs the owner's login: send the browser to the right screen instead of showing a raw error
+    if (res.status === 401 && typeof window !== "undefined" && (e?.code === "auth_required" || e?.code === "setup_required")) {
+      const target = e.code === "setup_required" ? "/setup" : "/login";
+      if (window.location.pathname !== target) window.location.assign(target);
+    }
     throw new ApiError(e?.code ?? "unknown", e?.message ?? "Request failed", e?.hint ?? "Thodi der baad try karo.", res.status);
   }
   return json as unknown as T;
@@ -59,7 +64,35 @@ export interface LedgerRow {
   voidReason?: string;
 }
 
+export interface Me {
+  authRequired: boolean;
+  setupNeeded: boolean;
+  loggedIn: boolean;
+  owner: { name: string } | null;
+  waLogin: boolean;
+  isDemoShop: boolean;
+  shopName: string | null;
+}
+
+export interface WaStatus {
+  configured: boolean;
+  reachable: boolean;
+  whatsapp: string;
+  adminUrl: string | null;
+}
+
 export const api = {
+  me: () => call<Me>("/api/auth/me"),
+  setup: (body: { setupCode: string; shopName: string; name: string; mobile: string; passcode: string; upiVpa?: string }) => post<{ owner: { name: string } }>("/api/auth/setup", body),
+  login: (mobile: string, passcode: string) => post<{ owner: { name: string } }>("/api/auth/login", { mobile, passcode }),
+  logout: () => post<Record<string, never>>("/api/auth/logout", {}),
+  changePasscode: (next: string, current?: string) => post<{ changed: boolean }>("/api/auth/passcode", { current, next }),
+  waCaptcha: () => call<{ captchaId: string; svg: string }>("/api/auth/wa/captcha"),
+  waSend: (mobile: string, captchaId: string, captchaCode: string) => post<{ sent: boolean }>("/api/auth/wa/send", { mobile, captchaId, captchaCode }),
+  waVerify: (mobile: string, code: string) => post<{ owner: { name: string } }>("/api/auth/wa/verify", { mobile, code }),
+  waStatus: () => call<WaStatus>("/api/wa/status"),
+  sendReminder: (body: { customerId: string; phone: string; text: string; payUrl: string }) =>
+    post<{ sent: boolean; simulated: boolean }>("/api/remind/send", { ...body, confirmed: true }),
   status: () => call<{ adapters: { stt: string; tts: string; llm: string; store: string }; demoMode: boolean }>("/api/status"),
   summary: () => call<{ summary: Summary; shopName: string; demoMode: boolean; isDemoShop: boolean }>("/api/summary"),
   customers: () => call<{ customers: CustomerListItem[] }>("/api/customers"),

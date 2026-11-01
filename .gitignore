@@ -11,3 +11,5 @@ deliverables/ad/node_modules
 *.log
 next-env.d.ts
 tsconfig.tsbuildinfo
+.claude/
+.next-verify

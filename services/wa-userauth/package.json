@@ -1,0 +1,29 @@
+{
+  "name": "wa-userauth",
+  "version": "1.0.0",
+  "description": "Self-hosted WhatsApp OTP authentication service for developers",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test tests/**/*.test.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "auth",
+    "otp",
+    "passwordless",
+    "developer",
+    "self-hosted"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "qrcode": "^1.5.4",
+    "berryprotocol": "^0.1.10"
+  }
+}

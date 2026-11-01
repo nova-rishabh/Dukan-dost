@@ -1,0 +1,11 @@
+node_modules/
+.env
+data/berry_auth/
+data/berry_store.db*
+data/*.tmp
+data/rate_limits.json
+data/whatsapp_session.json
+*.log
+.DS_Store
+Thumbs.db
+data/users.json

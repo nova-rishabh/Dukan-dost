@@ -12,6 +12,10 @@ export default defineConfig({
     port: PORT,
     reuseExistingServer: false,
     timeout: 120000,
-    env: { DUKAAN_DATA_FILE: ".data/shots-ledger.json", DEMO_RESET_ON_BOOT: "1", NEXT_PUBLIC_APP_URL: `http://localhost:${PORT}` },
+    env: {
+      // never pick up the owner's real .env
+      ELEVENLABS_API_KEY: "", GEMINI_API_KEY: "", DUKAAN_DB_FILE: "", PROPOSAL_SECRET: "", WA_SERVICE_URL: "", WA_APP_KEY: "", WA_APP_SECRET: "", DEMO_UPI_VPA: "", DEMO_SHOP_ID: "",
+      DUKAAN_DATA_FILE: ".data/shots-ledger.json", DEMO_RESET_ON_BOOT: "1", NEXT_PUBLIC_APP_URL: `http://localhost:${PORT}`,
+    },
   },
 });

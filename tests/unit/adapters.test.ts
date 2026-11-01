@@ -122,14 +122,14 @@ describe("hybrid interpretation (ADR-020)", () => {
 describe("adapter selection (keyless mode)", () => {
   it("selects local adapters and reports every missing name when no keys exist", () => {
     const s = adapterStatus({});
-    expect(s).toMatchObject({ stt: "local", tts: "local", llm: "rules-only", store: "local", demoMode: true });
+    expect(s).toMatchObject({ stt: "local", tts: "local", llm: "rules-only", store: "local", wa: "none", demoMode: true });
     expect(s.missing).toContain("ELEVENLABS_API_KEY");
     expect(s.missing).toContain("GEMINI_API_KEY");
-    expect(s.missing).toHaveLength(8);
+    expect(s.missing).toHaveLength(10);
   });
   it("selects real adapters when keys exist", () => {
-    const s = adapterStatus({ ELEVENLABS_API_KEY: "a", GEMINI_API_KEY: "b", DUKAAN_DB_FILE: ".data/ledger.sqlite" });
-    expect(s).toMatchObject({ stt: "elevenlabs", llm: "gemini", store: "sqlite", demoMode: false });
+    const s = adapterStatus({ ELEVENLABS_API_KEY: "a", GEMINI_API_KEY: "b", DUKAAN_DB_FILE: ".data/ledger.sqlite", WA_SERVICE_URL: "http://127.0.0.1:3001", WA_APP_KEY: "k", WA_APP_SECRET: "s" });
+    expect(s).toMatchObject({ stt: "elevenlabs", llm: "gemini", store: "sqlite", wa: "daemon", demoMode: false });
   });
 });
 

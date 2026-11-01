@@ -9,6 +9,7 @@ console.log(`Speech to text : ${s.stt === "elevenlabs" ? "ElevenLabs Scribe (key
 console.log(`Read-back voice: ${s.tts === "elevenlabs" ? "ElevenLabs TTS (key found)" : "LOCAL (silent)"}`);
 console.log(`Interpreter    : ${s.llm === "gemini" ? "rules first, Gemini fallback (key found)" : "RULES ONLY (no GEMINI_API_KEY)"}`);
 console.log(`Ledger store   : ${s.store === "sqlite" ? `SQLite database file (${process.env.DUKAAN_DB_FILE})` : "LOCAL (demo shop, JSON file in .data/)"}`);
+console.log(`WhatsApp      : ${s.wa === "daemon" ? "WA-USERAUTH daemon configured (login codes and sending)" : "not configured (passcode login only, wa.me drafts)"}`);
 console.log(`Demo mode tag  : ${s.demoMode ? "shown (at least one local adapter is active)" : "hidden (all real adapters)"}`);
 console.log("");
 if (s.missing.length) {

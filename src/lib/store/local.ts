@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { SEED_CUSTOMERS, SEED_ENTRIES, SEED_SHOP, SEED_STOCK } from "../seed";
 import { retentionCutoff, UNCONFIRMED_AUDIT_KIND } from "./retention";
-import type { AuditEvent, Customer, Entry, PayToken, Shop, StockFlag } from "../types";
+import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, Shop, StockFlag } from "../types";
 import type { LedgerStore } from "./types";
 
 interface State {
@@ -14,6 +14,7 @@ interface State {
   tokens: PayToken[];
   audit: AuditEvent[];
   nextAuditId: number;
+  owners: OwnerRecord[];
 }
 
 const seedState = (): State => ({
@@ -24,6 +25,7 @@ const seedState = (): State => ({
   tokens: [],
   audit: [],
   nextAuditId: 1,
+  owners: [],
 });
 
 /** In-memory store with optional JSON-file persistence. The keyless demo default and the test double; SqliteStore is the durable store. */
@@ -40,7 +42,9 @@ export class LocalStore implements LedgerStore {
   private load(): State {
     if (this.file && existsSync(this.file)) {
       try {
-        return JSON.parse(readFileSync(this.file, "utf8")) as State;
+        const loaded = JSON.parse(readFileSync(this.file, "utf8")) as State;
+        loaded.owners ??= [];
+        return loaded;
       } catch {
         // corrupt file: fall through to the seed
       }
@@ -155,6 +159,29 @@ export class LocalStore implements LedgerStore {
       .filter((a) => a.shopId === shopId)
       .slice(-limit)
       .reverse();
+  }
+
+  async createShop(shop: Shop) {
+    if (!this.state.shops.some((x) => x.id === shop.id)) {
+      this.state.shops.push({ ...shop });
+      this.persist();
+    }
+  }
+
+  async getOwner(shopId: string) {
+    return this.state.owners.find((o) => o.shopId === shopId) ?? null;
+  }
+
+  async createOwner(owner: OwnerRecord) {
+    if (this.state.owners.some((o) => o.shopId === owner.shopId)) throw new Error("owner already exists");
+    this.state.owners.push({ ...owner });
+    this.persist();
+  }
+
+  async setPasscodeHash(shopId: string, passcodeHash: string) {
+    const o = this.state.owners.find((x) => x.shopId === shopId);
+    if (o) o.passcodeHash = passcodeHash;
+    this.persist();
   }
 
   async reset() {
