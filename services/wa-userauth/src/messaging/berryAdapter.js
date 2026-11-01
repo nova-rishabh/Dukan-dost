@@ -48,6 +48,9 @@ export class BerryAdapter extends EventEmitter {
     this.shouldKeepPairingAlive = true;
     this.reconnectTimer = null;
     this.isSimulatedMode = false;
+    // reconnect backoff: consecutive closes without a stable stretch in between (see the close handler)
+    this.closeStreak = 0;
+    this.lastCloseAt = 0;
 
     // Check if session metadata already exists from previous run
     this._loadSavedSessionMeta();
@@ -228,6 +231,8 @@ export class BerryAdapter extends EventEmitter {
 
     // 1. QR Code generated for pairing
     this.client.on('auth.qr', async ({ value }) => {
+      // the last client stayed up 30 s or more before this QR, so it was not a close storm: restart quickly next time
+      if (Date.now() - this.lastCloseAt > 30_000) this.closeStreak = 0;
       try {
         let dataUrl = null;
         if (qrcodeLib) {
@@ -250,6 +255,7 @@ export class BerryAdapter extends EventEmitter {
 
     // 2. Connection successfully opened & authenticated
     const handleConnected = () => {
+      this.closeStreak = 0;
       this.status = 'CONNECTED';
       this.qrCode = null;
 
@@ -291,18 +297,24 @@ export class BerryAdapter extends EventEmitter {
 
     // 3. Connection closed / disconnected
     this.client.on('connection.close', ({ reason }) => {
+      console.log(`[BerryAdapter] connection.close reason=${reason} status_before=${this.status}`);
       this.status = 'DISCONNECTED';
       this.emit('disconnected', { reason });
       this.emit('status', this.status);
 
-      // Auto-refresh pairing QR loop if keep-alive is active
+      // Auto-refresh pairing QR loop if keep-alive is active.
+      // Added for Dukaan Dost: back off 2.5 s, 5 s, 10 s, 20 s, 40 s, 60 s while closes keep coming back-to-back.
+      // Without this a client that closes right after connecting made a new client (and a new QR) every few seconds.
       if (this.shouldKeepPairingAlive !== false && reason !== 'manual_logout') {
+        this.lastCloseAt = Date.now();
+        const delay = Math.min(60_000, 2500 * 2 ** this.closeStreak);
+        this.closeStreak += 1;
         clearTimeout(this.reconnectTimer);
         this.reconnectTimer = setTimeout(() => {
           if (this.status !== 'CONNECTED') {
             this.initialize().catch(() => {});
           }
-        }, 2500);
+        }, delay);
       }
     });
 
