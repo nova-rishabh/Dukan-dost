@@ -49,7 +49,9 @@ test("setup: a wrong code is refused, the right one creates the owner and signs 
   await page.getByTestId("setup-submit").click();
   await expect(page).toHaveURL(/\/shop$/);
   await expect(page.getByRole("heading", { name: "Test Dukaan" })).toBeVisible();
+  await page.getByTestId("menu-button").click();
   await expect(page.getByTestId("logout")).toBeVisible();
+  await page.keyboard.press("Escape");
   await page.getByRole("link", { name: "Settings", exact: true }).click();
   await expect(page.getByTestId("retention-note")).toContainText("30 din");
   await expect(page.getByTestId("wa-status")).toHaveText("WhatsApp jura hua hai");
@@ -87,6 +89,7 @@ test("the signed-in owner writes an entry and sends the reminder through WhatsAp
 test("logout, then the passcode login: wrong passcode is refused, the right one gets in", async ({ page }) => {
   await signIn(page);
   await page.goto("/shop");
+  await page.getByTestId("menu-button").click();
   await page.getByTestId("logout").click();
   await expect(page).toHaveURL(/\/login$/);
   expect((await page.request.get("/api/summary")).status()).toBe(401);
@@ -116,6 +119,7 @@ test("login with a WhatsApp code: CAPTCHA, code sent to the owner only, then in"
   await page.getByTestId("wa-code").fill(code);
   await page.getByTestId("wa-verify").click();
   await expect(page).toHaveURL(/\/shop$/);
+  await page.getByTestId("menu-button").click();
   await expect(page.getByTestId("logout")).toBeVisible();
 });
 

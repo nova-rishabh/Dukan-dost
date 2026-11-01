@@ -190,6 +190,60 @@ h3 {
   background: var(--sindoor);
 }
 
+/* Header size: smaller than the 48px default, still a comfortable tap. */
+.btn-sm {
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  font-size: 0.9375rem;
+  box-shadow: 3px 3px 0 var(--color-outline);
+}
+.input-sm {
+  width: auto;
+  min-height: 40px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* Header navigation: a popover panel under the menu button on phones, a plain row from md up. */
+.nav-menu {
+  inset: auto;
+  margin: 0;
+  overflow: visible;
+}
+.nav-menu:popover-open {
+  position: fixed;
+  top: 64px;
+  right: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 220px;
+  padding: var(--space-4);
+  border: var(--border-card);
+  border-radius: 20px;
+  background: var(--safed);
+  box-shadow: var(--shadow-hard);
+}
+.nav-menu:popover-open .btn {
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .menu-toggle {
+    display: none;
+  }
+  .nav-menu {
+    position: static;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
 .chip {
   display: inline-flex;
   align-items: center;

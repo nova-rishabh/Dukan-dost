@@ -10,7 +10,9 @@ test("public production trial isolates visitors, payment examples and real accou
     await page.goto("/try");
     await page.getByRole("button", { name: "Start private sample shop", exact: true }).click();
     await expect(page.locator("#typebox")).toBeVisible();
+    await page.getByTestId("menu-button").click();
     await expect(page.getByRole("button", { name: "Exit sample", exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
     expect((await context.cookies()).find((c) => c.name === "dd_demo")?.httpOnly).toBe(true);
     await page.request.post("/api/customers", { data: { name: "Fictional sample A only" } });
     const pageB = await other.newPage();

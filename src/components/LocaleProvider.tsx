@@ -36,13 +36,15 @@ export function useLocale() {
 }
 
 export function LanguageSelector() {
-  const { locale, setLocale, t } = useLocale();
-  return <div className="grid max-w-sm gap-1"><label className="flex min-h-[48px] items-center gap-2 font-semibold">
-    <span>{t("language")}</span>
-    <select aria-label="Language / Bhasha" className="input w-auto" value={locale} onChange={(e) => setLocale(e.target.value === "en" ? "en" : "hi-Latn")}>
-      <option value="hi-Latn">Hindi / Hinglish</option><option value="en">English</option>
-    </select>
-  </label>{locale === "en" ? <p className="text-base" data-testid="language-scope">{t("languageScope")}</p> : null}</div>;
+  const { locale, setLocale } = useLocale();
+  return <select aria-label="Language / Bhasha" className="input input-sm" value={locale} onChange={(e) => setLocale(e.target.value === "en" ? "en" : "hi-Latn")}>
+    <option value="hi-Latn">Hinglish</option><option value="en">English</option>
+  </select>;
+}
+
+export function LanguageScopeNote() {
+  const { locale, t } = useLocale();
+  return locale === "en" ? <p className="w-full text-base" data-testid="language-scope">{t("languageScope")}</p> : null;
 }
 
 export function LocalizedText({ id }: { id: MessageKey }) { return useLocale().t(id); }

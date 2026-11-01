@@ -127,3 +127,6 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - Workbook (docs shared by owner) requires a 30-60 s video ad; the 20 s cut did not qualify. Built deliverables/launch (1920x1080, 30 fps, 45 s, HyperFrames): hook, voice-to-parchi, stamp at 14.000 s (measured peak), balance and reminder, three trust rules, end card with CTA. Real app captures, fictional demo data, no voiceover.
 - Music: CC0 loop (125 to 120 BPM). SFX: CC0 Openverse set re-placed by measured peak; credits in deliverables/launch/assets/sounds/CREDITS.json. Audio measured only (-18.4 LUFS, -1.9 dBFS peak); not listened to by a human.
 - render.yaml now sets TRUST_PROXY_HOPS=1 so each visitor gets their own limiter bucket on Render. Not yet verified live: confirm after deploy that two different IPs do not share one bucket.
+
+## 2026-11-01: header rework
+- Header: removed the visible "Bhasha" label, language select moved to the far right (shows Hinglish / English), nav buttons smaller (.btn-sm, 40 px), phone width uses a menu button that opens a popover panel. Install prompt is now a slim bar with a compact button instead of a large button in the connection box. Pixel 7 e2e tests open the menu before using logout/Exit sample. Full Playwright run: 59 passed. Full pnpm verify not rerun; visual check at 390 px and 1440 px.
