@@ -71,3 +71,8 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - Fixed swallowed customer load errors, stock resolve failures, microphone context/stream lifecycle and permission races, and read-back object URL cleanup/stale playback.
 - Full pnpm verify returned VERIFY-PASS after implementation (187 unit tests, 48 daemon tests, browser and axe checks). Rendered mobile Help and desktop Settings inspected. Screenshots: docs/screenshots/help-390.png and settings-1440.png.
 - Real deployment and real WhatsApp delivery were not checked. Remaining media/deployment/platform work is listed in docs/18_AUDIT_AND_IMPROVEMENT_PLAN.md.
+
+## 2026-11-01: pushed improvements and drafted completion roadmap
+- On owner instruction, committed the verified improvements (4b2df73), merged with --no-ff (b6a1ce9), and pushed master. pnpm verify returned VERIFY-PASS: 187 unit tests, 48 daemon tests, 34 browser tests.
+- Used agency-product-manager and agency-workflow-architect skills with independent reality/security reviews to produce docs/19_COMPLETION_ROADMAP.md and docs/workflows drafts. Identified 24 product/operational gaps, priorities, dependencies and release gates. No proposed new product features are implemented by this planning change.
+- Public signup/account model remains an owner decision. Roadmap is Draft; deployment and live WhatsApp delivery remain unverified.
