@@ -7,6 +7,38 @@ const loggedOut = {
   waLogin: true, isDemoShop: false, shopName: "Fictional shop",
 };
 
+test("signup distinguishes a pending CAPTCHA from failure and retries only on request", async ({ page, context }) => {
+  await context.addCookies([{ name: "dukaan-locale", value: "en", domain: "localhost", path: "/" }]);
+  await page.route("**/api/auth/me", (route) => route.fulfill({ json: loggedOut }));
+  await page.route("**/api/auth/register/status", (route) => route.fulfill({ status: 401, json: { ok: false, error: { code: "invalid_registration", message: "No proof", hint: "Verify again" } } }));
+  let release: () => void = () => {};
+  const pending = new Promise<void>((resolve) => { release = resolve; });
+  let calls = 0;
+  await page.route("**/api/auth/wa/captcha", async (route) => {
+    calls++;
+    if (calls === 1) {
+      await pending;
+      await route.fulfill({ status: 503, json: { ok: false, error: { code: "wa_unavailable", message: "Unavailable", hint: "Try later" } } });
+    } else await route.fulfill({ json: { ok: true, captchaId: "fictional-captcha", svg: '<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60"><text x="10" y="30">TEST</text></svg>' } });
+  });
+  try {
+    await page.goto("/signup");
+    await page.getByLabel("WhatsApp number", { exact: true }).fill(mobile);
+    await expect(page.getByText("Loading verification image…", { exact: true })).toBeVisible();
+    await expect(page.getByText("Verification image unavailable", { exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "New image", exact: true })).toBeDisabled();
+    expect(calls).toBe(1);
+    release();
+    await expect(page.getByText("Verification image unavailable", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "New image", exact: true })).toBeEnabled();
+    expect(calls).toBe(1);
+    await page.getByRole("button", { name: "New image", exact: true }).click();
+    await expect(page.getByRole("img", { name: "Verification image", exact: true })).toBeVisible();
+    await expect(page.getByLabel("WhatsApp number", { exact: true })).toHaveValue(mobile);
+    expect(calls).toBe(2);
+  } finally { release(); }
+});
+
 test("initial login fetch failure is visible and retries without reloading", async ({ page }) => {
   await page.route("**/api/auth/me", (route) => route.abort());
   await page.goto("/login");
