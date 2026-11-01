@@ -34,6 +34,7 @@ export interface OwnerPublic {
   shopId: string;
   name: string;
   mobile: string;
+  authVersion: number;
 }
 
 /* ---------------------------------------------------------------- mobile numbers */
@@ -91,6 +92,7 @@ export type LoginMethod = "passcode" | "otp";
 export interface SessionPayload {
   mobile: string;
   shopId: string;
+  authVersion: number;
   method?: LoginMethod;
   iat?: number;
 }
@@ -102,9 +104,9 @@ interface SessionOpts {
 const b64 = (b: Buffer | string) => Buffer.from(b).toString("base64url");
 const sessionMac = (body: string, secret: string) => createHmac("sha256", `session:${secret}`).update(body).digest();
 
-/** A signed, expiring cookie value. Stateless: logout clears the cookie, and changing PROPOSAL_SECRET signs everyone out. */
+/** Signed cookie tied to the owner's persistent credential version; old versions cannot authenticate. */
 export function signSession(p: SessionPayload, o: SessionOpts): string {
-  const body = b64(JSON.stringify({ v: 1, m: p.mobile, s: p.shopId, a: p.method ?? "passcode", iat: o.now.getTime(), exp: o.now.getTime() + SESSION_TTL_MS }));
+  const body = b64(JSON.stringify({ v: 2, m: p.mobile, s: p.shopId, av: p.authVersion, a: p.method ?? "passcode", iat: o.now.getTime(), exp: o.now.getTime() + SESSION_TTL_MS }));
   return `${body}.${b64(sessionMac(body, o.secret))}`;
 }
 
@@ -115,9 +117,9 @@ export function verifySession(token: string, o: SessionOpts): (SessionPayload & 
     const expected = sessionMac(parts[0], o.secret);
     const given = Buffer.from(parts[1], "base64url");
     if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;
-    const d = JSON.parse(Buffer.from(parts[0], "base64url").toString("utf8")) as { v: number; m: string; s: string; a: LoginMethod; iat: number; exp: number };
-    if (d.v !== 1 || typeof d.exp !== "number" || o.now.getTime() >= d.exp || d.iat > o.now.getTime() + 60_000) return null;
-    return { mobile: d.m, shopId: d.s, method: d.a, iat: d.iat };
+    const d = JSON.parse(Buffer.from(parts[0], "base64url").toString("utf8")) as { v: number; m: string; s: string; av: number; a: LoginMethod; iat: number; exp: number };
+    if (d.v !== 2 || !Number.isSafeInteger(d.av) || d.av < 0 || typeof d.m !== "string" || typeof d.s !== "string" || !["passcode", "otp"].includes(d.a) || !Number.isFinite(d.iat) || typeof d.exp !== "number" || !Number.isFinite(d.exp) || o.now.getTime() >= d.exp || d.iat > o.now.getTime() + 60_000) return null;
+    return { mobile: d.m, shopId: d.s, authVersion: d.av, method: d.a, iat: d.iat };
   } catch {
     return null;
   }
@@ -171,11 +173,11 @@ export async function setupOwner(
   if (await store.getOwner(input.shopId)) throw new AuthError("already_set_up", "This shop already has an owner", "Dukaan pehle se set hai. Login karo.", 409);
   await store.createShop({ id: input.shopId, name: shopName, upiVpa: input.upiVpa.trim(), isDemo: false });
   try {
-    await store.createOwner({ shopId: input.shopId, name, mobile, passcodeHash: await hashPasscode(input.passcode), createdAt: input.now.toISOString() });
+    await store.createOwner({ shopId: input.shopId, name, mobile, passcodeHash: await hashPasscode(input.passcode), authVersion: 0, createdAt: input.now.toISOString() });
   } catch {
     throw new AuthError("already_set_up", "This shop already has an owner", "Dukaan pehle se set hai. Login karo.", 409);
   }
-  return { shopId: input.shopId, name, mobile };
+  return { shopId: input.shopId, name, mobile, authVersion: 0 };
 }
 
 export async function loginWithPasscode(
@@ -200,7 +202,7 @@ export async function loginWithPasscode(
   }
   limiter.reset(mKey);
   limiter.reset(iKey);
-  return { shopId: owner.shopId, name: owner.name, mobile: owner.mobile };
+  return { shopId: owner.shopId, name: owner.name, mobile: owner.mobile, authVersion: owner.authVersion };
 }
 
 export async function changePasscode(store: LedgerStore, input: { shopId: string; current?: string; next: string; skipCurrent?: boolean }) {

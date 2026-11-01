@@ -1,4 +1,4 @@
-import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, Shop, StockFlag } from "../types";
+import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
 
 export interface EraseCounts {
   customers: number;
@@ -26,6 +26,10 @@ export interface LedgerStore {
   resolveStockFlag(shopId: string, flagId: string, at: string): Promise<StockFlag | null>;
   savePayToken(token: PayToken): Promise<void>;
   getPayToken(token: string): Promise<PayToken | null>;
+  getReminderDelivery(shopId: string, token: string): Promise<ReminderDelivery | null>;
+  /** Atomically reserves a pay draft once; repeated attempts return the original reservation. */
+  claimReminderDelivery(delivery: ReminderDelivery): Promise<{ delivery: ReminderDelivery; claimed: boolean }>;
+  finishReminderDelivery(shopId: string, token: string, result: Pick<ReminderDelivery, "status" | "messageId" | "simulated">): Promise<void>;
   /** Appending also drops "proposal_shown" events (raw sentences nobody confirmed) older than 30 days. */
   appendAudit(shopId: string, kind: string, payload: Record<string, unknown>, at: string): Promise<void>;
   listAudit(shopId: string, limit: number): Promise<AuditEvent[]>;
@@ -37,6 +41,7 @@ export interface LedgerStore {
   /** One owner per shop; throws if one already exists. */
   createOwner(owner: OwnerRecord): Promise<void>;
   setPasscodeHash(shopId: string, passcodeHash: string): Promise<void>;
+  revokeOwnerSessions(shopId: string): Promise<void>;
   /** back to the seeded demo shop (demo only) */
   reset(): Promise<void>;
 }

@@ -33,5 +33,5 @@ export async function confirmWaCode(store: LedgerStore, cfg: WaConfig, input: { 
   const token = await waVerifyOtp(cfg, { mobile, code: input.code });
   const verified = await waResultVerify(cfg, token);
   if (verified.mobile !== owner.mobile) throw new AuthError("bad_code", "Verified number is not the owner", "Login poora nahi hua.", 401);
-  return { shopId: owner.shopId, name: owner.name, mobile: owner.mobile };
+  return { shopId: owner.shopId, name: owner.name, mobile: owner.mobile, authVersion: owner.authVersion };
 }

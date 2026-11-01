@@ -20,6 +20,8 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "24"
+      - key: DUKAAN_MODE
+        value: shop
       - key: DUKAAN_DB_FILE
         value: /var/data/dukaan.sqlite
       - key: PROPOSAL_SECRET

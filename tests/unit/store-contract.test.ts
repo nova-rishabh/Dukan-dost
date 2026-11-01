@@ -139,16 +139,19 @@ for (const [name, make] of makers) {
       await s.createShop({ id, name: "Dusra naam", upiVpa: "x@y", isDemo: false });
       expect((await s.getShop(id))?.name).toBe("Naya");
       expect(await s.getOwner(id)).toBeNull();
-      await s.createOwner({ shopId: id, name: "Ramesh", mobile: "+15550000001", passcodeHash: "h1", createdAt: NOW });
+      await s.createOwner({ shopId: id, name: "Ramesh", mobile: "+15550000001", passcodeHash: "h1", authVersion: 0, createdAt: NOW });
       expect(await s.getOwner(id)).toMatchObject({ name: "Ramesh", mobile: "+15550000001", passcodeHash: "h1" });
-      await expect(s.createOwner({ shopId: id, name: "Mallory", mobile: "+15550000002", passcodeHash: "h2", createdAt: NOW })).rejects.toThrow();
+      await expect(s.createOwner({ shopId: id, name: "Mallory", mobile: "+15550000002", passcodeHash: "h2", authVersion: 0, createdAt: NOW })).rejects.toThrow();
       await s.setPasscodeHash(id, "h3");
       expect((await s.getOwner(id))?.passcodeHash).toBe("h3");
+      expect((await s.getOwner(id))?.authVersion).toBe(1);
+      await Promise.all([s.revokeOwnerSessions(id), s.revokeOwnerSessions(id)]);
+      expect((await s.getOwner(id))?.authVersion).toBe(3);
     });
 
     it("erasing business data keeps the owner login", async () => {
       const s = make();
-      await s.createOwner({ shopId: SEED_SHOP_ID, name: "Ramesh", mobile: "+15550000001", passcodeHash: "h1", createdAt: NOW });
+      await s.createOwner({ shopId: SEED_SHOP_ID, name: "Ramesh", mobile: "+15550000001", passcodeHash: "h1", authVersion: 0, createdAt: NOW });
       await s.eraseShop(SEED_SHOP_ID);
       expect(await s.getOwner(SEED_SHOP_ID)).not.toBeNull();
     });

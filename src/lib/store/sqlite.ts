@@ -3,7 +3,7 @@ import { mkdirSync } from "node:fs";
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { SEED_CUSTOMERS, SEED_ENTRIES, SEED_SHOP, SEED_STOCK } from "../seed";
-import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, Shop, StockFlag } from "../types";
+import type { AuditEvent, Customer, Entry, OwnerRecord, PayToken, ReminderDelivery, Shop, StockFlag } from "../types";
 import { retentionCutoff, UNCONFIRMED_AUDIT_KIND } from "./retention";
 import type { EraseCounts, LedgerStore } from "./types";
 
@@ -67,6 +67,16 @@ create table if not exists pay_tokens (
   amount_paise integer not null,
   expires_at text not null
 );
+create table if not exists reminder_deliveries (
+  shop_id text not null references shops(id) on delete cascade,
+  token text not null references pay_tokens(token) on delete cascade,
+  fingerprint text not null,
+  status text not null check(status in ('pending','sent','unknown')),
+  created_at text not null,
+  message_id text,
+  simulated integer,
+  primary key(shop_id, token)
+);
 create table if not exists audit_events (
   id integer primary key autoincrement,
   shop_id text not null,
@@ -80,6 +90,7 @@ create table if not exists owners (
   name text not null,
   mobile text not null,
   passcode_hash text not null,
+  auth_version integer not null default 0,
   created_at text not null
 );
 `;
@@ -135,6 +146,11 @@ export class SqliteStore implements LedgerStore {
     this.db.exec("PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;");
     if (file !== ":memory:") this.db.exec("PRAGMA journal_mode = WAL;");
     this.db.exec(SCHEMA);
+    // Existing owners retain their password and data. Legacy sessions intentionally expire on deploy.
+    const ownerColumns = this.db.prepare("pragma table_info(owners)").all() as Row[];
+    if (!ownerColumns.some((column) => column.name === "auth_version")) {
+      this.db.exec("alter table owners add column auth_version integer not null default 0");
+    }
     const any = this.db.prepare("select count(*) as n from shops").get() as { n: number };
     if (any.n === 0) {
       if (opts.shop) this.db.prepare("insert into shops (id, name, upi_vpa, is_demo) values (?, ?, ?, 0)").run(opts.shop.id, opts.shop.name, opts.shop.upiVpa);
@@ -237,6 +253,20 @@ export class SqliteStore implements LedgerStore {
     return r ? { token: r.token as string, shopId: r.shop_id as string, customerId: r.customer_id as string, amountPaise: Number(r.amount_paise), expiresAt: r.expires_at as string } : null;
   }
 
+  async getReminderDelivery(shopId: string, token: string): Promise<ReminderDelivery | null> {
+    const row = this.db.prepare("select * from reminder_deliveries where shop_id = ? and token = ?").get(shopId, token) as Row | undefined;
+    return row ? { shopId, token, fingerprint: row.fingerprint as string, status: row.status as ReminderDelivery["status"], createdAt: row.created_at as string, messageId: (row.message_id as string | null) ?? undefined, simulated: row.simulated === null ? undefined : row.simulated === 1 } : null;
+  }
+
+  async claimReminderDelivery(delivery: ReminderDelivery) {
+    const result = this.db.prepare("insert or ignore into reminder_deliveries (shop_id, token, fingerprint, status, created_at) values (?, ?, ?, ?, ?)").run(delivery.shopId, delivery.token, delivery.fingerprint, "pending", delivery.createdAt);
+    return { delivery: (await this.getReminderDelivery(delivery.shopId, delivery.token))!, claimed: Number(result.changes) === 1 };
+  }
+
+  async finishReminderDelivery(shopId: string, token: string, result: Pick<ReminderDelivery, "status" | "messageId" | "simulated">) {
+    this.db.prepare("update reminder_deliveries set status = ?, message_id = ?, simulated = ? where shop_id = ? and token = ?").run(result.status, result.messageId ?? null, result.simulated === undefined ? null : result.simulated ? 1 : 0, shopId, token);
+  }
+
   async appendAudit(shopId: string, kind: string, payload: Record<string, unknown>, at: string) {
     this.db.prepare("insert into audit_events (shop_id, kind, payload, created_at) values (?, ?, ?, ?)").run(shopId, kind, JSON.stringify(payload), at);
     this.db.prepare("delete from audit_events where kind = ? and created_at < ?").run(UNCONFIRMED_AUDIT_KIND, retentionCutoff(at));
@@ -257,7 +287,7 @@ export class SqliteStore implements LedgerStore {
         payTokens: n("select count(*) as n from pay_tokens where shop_id = ?"),
         auditEvents: n("select count(*) as n from audit_events where shop_id = ?"),
       };
-      for (const t of ["pay_tokens", "entries", "stock_flags", "audit_events", "customers"]) this.db.prepare(`delete from ${t} where shop_id = ?`).run(shopId);
+      for (const t of ["reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers"]) this.db.prepare(`delete from ${t} where shop_id = ?`).run(shopId);
       return counts;
     });
   }
@@ -268,20 +298,24 @@ export class SqliteStore implements LedgerStore {
 
   async getOwner(shopId: string) {
     const r = this.db.prepare("select * from owners where shop_id = ?").get(shopId) as Row | undefined;
-    return r ? ({ shopId: r.shop_id, name: r.name, mobile: r.mobile, passcodeHash: r.passcode_hash, createdAt: r.created_at } as OwnerRecord) : null;
+    return r ? ({ shopId: r.shop_id, name: r.name, mobile: r.mobile, passcodeHash: r.passcode_hash, authVersion: Number(r.auth_version), createdAt: r.created_at } as OwnerRecord) : null;
   }
 
   async createOwner(o: OwnerRecord) {
-    this.db.prepare("insert into owners (shop_id, name, mobile, passcode_hash, created_at) values (?, ?, ?, ?, ?)").run(o.shopId, o.name, o.mobile, o.passcodeHash, o.createdAt);
+    this.db.prepare("insert into owners (shop_id, name, mobile, passcode_hash, auth_version, created_at) values (?, ?, ?, ?, ?, ?)").run(o.shopId, o.name, o.mobile, o.passcodeHash, o.authVersion, o.createdAt);
   }
 
   async setPasscodeHash(shopId: string, passcodeHash: string) {
-    this.db.prepare("update owners set passcode_hash = ? where shop_id = ?").run(passcodeHash, shopId);
+    this.db.prepare("update owners set passcode_hash = ?, auth_version = auth_version + 1 where shop_id = ?").run(passcodeHash, shopId);
+  }
+
+  async revokeOwnerSessions(shopId: string) {
+    this.db.prepare("update owners set auth_version = auth_version + 1 where shop_id = ?").run(shopId);
   }
 
   async reset() {
     this.tx(() => {
-      for (const t of ["owners", "pay_tokens", "entries", "stock_flags", "audit_events", "customers", "shops"]) this.db.exec(`delete from ${t}`);
+      for (const t of ["owners", "reminder_deliveries", "pay_tokens", "entries", "stock_flags", "audit_events", "customers", "shops"]) this.db.exec(`delete from ${t}`);
     });
     if (this.seedDemo) this.seed();
   }

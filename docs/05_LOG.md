@@ -76,3 +76,10 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - On owner instruction, committed the verified improvements (4b2df73), merged with --no-ff (b6a1ce9), and pushed master. pnpm verify returned VERIFY-PASS: 187 unit tests, 48 daemon tests, 34 browser tests.
 - Used agency-product-manager and agency-workflow-architect skills with independent reality/security reviews to produce docs/19_COMPLETION_ROADMAP.md and docs/workflows drafts. Identified 24 product/operational gaps, priorities, dependencies and release gates. No proposed new product features are implemented by this planning change.
 - Public signup/account model remains an owner decision. Roadmap is Draft; deployment and live WhatsApp delivery remain unverified.
+
+## 2026-11-01: first roadmap implementation
+- Owner approved starting and selected the existing WhatsApp service for public signup. Work on codex/phase-zero-reliability.
+- Added session revocation/logout-all, login/CAPTCHA retry, request deadlines, durable reminder-send reservation and stale draft rejection, encrypted DB backup/restore CLI and synthetic rehearsal, production DB guard, persistent bootstrap code and CI workflow.
+- Added English account/header/security preview with persisted language choice; other shop surfaces remain Hinglish.
+- pnpm verify: VERIFY-PASS (222 unit/fixture tests, 48 daemon tests, 42 browser tests). English account screenshot inspected at 390 px; axe/overflow/input-preservation checks passed.
+- docs/20_OPERATIONS.md records backup, restore, secret rotation and release requirements. No hosted CI, live deployment or real WhatsApp delivery verified. Tenant-safe public signup, full locale coverage, dashboard and inventory remain ahead.

@@ -9,6 +9,7 @@ const WA_PORT = 3201;
  * the demo server stays a keyless demo and no test ever calls ElevenLabs, Gemini or a real WhatsApp.
  */
 const HERMETIC = {
+  DUKAAN_MODE: "demo",
   ELEVENLABS_API_KEY: "",
   GEMINI_API_KEY: "",
   DUKAAN_DB_FILE: "",
@@ -53,6 +54,8 @@ export default defineConfig({
       timeout: 120000,
       env: {
         ...HERMETIC,
+        DUKAAN_MODE: "shop",
+        DUKAAN_TEST_MEMORY: "1",
         DUKAAN_DB_FILE: ":memory:",
         PROPOSAL_SECRET: "e2e-real-shop-secret-e2e-real-shop-secret",
         SETUP_CODE: "e2e-setup-code",

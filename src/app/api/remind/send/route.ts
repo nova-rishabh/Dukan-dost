@@ -1,9 +1,9 @@
-import { AuthError, normalizeMobile } from "@/lib/auth";
-import { LedgerError } from "@/lib/ledger";
+import { AuthError } from "@/lib/auth";
 import { SendReminderBody } from "@/lib/schemas";
 import { waSendMessage } from "@/lib/waService";
-import { getContext } from "@/server/context";
-import { HttpError, rateLimit, readJson, route } from "@/server/http";
+import { appUrl, getContext } from "@/server/context";
+import { rateLimit, readJson, route } from "@/server/http";
+import { sendConfirmedReminder } from "@/server/sendReminder";
 
 export const runtime = "nodejs";
 
@@ -17,15 +17,5 @@ export const POST = route("remind.send", async (req) => {
   const ctx = getContext();
   if (!ctx.authRequired || !ctx.wa) throw new AuthError("wa_unavailable", "Sending is not configured", "WhatsApp bhejna chalu nahi hai. WhatsApp kholo se bhejo.", 503);
   const body = SendReminderBody.parse(await readJson(req));
-  if (body.confirmed !== true) throw new LedgerError("not_confirmed", "Send was not confirmed", "Bhejne se pehle pakka karo.");
-  const to = normalizeMobile(body.phone);
-  if (!to) throw new AuthError("bad_mobile", "Phone number is not valid", "Customer ka number desh code ke saath likho.");
-  const token = new URL(body.payUrl).pathname.split("/").filter(Boolean).pop() ?? "";
-  const pay = await ctx.store.getPayToken(token);
-  if (!pay || pay.shopId !== ctx.shopId || pay.customerId !== body.customerId || !body.text.includes(body.payUrl)) {
-    throw new HttpError(400, "bad_request", "Message does not match a pay link for this customer", "Pehle Yaad dilao se message banao, phir bhejo.");
-  }
-  const sent = await waSendMessage(ctx.wa, { to, text: body.text });
-  await ctx.store.appendAudit(ctx.shopId, "reminder_sent", { customerId: body.customerId, amountPaise: pay.amountPaise, messageId: sent.id, simulated: sent.simulated }, new Date().toISOString());
-  return { sent: !sent.simulated, simulated: sent.simulated };
+  return sendConfirmedReminder(ctx.store, body, { shopId: ctx.shopId, secret: ctx.secret, appUrl: await appUrl(req), now: new Date(), send: (input) => waSendMessage(ctx.wa!, input) });
 });

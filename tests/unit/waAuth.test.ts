@@ -48,7 +48,7 @@ describe("WhatsApp code login through the real daemon code", () => {
     const code = daemon.lastCode()!;
     expect(code).toMatch(/^\d{6}$/);
     const owner = await confirmWaCode(s, daemon.cfg, { shopId: SHOP, mobile: TEN, code });
-    expect(owner).toEqual({ shopId: SHOP, name: "Ramesh", mobile: OWNER });
+    expect(owner).toEqual({ shopId: SHOP, name: "Ramesh", mobile: OWNER, authVersion: 0 });
     await expect(confirmWaCode(s, daemon.cfg, { shopId: SHOP, mobile: TEN, code })).rejects.toMatchObject({ code: "bad_code" });
   });
 
