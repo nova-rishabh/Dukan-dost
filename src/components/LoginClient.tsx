@@ -110,7 +110,7 @@ export function LoginClient() {
   return (
     <div className="grid gap-4">
       {me.waLogin ? (
-        <div role="group" aria-label={t("loginMethod")} className="flex flex-wrap gap-2">
+        <div role="group" aria-label={t("loginMethod")} className="chip-grid">
           <button type="button" className="chip" aria-pressed={mode === "passcode"} onClick={() => { setMode("passcode"); setError(null); }}>
             {t("passwordMode")}
           </button>
@@ -185,7 +185,7 @@ export function LoginClient() {
             {t("sixDigitCode")}
           </label>
           <input id="wa-code" className="input" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} data-testid="wa-code" />
-          <div className="flex flex-wrap gap-3">
+          <div className="btn-grid">
             <button type="submit" className="btn btn-primary" disabled={busy || code.length !== 6} data-testid="wa-verify">
               {t("signIn")}
             </button>

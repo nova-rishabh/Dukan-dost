@@ -83,7 +83,7 @@ export function TypeBox({ onSubmit, disabled, initial = "" }: { onSubmit: (text:
       <div className="grid gap-2 border-2 border-syahi bg-safed p-3">
         <p>{L("Optional. Only typed text is saved in this browser tab, for up to 24 hours. It can contain customer names. Avoid shared devices. Nothing is queued or sent automatically.", "Optional hai. Sirf likha text isi browser tab mein 24 ghante tak rahega. Ismein customer ka naam ho sakta hai. Shared device par mat rakho. Apne aap kuch nahi bhejenge.")}</p>
         <label className="flex min-h-12 items-center gap-2"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />{L("Save this draft on this device", "Yeh draft is device par rakho")}</label>
-        <div className="flex flex-wrap gap-2"><button type="button" className="chip" disabled={!consent || !scope || !text.trim()} onClick={() => {
+        <div className="chip-grid"><button type="button" className="chip" disabled={!consent || !scope || !text.trim()} onClick={() => {
           if (!scope) return;
           try { saveDraft(scope, text); setSaved(text); setNote("saved"); } catch { setNote("unavailable"); }
         }}>{L("Save draft", "Draft rakho")}</button>

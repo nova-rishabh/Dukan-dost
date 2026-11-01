@@ -62,7 +62,7 @@ export function StartBand() {
         <div className="flex-1">
           <h2 id="shuru" className="text-[32px]"><Copy en="Try the sample shop first" hi="Pehle sample dukaan mein try karo" /></h2>
           <p className="mt-3 max-w-[48ch] text-xl"><Copy en="No sign-up. Speak one entry, check the card and watch the stamp land." hi="Sign-up nahi chahiye. Ek entry bolo, parchi dekho aur stamp lagta dekho." /></p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="btn-grid mt-6">
             <Link href="/try" className="btn btn-primary"><Copy en="Try sample shop" hi="Sample dukaan try karo" /></Link>
             <Link href="/signup" className="btn"><Copy en="Create account" hi="Naya account" /></Link>
           </div>

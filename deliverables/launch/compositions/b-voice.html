@@ -32,28 +32,31 @@
 #root .t{position:absolute;left:110px;top:170px;font-size:215px}
 #root .s{position:absolute;left:114px;top:530px;font-size:58px}
 #root #b-mic{left:114px;top:730px;width:200px;height:200px;border-radius:999px;background:#2D46FF;border:5px solid #16123A;box-shadow:8px 8px 0 #16123A;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:42px}
+#root #b-wave{left:380px;top:640px;width:420px;height:380px}
+#root .wb{position:absolute;bottom:0;width:26px;height:200px;background:#2D46FF;border:4px solid #16123A;border-radius:14px}
 #root .ring{position:absolute;left:114px;top:730px;width:200px;height:200px;border:6px solid #2D46FF;border-radius:999px;opacity:0}
 
 </style>
-<div data-hf-id="hf-zfuk" id="root" data-composition-id="b-voice" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="b-voice" data-width="1920" data-height="1080">
 
-<div data-hf-id="hf-w0k7" class="ring" id="b-rg1"></div><div data-hf-id="hf-ncoc" class="ring" id="b-rg2"></div><div data-hf-id="hf-o4c5" class="ring" id="b-rg3"></div>
-<div data-hf-id="hf-i17k" class="abs" id="b-mic">Bolo</div>
-<div data-hf-id="hf-mbog" class="t disp" id="b-t1">Bolo.</div>
-<div data-hf-id="hf-pwr6" class="t disp" id="b-t3" style="font-size:170px;top:120px">Parchi<br data-hf-id="hf-x5px">dikhegi.</div>
-<div data-hf-id="hf-gs9r" class="t disp" id="b-t4" style="font-size:170px;top:120px">Aap tap<br data-hf-id="hf-rsrt">karo.</div>
-<div data-hf-id="hf-v29x" class="t disp" id="b-t5" style="color:#FF3B2F;font-size:175px;top:170px">Likh<br data-hf-id="hf-szow">liya.</div>
-<div data-hf-id="hf-nwvh" class="s hand" id="b-s1">Jaise dukaan pe bolte ho.</div>
-<div data-hf-id="hf-6cx3" class="s hand" id="b-s3">Pehle parchi. Entry baad mein.</div>
-<div data-hf-id="hf-wkob" class="s hand" id="b-s4">Rupaye digits mein, shabdon mein.</div>
-<div data-hf-id="hf-mnuh" class="s hand" id="b-s5">Aapke tap ke baad hi.</div>
-<div data-hf-id="hf-1mbf" class="abs" id="b-card">
-  <img data-hf-id="hf-0qe0" id="b-before" src="assets/captures/parchi-before.png" alt="" />
-  <img data-hf-id="hf-isdj" id="b-after" src="assets/captures/parchi-after.png" alt="" style="opacity:0" />
-  <div data-hf-id="hf-ab5o" class="abs disp" id="b-stamp" style="opacity:0">लिख लिया<div data-hf-id="hf-tmw2" id="b-ink"></div></div>
+<div class="abs" id="b-wave"></div>
+<div class="ring" id="b-rg1"></div><div class="ring" id="b-rg2"></div><div class="ring" id="b-rg3"></div>
+<div class="abs" id="b-mic">Bolo</div>
+<div class="t disp" id="b-t1">Bolo.</div>
+<div class="t disp" id="b-t3" style="font-size:170px;top:120px">Parchi<br>dikhegi.</div>
+<div class="t disp" id="b-t4" style="font-size:170px;top:120px">Aap tap<br>karo.</div>
+<div class="t disp" id="b-t5" style="color:#FF3B2F;font-size:175px;top:170px">Likh<br>liya.</div>
+<div class="s hand" id="b-s1">Jaise dukaan pe bolte ho.</div>
+<div class="s hand" id="b-s3">Pehle parchi. Entry baad mein.</div>
+<div class="s hand" id="b-s4">Rupaye digits mein, shabdon mein.</div>
+<div class="s hand" id="b-s5">Aapke tap ke baad hi.</div>
+<div class="abs" id="b-card">
+  <img id="b-before" src="assets/captures/parchi-before.png" alt="" />
+  <img id="b-after" src="assets/captures/parchi-after.png" alt="" style="opacity:0" />
+  <div class="abs disp" id="b-stamp" style="opacity:0">लिख लिया<div id="b-ink"></div></div>
 </div>
-<div data-hf-id="hf-ng0k" class="ripple" id="b-rip"></div>
-<div data-hf-id="hf-ki33" class="cursor" id="b-cur"><svg data-hf-id="hf-ulu9" viewBox="0 0 24 24"><path data-hf-id="hf-2ur4" d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.6 L11 13.2 L18 13 Z" fill="#FF5CA8" stroke="#16123A" stroke-width="1.6" stroke-linejoin="round"/></svg><div data-hf-id="hf-ec5n" class="nm">Aap</div></div>
+<div class="ripple" id="b-rip"></div>
+<div class="cursor" id="b-cur"><svg viewBox="0 0 24 24"><path d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.6 L11 13.2 L18 13 Z" fill="#FF5CA8" stroke="#16123A" stroke-width="1.6" stroke-linejoin="round"/></svg><div class="nm">Aap</div></div>
 </div>
 <script>
 const tl = gsap.timeline({ paused: true });
@@ -68,17 +71,21 @@ tl.fromTo('#b-card',{x:1100,rotation:8,opacity:0},{x:0,rotation:0,opacity:1,dura
 // mic + rings
 tl.fromTo('#b-mic',{scale:0.2,opacity:0},{scale:1,opacity:1,duration:0.3,ease:'back.out(1.4)'},0.45);
 [0.9,1.5,2.1].forEach(function(t,i){ tl.fromTo('#b-rg'+(i+1),{opacity:0.9,scale:1},{opacity:0,scale:1.9,duration:0.7,ease:'power2.out'},t); });
-tl.to('#b-mic',{opacity:0,scale:0.4,filter:'blur(8px)',duration:0.25,ease:'power2.in'},2.8);
-slam('#b-t1',0.9); slam('#b-s1',1.6,0.3);
-swapOut('#b-t1',2.75); swapOut('#b-s1',2.75);
-slam('#b-t3',3.2); slam('#b-s3',3.7,0.3);
+tl.to('#b-mic',{opacity:0,scale:0.4,filter:'blur(8px)',duration:0.25,ease:'power2.in'},2.9);
+slam('#b-t1',1.0); slam('#b-s1',1.6,0.3);
+(function(){ var w=document.getElementById('b-wave'); for (var i=0;i<9;i++){ var d=document.createElement('div'); d.className='wb'; d.style.left=(i*46)+'px'; d.id='wb'+i; w.appendChild(d); }
+  gsap.set('.wb',{transformOrigin:'50% 100%',scaleY:0.12});
+  for (var k=0;k<8;k++){ for (var i=0;i<9;i++){ var h=0.2+0.8*Math.abs(Math.sin(i*1.7+k*2.3)); tl.to('#wb'+i,{scaleY:h,duration:0.1,ease:'power2.out'},1.0+k*0.25); } }
+  tl.to('.wb',{scaleY:0.05,opacity:0,duration:0.2},2.9); })();
+swapOut('#b-t1',2.8); swapOut('#b-s1',2.8);
+slam('#b-t3',3.0); slam('#b-s3',3.6,0.3);
 swapOut('#b-t3',4.8); swapOut('#b-s3',4.8);
-slam('#b-t4',5.2); slam('#b-s4',5.7,0.3);
+slam('#b-t4',5.0); slam('#b-s4',5.6,0.3);
 swapOut('#b-t4',8.45); swapOut('#b-s4',8.45);
 // cursor to Likh do and tap
-tl.fromTo('#b-cur',{x:760,y:1180,opacity:0},{x:1193,y:883,opacity:1,duration:1.9,ease:'power3.inOut'},5.7);
-tl.to('#b-cur',{scale:0.85,duration:0.07,ease:'power2.out'},8.1); tl.to('#b-cur',{scale:1,duration:0.2,ease:'power3.out'},8.17);
-tl.set('#b-rip',{x:1193,y:883},0); ripple('#b-rip',8.12);
+tl.fromTo('#b-cur',{x:760,y:1180,opacity:0},{x:1193,y:883,opacity:1,duration:1.9,ease:'power3.inOut'},5.9);
+tl.to('#b-cur',{scale:0.85,duration:0.07,ease:'power2.out'},8.0); tl.to('#b-cur',{scale:1,duration:0.2,ease:'power3.out'},8.07);
+tl.set('#b-rip',{x:1193,y:883},0); ripple('#b-rip',8.02);
 // stamp slam (fastest at contact)
 tl.set('#b-stamp',{transformOrigin:'50% 50%'},0);
 tl.fromTo('#b-stamp',{scale:2.8,rotation:-32},{scale:1,rotation:-8,duration:HIT-8.24,ease:'power3.in'},8.24);

@@ -82,14 +82,14 @@ export function PosterMaker() {
           {L("Type your offer", "Offer bolo ya likho")}
         </label>
         <textarea id="offer" className="input min-h-[96px] rounded-2xl py-3" value={text} onChange={(e) => setText(e.target.value)} maxLength={300} />
-        <div className="flex flex-wrap gap-2" role="group" aria-label={L("Poster colour", "Poster ka rang")}>
+        <div className="chip-grid" role="group" aria-label={L("Poster colour", "Poster ka rang")}>
           {TEMPLATES.map((x) => (
             <button key={x.id} type="button" className="chip" aria-pressed={tpl === x.id} onClick={() => setTpl(x.id)}>
               {x.label}
             </button>
           ))}
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="btn-grid">
           <button type="button" className="btn btn-primary" onClick={make}>
             {L("Make poster", "Poster banao")}
           </button>

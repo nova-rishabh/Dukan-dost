@@ -39,14 +39,14 @@ export function ShopHome() {
 
   return (
     <div className="mx-auto grid max-w-5xl gap-5 px-4 pb-40 pt-2 md:px-8">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="grid gap-3 md:flex md:items-end md:justify-between">
         <h1 className="text-[40px] leading-tight">{shopName || L("My shop", "Meri dukaan")}</h1>
         <Link href="/shop/poster" className="btn">
           {L("Make offer poster", "Offer poster banao")}
         </Link>
       </div>
 
-      <div className="flex flex-wrap gap-3"><Link className="btn" href="/shop/entry">{L("Write exact amount", "Sahi rakam likho")}</Link><Link className="btn" href="/shop/ledger">{L("Browse entries", "Entries dekho")}</Link><Link className="btn" href="/shop/help">{L("Help", "Madad")}</Link></div>
+      <div className="btn-grid"><Link className="btn" href="/shop/entry">{L("Write exact amount", "Sahi rakam likho")}</Link><Link className="btn" href="/shop/ledger">{L("Browse entries", "Entries dekho")}</Link><Link className="btn" href="/shop/help">{L("Help", "Madad")}</Link></div>
       <div className="flex items-center gap-4"><Munshi /><p>{L("Welcome! Speak an entry or type below. Review the card and confirm it.", "Namaste! Entry bolo ya neeche likho. Main parchi dikhaunga, aap pakka karna.")}</p></div>
 
       {failed ? (

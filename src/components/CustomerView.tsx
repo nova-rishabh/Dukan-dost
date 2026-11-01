@@ -82,7 +82,7 @@ export function CustomerView({ id }: { id: string }) {
         <BalanceChip paise={data.balance} />
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="btn-grid">
         <Link href={`/shop/${id}/statement`} className="btn">{L("Statement", "Khata statement")}</Link>
         <button type="button" className="btn btn-reminder" onClick={() => setSheet(true)} disabled={data.balance <= 0}>
           {L("Send reminder", "Yaad dilao")}

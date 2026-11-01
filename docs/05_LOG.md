@@ -134,3 +134,9 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 ## 2026-11-01: sidebar, compact language menu, longer homepage, footer
 - Language control is now a small "H/E" button with a menu (Hinglish, English) at the top right; the explanatory note under it is gone. Shop pages use a left sidebar on desktop; on phones the same links sit in the header menu. Homepage gained a four-step section, FAQ, closing sample-shop band and a site-wide footer (fictional-data and draft-only notes; no new numbers or claims).
 - Tests: new tests/e2e/helpers.ts (setLanguage, openMenu). pnpm verify: VERIFY-PASS (typecheck, lint, unit, WA daemon, build, 59 browser tests, slop, secrets, assets). Checked by screenshot at 1440 and 390 px. Not checked on a real phone.
+
+## 2026-11-01: film v2, deck and posts rebuilt, even button grids
+- Workbook (shared by owner) needs a 30-60 s video and an 11-slide deck in a fixed order. Film v2 is 45 s, 1920x1080, with a Munshi comic hook, hits on the 0.5 s beat grid and an original synthesised score (Openverse audio search was timing out; CC0 effects kept). Stamp loudest sample measured at 14.001 s. Audio measured only, never listened to by a human.
+- Deck rebuilt to 11 slides in the workbook order; market size is an explicit GAP and pricing is labelled hypothesis. Three posts rebuilt in the film style with new bilingual captions (five hashtags each). public/submission now serves the new film, deck, posts and credits. verify-assets updated for the 45 s film and 11-slide deck.
+- Button groups now use even grids (.btn-grid, .chip-grid) and button labels never wrap; no clipped buttons or sideways scroll at 360, 390 or 412 px across 15 pages.
+- Google Slides copy and a hosted video link still need the owner.

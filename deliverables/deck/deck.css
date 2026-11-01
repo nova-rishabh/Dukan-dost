@@ -42,3 +42,13 @@ h2{font-size:96px;max-width:1500px}
  .slide:last-of-type{page-break-after:auto;break-after:auto}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important}}
+.bub{position:absolute;background:var(--safed);color:var(--syahi);border:var(--border-card);border-radius:36px;box-shadow:var(--shadow-hard);padding:22px 40px;font-weight:700;font-size:50px;line-height:1.15;white-space:nowrap}
+.bub::after{content:"";position:absolute;bottom:-22px;left:70px;width:36px;height:36px;background:inherit;border-right:3px solid var(--syahi);border-bottom:3px solid var(--syahi);transform:rotate(45deg)}
+.tbl{width:100%;border-collapse:collapse;background:var(--safed);color:var(--syahi);border:var(--border-card);box-shadow:var(--shadow-hard);font-size:34px}
+.tbl th,.tbl td{padding:16px 24px;text-align:left;border-bottom:2px dashed var(--syahi)}
+.tbl thead th{border-bottom:3px solid var(--syahi);font-weight:700;font-size:32px}
+.tbl tr:last-child td,.tbl tr:last-child th{border-bottom:0}
+.tbl .us{background:var(--bahi-page);font-weight:700}
+.link-row{display:grid;grid-template-columns:260px 1fr;gap:10px 30px;font-size:34px;align-items:center}
+.link-row b{font-family:var(--font-display);font-weight:400;font-size:36px}
+.cap{font-size:26px;margin-top:14px}

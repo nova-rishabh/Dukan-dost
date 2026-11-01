@@ -1,27 +1,33 @@
 # Captions
 
-Prepared trial URL: https://dukaan-dost.onrender.com/try. Verify the released route before posting; refreshed local artifacts do not establish live availability. Demo shop and customers are fictional. Product screens are captures of the running demo app; post 1 recreates the parchi in HTML from the same design.
+Prepared trial URL: https://dukaan-dost.onrender.com/try. Verify the released route before posting; local artifacts do not establish live availability. Demo shop and customers are fictional. Post images use the supplied Munshi artwork and a capture of the running demo app. Each caption stays under 60 words and carries five hashtags.
 
-## Post 1: Ne ya ko (post-1-ne-ya-ko.png)
-
-Hindi:
-"शर्मा जी ने 500 दिए" और "शर्मा जी को 500 दिए" में सिर्फ़ एक शब्द का फ़र्क़ है, पर पैसे की दिशा उलटी है। Dukaan Dost लिखने से पहले पूछता है: रकम अंकों और शब्दों में, और दिशा शब्दों में (पैसे मिले या उधार दिया)। आपके टैप के बिना कुछ सेव नहीं होता। आज़माइए (डेमो, काल्पनिक दुकान): https://dukaan-dost.onrender.com/try
-
-English:
-"Sharma ji ne 500 diye" and "Sharma ji ko 500 diye" are one word apart, and the money moves in opposite directions. Dukaan Dost asks before it writes: the amount in digits and words, and the direction in words (money received or udhaar given). Nothing is saved without your tap. Try the demo (fictional shop): https://dukaan-dost.onrender.com/try
-
-## Post 2: Bahi vs bolo (post-2-bahi-vs-bolo.png)
+## Post 1: Kitna baaki tha? (post-1-ne-ya-ko.png), the problem as a moment
 
 Hindi:
-वही एंट्री, दो तरीक़े। बाएँ हाथ से लिखी बही, दाएँ बोलकर बना बही-पेज। जोड़ और दिशा ऐप संभालता है, आप सिर्फ़ बोलिए और टैप कीजिए। डेमो देखिए (काल्पनिक डेटा): https://dukaan-dost.onrender.com/try
+"भैया, मेरा कितना बाकी है?" और बही के पन्ने पलटते मुंशी जी। काउंटर पर भीड़, हाथ में सामान, और रकम ₹??? । बोलकर लिखवाइए, पर्ची देखिए, ख़ुद टैप कीजिए। आज़माइए (काल्पनिक दुकान): https://dukaan-dost.onrender.com/try
+#DukaanDost #Kirana #UdhaarKhata #VoiceFirst #AIBuilderChallenge
 
 English:
-The same entry, two ways. A hand-ruled paper khata page on the left, the bahi-style page in the app on the right. You speak and tap; the app keeps the total and the direction straight. See the demo (fictional data): https://dukaan-dost.onrender.com/try
+"Bhaiya, how much do I owe?" And the shopkeeper flips through the bahi, busy counter, hands full, amount ₹???. Speak the entry, read the slip, tap to confirm. Try it (fictional shop): https://dukaan-dost.onrender.com/try
+#DukaanDost #Kirana #UdhaarKhata #VoiceFirst #AIBuilderChallenge
 
-## Post 3: Vasooli, politely (post-3-vasooli-politely.png)
+## Post 2: Bolo. Parchi dekho. Tap karo. (post-2-bahi-vs-bolo.png), the product in action
 
 Hindi:
-याद दिलाइए, डाँटिए मत। ऐप WhatsApp का मैसेज ड्राफ़्ट बना देता है, भेजना आपके हाथ में है: Send आप दबाते हैं, ऐप अपने आप संदेश नहीं भेजता। पे-पेज पर QR है; लिंक भुगतान का सबूत नहीं है। रकम तभी घटती है जब दुकानदार भुगतान की एंट्री की पुष्टि करता है। हमने अभी असली दुकानों पर टेस्ट नहीं किया है; अगला क़दम दस दुकानों के साथ टेस्ट है। डेमो: https://dukaan-dost.onrender.com/try
+तीन कदम: बोलिए, पर्ची देखिए, टैप कीजिए। नाम, रकम (अंकों और शब्दों में) और दिशा पर्ची पर दिखती है। आपके टैप के बाद ही "लिख लिया" का स्टांप लगता है। डेमो (काल्पनिक डेटा): https://dukaan-dost.onrender.com/try
+#DukaanDost #Kirana #UdhaarKhata #VoiceFirst #AIBuilderChallenge
 
 English:
-Remind, don't nag. The app drafts the WhatsApp message and you review the recipient and confirm sending; it never sends automatically. The pay page has a QR, but a link is not proof of payment. The balance changes only when the shopkeeper confirms a payment entry. We have not tested with real shops yet; the next step is a test with ten shops. Demo: https://dukaan-dost.onrender.com/try
+Three steps: speak, read the slip, tap. The name, the amount in digits and words, and the direction are on the slip. The "likh liya" stamp lands only after your tap. Demo (fictional data): https://dukaan-dost.onrender.com/try
+#DukaanDost #Kirana #UdhaarKhata #VoiceFirst #AIBuilderChallenge
+
+## Post 3: Bolo, likho mat (post-3-vasooli-politely.png), the launch and call to action
+
+Hindi:
+Dukaan Dost आ गया: उधार का खाता, आपकी आवाज़ से। रिमाइंडर सिर्फ़ ड्राफ़्ट है, Send आप दबाते हैं। सैंपल दुकान में सब नाम और रकम काल्पनिक हैं। अभी आज़माइए: https://dukaan-dost.onrender.com/try
+#DukaanDost #Kirana #UdhaarKhata #VoiceFirst #AIBuilderChallenge
+
+English:
+Dukaan Dost is here: a credit ledger you speak to. Reminders are drafts only; you press Send. In the sample shop every name and amount is fictional. Try it now: https://dukaan-dost.onrender.com/try
+#DukaanDost #Kirana #UdhaarKhata #VoiceFirst #AIBuilderChallenge

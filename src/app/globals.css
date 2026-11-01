@@ -136,6 +136,36 @@ h3 {
   background: var(--safed);
 }
 
+/* Buttons never wrap their label, and groups sit in an even grid instead of a ragged flow. */
+.btn-grid,
+.chip-grid {
+  display: grid;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+.btn-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+}
+.chip-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+}
+.btn-grid > *,
+.chip-grid > * {
+  min-width: 0;
+}
+.btn-grid > li,
+.chip-grid > li {
+  display: flex;
+}
+.btn-grid > li > *,
+.chip-grid > li > * {
+  flex: 1;
+}
+.btn,
+.chip {
+  white-space: nowrap;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

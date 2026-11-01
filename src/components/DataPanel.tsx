@@ -78,7 +78,7 @@ export function DataPanel({ isDemoShop, onErased }: { isDemoShop: boolean; onEra
             {error}
           </p>
         ) : null}
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="btn-grid mt-4">
           <button type="button" className="btn" autoFocus onClick={() => ref.current?.close()}>
             {L("Cancel", "Rehne do")}
           </button>

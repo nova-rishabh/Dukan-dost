@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Copy } from "@/components/LocaleProvider";
 
 export default function SocialSubmissionPage() {
-  const posts = [["post-1-ne-ya-ko", "Ne ya ko", "Direction in words"], ["post-2-bahi-vs-bolo", "Bahi vs bolo", "A spoken entry and a ledger page"], ["post-3-vasooli-politely", "Vasooli, politely", "A reviewed reminder and honest payment link"]];
+  const posts = [["post-1-ne-ya-ko", "Kitna baaki tha?", "The problem as a moment"], ["post-2-bahi-vs-bolo", "Bolo. Parchi dekho. Tap karo.", "The product in action"], ["post-3-vasooli-politely", "Bolo, likho mat", "The launch and the call to action"]];
   return <div className="mx-auto grid max-w-5xl gap-5 px-4 py-6 md:px-8">
     <Link className="underline" href="/submission"><Copy en="Back to submission" hi="Submission par wapas" /></Link>
     <h1 className="text-4xl"><Copy en="Three social posts" hi="Teen social posts" /></h1>

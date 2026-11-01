@@ -205,7 +205,7 @@ export function Assistant({ variant, previewText, showSamples, onChange }: Props
           <TypeBox onSubmit={(t) => void submitText(t, "text")} disabled={busy} />
         </div>
         {variant === "hero" ? (
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-[auto_1fr_1fr] items-center gap-2">
             <span className="font-semibold">Try:</span>
             {heroClips.map((c) => (
               <button key={c.id} type="button" className="btn" disabled={busy} onClick={() => void onSample(c.id)}>

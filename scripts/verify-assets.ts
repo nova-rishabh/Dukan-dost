@@ -33,11 +33,11 @@ check("social captions.md", () => {
   return `${n} finished trial links, Hindi and English`;
 });
 
-// Deck: 8 slides in HTML, and a PDF that opens with 8 pages.
-check("deck index.html has 8 slides", () => {
+// Deck: 11 slides in HTML (the challenge's order), and a PDF that opens with 11 pages.
+check("deck index.html has 11 slides", () => {
   const html = readFileSync(need("deliverables/deck/index.html"), "utf8");
   const n = (html.match(/<section[^>]*class="[^"]*\bslide\b[^"]*"/g) ?? []).length;
-  if (n !== 8) throw new Error(`expected 8 slides, found ${n}`);
+  if (n !== 11) throw new Error(`expected 11 slides, found ${n}`);
   return "8 slides";
 });
 check("deck deck.pdf opens, 8 pages", () => {
@@ -45,11 +45,11 @@ check("deck deck.pdf opens, 8 pages", () => {
   if (buf.subarray(0, 5).toString() !== "%PDF-") throw new Error("not a PDF");
   const text = buf.toString("latin1");
   const pages = (text.match(/\/Type\s*\/Page(?![s\w])/g) ?? []).length;
-  if (pages !== 8) throw new Error(`expected 8 pages, found ${pages}`);
+  if (pages !== 11) throw new Error(`expected 11 pages, found ${pages}`);
   return `PDF header ok, ${pages} pages, ${(buf.length / 1024).toFixed(0)} KB`;
 });
 
-// Video ad: ffprobe the vertical render.
+// Video ad: ffprobe the 45-second launch film (the challenge asks for 30 to 60 seconds).
 check("ad mp4 (ffprobe)", () => {
   const file = need("public/submission/dukaan-dost-ad.mp4");
   const raw = execFileSync("ffprobe", ["-v", "error", "-show_entries", "stream=codec_type,width,height,r_frame_rate,duration:format=duration", "-of", "json", file], { encoding: "utf8" });
@@ -57,53 +57,39 @@ check("ad mp4 (ffprobe)", () => {
   const v = j.streams.find((s) => s.codec_type === "video");
   const a = j.streams.find((s) => s.codec_type === "audio");
   const dur = Number(j.format.duration);
-  if (!v || v.width !== 1080 || v.height !== 1920) throw new Error(`expected 1080x1920, got ${v?.width}x${v?.height}`);
+  if (!v || v.width !== 1920 || v.height !== 1080) throw new Error(`expected 1920x1080, got ${v?.width}x${v?.height}`);
   const [n, d] = (v.r_frame_rate ?? "0/1").split("/").map(Number);
   if (Math.round(n / d) !== 30) throw new Error(`expected 30 fps, got ${v.r_frame_rate}`);
-  if (!(dur >= 19.9 && dur <= 20.2)) throw new Error(`expected the approved 20-second cut, got ${dur.toFixed(2)}`);
+  if (!(dur >= 30 && dur <= 60)) throw new Error(`the challenge asks for 30 to 60 seconds, got ${dur.toFixed(2)}`);
   if (!a) throw new Error("no audio track");
   return `${v.width}x${v.height}, ${Math.round(n / d)} fps, ${dur.toFixed(2)} s, audio present`;
 });
 
-// Sounds: only CC0, every file present, stamp has a computed peak-aligned start.
-check("ad sounds CREDITS.json (cc0 only, stamp peak-aligned)", () => {
-  const list = JSON.parse(readFileSync(need("deliverables/ad/assets/sounds/CREDITS.json"), "utf8")) as Array<Record<string, unknown>>;
+// Sounds: effects are CC0 with provenance; the score is original; the stamp effect peak lands on the hero hit.
+check("launch sounds CREDITS.json (cc0 effects, stamp peak-aligned)", () => {
+  const list = JSON.parse(readFileSync(need("deliverables/launch/assets/sounds/CREDITS.json"), "utf8")) as Array<Record<string, unknown>>;
   if (!Array.isArray(list) || list.length === 0) throw new Error("CREDITS.json is empty");
   for (const e of list) {
+    if (e.role === "music-score") continue;
     if (e.license !== "cc0") throw new Error(`non-cc0 entry: ${String(e.title)}`);
     for (const k of ["title", "creator", "openverseId", "landingUrl", "file"]) if (!e[k]) throw new Error(`entry missing ${k}`);
-    need(`deliverables/ad/assets/sounds/${String(e.file)}`);
+    need(`deliverables/launch/assets/sounds/${String(e.file)}`);
   }
-  const stamp = list.find((e) => typeof e.role === "string" && e.role.startsWith("stamp"));
-  if (!stamp) throw new Error("no entry whose role starts with 'stamp'");
-  for (const k of ["hitTimeMs", "peakOffsetMs", "startMs"]) if (typeof stamp[k] !== "number") throw new Error(`stamp.${k} is not a computed number`);
-  const expected = Math.max(0, (stamp.hitTimeMs as number) - (stamp.peakOffsetMs as number));
-  if (Math.abs(expected - (stamp.startMs as number)) > 1) throw new Error(`stamp startMs ${stamp.startMs} != hit - peak (${expected})`);
-  return `${list.length} cc0 clips; stamp hit ${stamp.hitTimeMs} ms, peak offset ${stamp.peakOffsetMs} ms, start ${stamp.startMs} ms`;
+  const stamp = list.find((e) => e.role === "stamp-thunk") as { peakOffsetMs: number; placements: Array<{ hitSeconds: number; peakOffsetSeconds: number; startSeconds: number; mediaStartSeconds: number }> } | undefined;
+  if (!stamp) throw new Error("no stamp-thunk entry");
+  const hero = stamp.placements.find((p) => p.hitSeconds === 14);
+  if (!hero) throw new Error("no stamp placement at 14.0 s");
+  const expected = Math.max(0, hero.hitSeconds - hero.peakOffsetSeconds);
+  if (Math.abs(expected - hero.startSeconds) > 0.002) throw new Error(`stamp start ${hero.startSeconds} != hit - peak (${expected})`);
+  return `${list.length} entries; stamp hit 14.000 s, peak offset ${hero.peakOffsetSeconds} s, start ${hero.startSeconds} s`;
 });
-check("ad voice-over (7 lines, each mounted, none over the stamp)", () => {
-  const meta = JSON.parse(readFileSync(need("deliverables/ad/assets/vo/VO.json"), "utf8")) as Array<{ file: string; voice: string; start: number; end: number }>;
-  if (meta.length < 6) throw new Error(`expected at least 6 voice lines, found ${meta.length}`);
-  const html = readFileSync(need("deliverables/ad/index.html"), "utf8");
-  for (const m of meta) {
-    need(`deliverables/ad/assets/vo/${m.file}.mp3`);
-    if (!html.includes(`src="assets/vo/${m.file}.mp3"`)) throw new Error(`${m.file} is not mounted in index.html`);
-    if (m.start < 8.05 && m.end > 7.85) throw new Error(`${m.file} runs over the stamp contact window (8.0 s)`);
-    if (m.end > 20) throw new Error(`${m.file} runs past the end of the ad`);
-  }
-  return `${meta.length} lines, voices: ${[...new Set(meta.map((m) => m.voice))].join(" and ")}`;
-});
-check("ad CC0 music bed and real product CTA", () => {
-  const credits = JSON.parse(readFileSync(need("deliverables/ad/assets/music/CREDITS.json"), "utf8")) as Array<{ license: string; openverseId: string; landingUrl: string; file: string; edit: { derivedFile: string } }>;
-  const track = credits[0];
-  if (track?.license !== "cc0" || !track.openverseId || !track.landingUrl) throw new Error("Music provenance missing");
-  need(`deliverables/ad/assets/music/${track.file}`);
-  need(`deliverables/ad/assets/music/${track.edit.derivedFile}`);
-  const html = readFileSync(need("deliverables/ad/index.html"), "utf8");
-  if (!html.includes('id="music-bed"') || !html.includes("data-automation=")) throw new Error("Music bed or ducking envelope missing");
-  const end = readFileSync(need("deliverables/ad/compositions/shot6-logo.html"), "utf8");
-  if (end.includes("{{APP_URL}}") || !end.includes("dukaan-dost.onrender.com")) throw new Error("Ad product CTA is unfinished");
-  return "CC0 source and derived music present, volume envelope mounted, product URL shown";
+check("launch score and real product CTA", () => {
+  need("deliverables/launch/assets/music/launch-score-120bpm.mp3");
+  const html = readFileSync(need("deliverables/launch/index.html"), "utf8");
+  if (!html.includes('id="music-bed"') || !html.includes("launch-score-120bpm.mp3")) throw new Error("score not mounted");
+  const end = readFileSync(need("deliverables/launch/compositions/e-end.html"), "utf8");
+  if (end.includes("{{APP_URL}}") || !end.includes("dukaan-dost.onrender.com")) throw new Error("film CTA is unfinished");
+  return "original score mounted, product URL shown";
 });
 check("ad FLOWS_PROMPTS.md", () => {
   const t = readFileSync(need("deliverables/ad/FLOWS_PROMPTS.md"), "utf8");

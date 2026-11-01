@@ -29,7 +29,7 @@ export function TryClient({ needsWorkspace = false }: { needsWorkspace?: boolean
     <>
       <Assistant variant="try" showSamples />
       {needsWorkspace ? <p className="sticker p-3" role="note">{L("Fictional practice only. No real WhatsApp messages or payments are sent. This sample expires after 30 minutes.", "Sirf kalpanik practice. Asli WhatsApp message ya payment nahi bheja jayega. Sample 30 minute mein khatam hoga.")}</p> : null}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="btn-grid">
         <Link href="/shop" className="btn btn-primary">
           {L("View full ledger", "Poora khata dekho")}
         </Link>

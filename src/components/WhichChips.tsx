@@ -18,7 +18,7 @@ export function WhichChips({
   return (
     <div role="group" aria-label={question} className="mt-3">
       <p className="font-semibold">{question}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="chip-grid mt-2">
         {candidates.map((c) => (
           <button key={c.customerId} type="button" className="chip" aria-pressed={selectedId === c.customerId} onClick={() => onPick(c)}>
             {c.label}

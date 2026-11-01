@@ -111,7 +111,7 @@ export function ReminderSheet({ customerId, customerName, onClose }: { customerI
             confirming ? (
               <div className="sticker mt-3 bg-haldi p-3" role="group" aria-label={L("Confirm before sending", "Bhejne se pehle pakka karo")}>
                 <p className="font-semibold">{L(`Send this message to ${phone}?`, `Pakka bhejun? Yeh message ${phone} par jayega.`)}</p>
-                <div className="mt-2 flex flex-wrap gap-3">
+                <div className="btn-grid mt-2">
                   <button type="button" className="btn btn-reminder" onClick={send} disabled={busy || locked || stale} data-testid="remind-send-confirm">
                     {L("Yes, send", "Haan, bhejo")}
                   </button>
@@ -149,7 +149,7 @@ export function ReminderSheet({ customerId, customerName, onClose }: { customerI
           ) : null}
 
           <p className="mt-3 text-base">{L("Messages are sent only after you confirm Send through WhatsApp or press Send in your own WhatsApp.", "Hum khud kuch nahi bhejte. Ya to aap “WhatsApp se bhejo” dabate ho, ya apne WhatsApp mein khol kar Send dabate ho.")}</p>
-          <div className="mt-4 flex flex-wrap gap-3">
+          <div className="btn-grid mt-4">
             <a className="btn no-underline" aria-disabled={busy || locked || stale} href={busy || locked || stale ? undefined : buildWaUrl({ text, phone })} target="_blank" rel="noopener noreferrer" onClick={() => setOpened(true)} data-testid="wa-open">
               {L("Open WhatsApp", "WhatsApp kholo")}
             </a>

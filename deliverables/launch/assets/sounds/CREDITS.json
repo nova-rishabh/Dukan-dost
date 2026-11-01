@@ -11,16 +11,16 @@
     "placements": [
       {
         "role": "whoosh-into-app",
-        "hitSeconds": 5.45,
+        "hitSeconds": 5.5,
         "peakOffsetSeconds": 0.059,
-        "startSeconds": 5.391,
+        "startSeconds": 5.441,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "whoosh-into-app",
-        "hitSeconds": 25.95,
+        "hitSeconds": 26.0,
         "peakOffsetSeconds": 0.059,
-        "startSeconds": 25.891,
+        "startSeconds": 25.941,
         "mediaStartSeconds": 0.0
       }
     ]
@@ -37,44 +37,23 @@
     "placements": [
       {
         "role": "ui-tick-parchi",
-        "hitSeconds": 8.5,
+        "hitSeconds": 26.5,
         "peakOffsetSeconds": 0.057,
-        "startSeconds": 8.443,
+        "startSeconds": 26.443,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-parchi",
-        "hitSeconds": 10.5,
+        "hitSeconds": 30.0,
         "peakOffsetSeconds": 0.057,
-        "startSeconds": 10.443,
+        "startSeconds": 29.943,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-parchi",
-        "hitSeconds": 18.6,
+        "hitSeconds": 33.5,
         "peakOffsetSeconds": 0.057,
-        "startSeconds": 18.543,
-        "mediaStartSeconds": 0.0
-      },
-      {
-        "role": "ui-tick-parchi",
-        "hitSeconds": 26.85,
-        "peakOffsetSeconds": 0.057,
-        "startSeconds": 26.793,
-        "mediaStartSeconds": 0.0
-      },
-      {
-        "role": "ui-tick-parchi",
-        "hitSeconds": 30.35,
-        "peakOffsetSeconds": 0.057,
-        "startSeconds": 30.293,
-        "mediaStartSeconds": 0.0
-      },
-      {
-        "role": "ui-tick-parchi",
-        "hitSeconds": 33.85,
-        "peakOffsetSeconds": 0.057,
-        "startSeconds": 33.793,
+        "startSeconds": 33.443,
         "mediaStartSeconds": 0.0
       }
     ]
@@ -91,65 +70,72 @@
     "placements": [
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 0.3,
+        "hitSeconds": 6.5,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 0.291,
+        "startSeconds": 6.491,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 2.0,
+        "hitSeconds": 8.5,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 1.991,
+        "startSeconds": 8.491,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 3.5,
+        "hitSeconds": 10.5,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 3.491,
+        "startSeconds": 10.491,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 4.2,
+        "hitSeconds": 13.5,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 4.191,
+        "startSeconds": 13.491,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 13.62,
+        "hitSeconds": 16.5,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 13.611,
+        "startSeconds": 16.491,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 16.4,
+        "hitSeconds": 18.5,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 16.391,
+        "startSeconds": 18.491,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 20.42,
+        "hitSeconds": 20.5,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 20.411,
+        "startSeconds": 20.491,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 24.72,
+        "hitSeconds": 21.5,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 24.711,
+        "startSeconds": 21.491,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "ui-tick-tap",
-        "hitSeconds": 41.62,
+        "hitSeconds": 25.0,
         "peakOffsetSeconds": 0.009,
-        "startSeconds": 41.611,
+        "startSeconds": 24.991,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 41.5,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 41.491,
         "mediaStartSeconds": 0.0
       }
     ]
@@ -166,6 +152,13 @@
     "placements": [
       {
         "role": "stamp-thunk",
+        "hitSeconds": 4.0,
+        "peakOffsetSeconds": 0.219,
+        "startSeconds": 3.781,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "stamp-thunk",
         "hitSeconds": 14.0,
         "peakOffsetSeconds": 0.219,
         "startSeconds": 13.781,
@@ -173,9 +166,9 @@
       },
       {
         "role": "stamp-thunk",
-        "hitSeconds": 37.4,
+        "hitSeconds": 37.5,
         "peakOffsetSeconds": 0.219,
-        "startSeconds": 37.181,
+        "startSeconds": 37.281,
         "mediaStartSeconds": 0.0
       }
     ]
@@ -192,23 +185,16 @@
     "placements": [
       {
         "role": "whoosh-into-balance",
-        "hitSeconds": 5.95,
+        "hitSeconds": 15.0,
         "peakOffsetSeconds": 0.07,
-        "startSeconds": 5.88,
+        "startSeconds": 14.93,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "whoosh-into-balance",
-        "hitSeconds": 15.05,
+        "hitSeconds": 36.0,
         "peakOffsetSeconds": 0.07,
-        "startSeconds": 14.98,
-        "mediaStartSeconds": 0.0
-      },
-      {
-        "role": "whoosh-into-balance",
-        "hitSeconds": 35.55,
-        "peakOffsetSeconds": 0.07,
-        "startSeconds": 35.48,
+        "startSeconds": 35.93,
         "mediaStartSeconds": 0.0
       }
     ]
@@ -225,16 +211,23 @@
     "placements": [
       {
         "role": "message-tick",
-        "hitSeconds": 6.4,
+        "hitSeconds": 0.5,
         "peakOffsetSeconds": 0.353,
-        "startSeconds": 6.047,
+        "startSeconds": 0.147,
         "mediaStartSeconds": 0.0
       },
       {
         "role": "message-tick",
-        "hitSeconds": 21.1,
+        "hitSeconds": 2.0,
         "peakOffsetSeconds": 0.353,
-        "startSeconds": 20.747,
+        "startSeconds": 1.647,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "message-tick",
+        "hitSeconds": 21.0,
+        "peakOffsetSeconds": 0.353,
+        "startSeconds": 20.647,
         "mediaStartSeconds": 0.0
       }
     ]
@@ -299,6 +292,33 @@
     "landingUrl": "https://freesound.org/people/mistermender/sounds/512340/",
     "license": "cc0",
     "file": "../music/launch-bed-120bpm.mp3",
-    "edit": "atempo 0.96 (125 to 120 BPM), first 45 s, loudnorm -16 LUFS, 1.8 s fade-out; media start 0.05 s puts the kick grid on whole 0.5 s beats"
+    "edit": "atempo 0.96 (125 to 120 BPM), first 45 s, loudnorm -16 LUFS, 1.8 s fade-out; media start 0.05 s puts the kick grid on whole 0.5 s beats",
+    "placements": []
+  },
+  {
+    "role": "music-score",
+    "title": "Dukaan Dost launch score",
+    "creator": "Original, synthesised for this film (numpy), no samples",
+    "license": "original work for this project",
+    "file": "../music/launch-score-120bpm.mp3",
+    "notes": "120 BPM, Bhairavi-flavoured; riser into the drop on the stamp at 14.0 s; impact on the logo at 37.0 s. Replaces the earlier CC0 loop (kept in assets/music for reference).",
+    "placements": []
+  },
+  {
+    "role": "music-score",
+    "title": "Dukaan Dost launch score",
+    "creator": "Original, synthesised for this film (numpy), no samples",
+    "license": "original work for this project",
+    "file": "../music/launch-score-120bpm.mp3",
+    "notes": "120 BPM, Bhairavi-flavoured; riser into the drop on the stamp at 14.0 s; impact on the logo at 37.0 s. Replaces the earlier CC0 loop (kept in assets/music for reference).",
+    "placements": []
+  },
+  {
+    "role": "music-score",
+    "title": "Dukaan Dost launch score",
+    "creator": "Original, synthesised for this film (numpy), no samples",
+    "license": "original work for this project",
+    "file": "../music/launch-score-120bpm.mp3",
+    "notes": "120 BPM, Bhairavi-flavoured; riser into the drop on the stamp at 14.0 s; impact on the logo at 37.0 s. Replaces the earlier CC0 loop (kept in assets/music for reference)."
   }
 ]

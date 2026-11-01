@@ -70,7 +70,7 @@ export function PasscodePanel() {
       </form>}
       {!signedOut ? <div className="mt-4 border-t-2 border-syahi pt-4">
         <p>{t("lostPhone")}</p>
-        {askingLogout ? <div className="mt-3 flex flex-wrap gap-3">
+        {askingLogout ? <div className="btn-grid mt-3">
           <button type="button" className="btn" disabled={busy} onClick={() => void logoutAll()} data-testid="logout-all-confirm">{t("confirmLogoutAll")}</button>
           <button type="button" className="btn" disabled={busy} onClick={() => setAskingLogout(false)}>{t("cancel")}</button>
         </div> : <button type="button" className="btn mt-3" disabled={busy} onClick={() => setAskingLogout(true)} data-testid="logout-all">{t("logoutAll")}</button>}

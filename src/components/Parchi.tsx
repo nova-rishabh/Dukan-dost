@@ -222,7 +222,7 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
             {need("direction") && !preview ? (
               <div role="group" aria-label={L("Which way did the money move?", "Paise kis taraf gaye?")} className="mt-3">
                 <p className="font-semibold">{L("Which way did the money move?", "Paise kis taraf gaye?")}</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="chip-grid mt-2">
                   <button type="button" className="chip" aria-pressed={type === "credit_given"} onClick={() => { setType("credit_given"); resolve("direction"); }}>
                     {L("Credit given", "Udhaar diya")}
                   </button>
@@ -260,7 +260,7 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
             {need("amount") && !preview ? (
               <div role="group" aria-label={L("Confirm the amount", "Amount pakka karo")} className="mt-3">
                 <p className="font-semibold">{L("Confirm the amount", "Amount pakka karo")}</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="chip-grid mt-2">
                   {(intent.amountReadings ?? []).map((r) => (
                     <button key={r} type="button" className="chip" aria-pressed={amount === r} onClick={() => { setAmount(r); resolve("amount"); }}>
                       {formatINR(r * 100)}
@@ -336,7 +336,7 @@ export function Parchi({ intent, index, token, sourceText, source, preview, onWr
             ) : null}
 
             {!preview && phase !== "stamped" ? (
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="btn-grid mt-4">
                 <button type="button" className="btn btn-primary" onClick={likhDo} disabled={!ready || phase === "writing"} data-testid="likh-do">
                   {phase === "second" && secondFor === amount ? L(`Confirm ${formatINR((amount ?? 0) * 100)}?`, `Pakka ${formatINR((amount ?? 0) * 100)}?`) : L("Record entry", "Likh do")}
                 </button>

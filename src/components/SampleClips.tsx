@@ -29,7 +29,7 @@ export function SampleClips({ onPick, disabled, showNotes }: { onPick: (id: stri
 
   return (
     <div>
-      <ul className="flex flex-wrap gap-2" aria-label="Sample clip">
+      <ul className="chip-grid" aria-label="Sample clip">
         {SAMPLE_CLIPS.map((c) => (
           <li key={c.id}>
             <button type="button" className="btn" disabled={disabled} onClick={() => onPick(c.id)} data-testid={`clip-${c.id}`}>

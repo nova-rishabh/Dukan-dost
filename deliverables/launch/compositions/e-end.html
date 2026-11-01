@@ -30,21 +30,21 @@
 #root #e-tag{left:108px;top:460px;font-size:86px}
 #root #e-cta{left:108px;top:620px;width:820px;height:150px;background:#2D46FF;color:#fff;font-size:68px;display:flex;align-items:center;justify-content:center}
 #root #e-url{left:108px;top:810px;padding:6px 34px;background:#fff;font-size:50px}
-#root #e-st{left:1180px;top:540px;padding:22px 52px;border:14px solid #FF3B2F;border-radius:26px;color:#FF3B2F;background:#fff;font-size:150px;line-height:1.2;box-shadow:14px 14px 0 #16123A}
+#root #e-st{left:1090px;top:520px;padding:22px 52px;border:14px solid #FF3B2F;border-radius:26px;color:#FF3B2F;background:#fff;font-size:150px;line-height:1.2;box-shadow:14px 14px 0 #16123A}
 #root #e-note{left:112px;top:925px;font-size:36px;font-weight:600}
 
 </style>
-<div data-hf-id="hf-cmcm" id="root" data-composition-id="e-end" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="e-end" data-width="1920" data-height="1080">
 
-<div data-hf-id="hf-mqt2" id="e-bg"></div>
-<div data-hf-id="hf-chfp" class="abs disp" id="e-logo">Dukaan Dost</div>
-<div data-hf-id="hf-81zm" class="abs disp" id="e-st">लिख लिया</div>
-<div data-hf-id="hf-xoep" class="abs hand" id="e-tag">Bolo. Parchi dekho. Tap karo.</div>
-<div data-hf-id="hf-8p90" class="abs pill" id="e-cta">Sample dukaan kholo</div>
-<div data-hf-id="hf-81zn" class="abs pill" id="e-url">dukaan-dost.onrender.com</div>
-<div data-hf-id="hf-40gt" class="abs" id="e-note">Sample dukaan: sab data fictional hai.</div>
-<div data-hf-id="hf-8bhv" class="ripple" id="e-rip"></div>
-<div data-hf-id="hf-caxc" class="cursor" id="e-cur"><svg data-hf-id="hf-ulu9" viewBox="0 0 24 24"><path data-hf-id="hf-2ur4" d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.6 L11 13.2 L18 13 Z" fill="#FF5CA8" stroke="#16123A" stroke-width="1.6" stroke-linejoin="round"/></svg><div data-hf-id="hf-ec5n" class="nm">Aap</div></div>
+<div id="e-bg"></div>
+<div class="abs disp" id="e-logo">Dukaan Dost</div>
+<div class="abs disp" id="e-st">लिख लिया</div>
+<div class="abs hand" id="e-tag">Bolo. Parchi dekho. Tap karo.</div>
+<div class="abs pill" id="e-cta">Sample dukaan kholo</div>
+<div class="abs pill" id="e-url">dukaan-dost.onrender.com</div>
+<div class="abs" id="e-note">Sample dukaan: sab data fictional hai.</div>
+<div class="ripple" id="e-rip"></div>
+<div class="cursor" id="e-cur"><svg viewBox="0 0 24 24"><path d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.6 L11 13.2 L18 13 Z" fill="#FF5CA8" stroke="#16123A" stroke-width="1.6" stroke-linejoin="round"/></svg><div class="nm">Aap</div></div>
 </div>
 <script>
 const tl = gsap.timeline({ paused: true });
@@ -53,19 +53,19 @@ function swapOut(id, t){ tl.to(id, {opacity:0, y:-30, filter:'blur(10px)', durat
 function press(id, t){ tl.to(id,{scale:0.9,duration:0.07,ease:'power2.out'},t); tl.to(id,{scale:1,duration:0.2,ease:'power3.out'},t+0.07); }
 function ripple(id, t){ tl.fromTo(id,{opacity:1,scale:0.3},{opacity:0,scale:1.4,duration:0.4,ease:'power2.out',immediateRender:false},t); }
 
-tl.fromTo('#e-bg',{clipPath:'circle(0px at 960px 540px)'},{clipPath:'circle(1700px at 960px 540px)',duration:0.7,ease:'power3.in'},0);
+tl.fromTo('#e-bg',{clipPath:'circle(0px at 960px 540px)'},{clipPath:'circle(1700px at 960px 540px)',duration:0.5,ease:'power3.in'},0);
 slam('#e-logo',1.0,0.3,{y:0,scale:1.5});
 tl.set('#e-st',{transformOrigin:'50% 50%'},0);
-tl.fromTo('#e-st',{scale:3,rotation:-30,opacity:0},{scale:1,rotation:-9,opacity:1,duration:0.4,ease:'power3.in'},1.2);
-tl.to('#e-logo',{y:10,duration:0.05},1.6); tl.to('#e-logo',{y:0,duration:0.25,ease:'power3.out'},1.65);
-slam('#e-tag',2.4,0.3);
-tl.fromTo('#e-cta',{x:-300,opacity:0},{x:0,opacity:1,duration:0.45,ease:'power4.out'},2.9);
-slam('#e-url',3.6,0.3,{y:40}); slam('#e-note',3.9,0.3,{y:20});
-tl.fromTo('#e-cur',{x:1700,y:1040,opacity:0},{x:560,y:695,opacity:1,duration:1.2,ease:'power3.inOut'},4.4);
+tl.fromTo('#e-st',{scale:3,rotation:-30,opacity:0},{scale:1,rotation:-9,opacity:1,duration:0.4,ease:'power3.in'},1.1);
+tl.to('#e-logo',{y:10,duration:0.05},1.5); tl.to('#e-logo',{y:0,duration:0.25,ease:'power3.out'},1.55);
+slam('#e-tag',2.5,0.3);
+tl.fromTo('#e-cta',{x:-300,opacity:0},{x:0,opacity:1,duration:0.45,ease:'power4.out'},2.55);
+slam('#e-url',3.5,0.3,{y:40}); slam('#e-note',4.0,0.3,{y:20});
+tl.fromTo('#e-cur',{x:1700,y:1040,opacity:0},{x:560,y:695,opacity:1,duration:1.2,ease:'power3.inOut'},4.3);
 tl.set('#e-rip',{x:560,y:695},0);
 tl.set('#e-cta',{transformOrigin:'50% 50%'},0);
-press('#e-cta',5.6); ripple('#e-rip',5.62);
-tl.to('#e-cur',{scale:0.85,duration:0.07},5.6); tl.to('#e-cur',{scale:1,duration:0.2},5.67);
+press('#e-cta',5.5); ripple('#e-rip',5.52);
+tl.to('#e-cur',{scale:0.85,duration:0.07},5.5); tl.to('#e-cur',{scale:1,duration:0.2},5.57);
 
 window.__timelines['e-end'] = tl;
 </script>
