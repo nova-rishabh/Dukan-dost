@@ -78,13 +78,11 @@ export const config = {
 
 // Added for Dukaan Dost: never run in production on the well-known defaults.
 if (config.nodeEnv === 'production') {
-  const weak =
-    config.adminPassword === 'admin_password_123' ||
-    config.adminSessionSecret.startsWith('dev_admin_session_secret') ||
-    config.allowedApps.has('app_default_demo');
-  if (weak) {
-    throw new Error(
-      'Refusing to start in production with the default admin password, session secret or demo app credentials. Set ADMIN_PASSWORD, ADMIN_SESSION_SECRET and ALLOWED_APPS in services/wa-userauth/.env.'
-    );
+  const problems = [];
+  if (config.adminPassword === 'admin_password_123') problems.push('ADMIN_PASSWORD is missing or still the default');
+  if (config.adminSessionSecret.startsWith('dev_admin_session_secret')) problems.push('ADMIN_SESSION_SECRET is missing or still the default');
+  if (config.allowedApps.has('app_default_demo')) problems.push('ALLOWED_APPS is missing, empty, or not written as key:secret');
+  if (problems.length) {
+    throw new Error(`Refusing to start in production on default credentials: ${problems.join('; ')}.`);
   }
 }
