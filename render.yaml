@@ -12,7 +12,7 @@ services:
     plan: starter
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
     startCommand: pnpm start
-    healthCheckPath: /
+    healthCheckPath: /api/health
     disk:
       name: dukaan-data
       mountPath: /var/data
