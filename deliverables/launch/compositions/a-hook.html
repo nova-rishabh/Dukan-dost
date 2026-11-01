@@ -1,0 +1,71 @@
+<template>
+<style>
+@font-face{font-family:'Yatra One';font-weight:400;src:url('assets/fonts/yatra-one-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Yatra One';font-weight:400;src:url('assets/fonts/yatra-one-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:400;src:url('assets/fonts/hind-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:400;src:url('assets/fonts/hind-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:600;src:url('assets/fonts/hind-latin-600-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:600;src:url('assets/fonts/hind-devanagari-600-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:700;src:url('assets/fonts/hind-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:700;src:url('assets/fonts/hind-devanagari-700-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Kalam';font-weight:400;src:url('assets/fonts/kalam-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Kalam';font-weight:400;src:url('assets/fonts/kalam-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Kalam';font-weight:700;src:url('assets/fonts/kalam-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Kalam';font-weight:700;src:url('assets/fonts/kalam-devanagari-700-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+
+#root{position:absolute;inset:0;overflow:hidden;font-family:'Hind',sans-serif;color:#16123A;--haldi:#FFC400;--sindoor:#FF3B2F;--neel:#2D46FF;--pista:#00C26A;--gulabi:#FF5CA8;--syahi:#16123A;--safed:#FFFFFF;--bahi:#FFE98A}
+#root *{box-sizing:border-box}
+#root .abs{position:absolute}
+#root .disp{font-family:'Yatra One','Hind',serif;font-weight:400;line-height:1.05;white-space:nowrap}
+#root .hand{font-family:'Kalam','Hind',cursive;white-space:nowrap}
+#root .card{background:#fff;border:4px solid #16123A;box-shadow:12px 12px 0 #16123A;border-radius:24px}
+#root .pill{border:4px solid #16123A;border-radius:999px;box-shadow:6px 6px 0 #16123A;font-weight:700;white-space:nowrap}
+#root .cursor{position:absolute;left:0;top:0;width:0;height:0}
+#root .cursor svg{position:absolute;left:-8px;top:-5px;width:72px;height:72px}
+#root .cursor .nm{position:absolute;left:44px;top:58px;padding:2px 18px;background:#16123A;color:#fff;border-radius:999px;font-size:28px;font-weight:700;white-space:nowrap}
+#root .ripple{position:absolute;width:150px;height:150px;margin:-75px 0 0 -75px;border:8px solid #16123A;border-radius:999px;opacity:0}
+
+#root .l{position:absolute;left:100px;font-size:150px}
+#root #a-book{left:1060px;top:90px;width:740px;height:900px;background:#FFE98A;border:4px solid #16123A;box-shadow:14px 14px 0 #16123A}
+#root #a-bar{left:0;top:0;width:70px;height:100%;background:#FF3B2F;border-right:4px solid #16123A}
+#root .row{position:absolute;left:100px;width:600px;height:110px;border-bottom:3px dashed #B9A24A;font-size:54px;display:flex;justify-content:space-between;align-items:center}
+#root .row b{font-family:'Kalam',cursive;font-weight:700}
+#root #a-q{left:430px;top:200px;font-size:430px;color:#FF3B2F;text-shadow:12px 12px 0 #16123A}
+
+</style>
+<div data-hf-id="hf-hgjy" id="root" data-composition-id="a-hook" data-width="1920" data-height="1080">
+
+<div data-hf-id="hf-ce97" class="abs card" id="a-book" style="border-radius:12px"><div data-hf-id="hf-7f0z" class="abs" id="a-bar"></div>
+ <div data-hf-id="hf-9497" class="row hand" id="r1" style="top:40px"><span data-hf-id="hf-xcz9">Gupta ji</span><b data-hf-id="hf-1tpn">₹500</b></div>
+ <div data-hf-id="hf-b374" class="row hand" id="r2" style="top:150px"><span data-hf-id="hf-swy1">Tapan Banerjee</span><b data-hf-id="hf-ydfo">₹1,250</b></div>
+ <div data-hf-id="hf-h8zv" class="row hand" id="r3" style="top:260px"><span data-hf-id="hf-kq38">Amit Sharma</span><b data-hf-id="hf-nzbf">₹500</b></div>
+ <div data-hf-id="hf-uu6q" class="row hand" id="r4" style="top:370px"><span data-hf-id="hf-puuu">R K Sharma</span><b data-hf-id="hf-qdgt">₹450</b></div>
+ <div data-hf-id="hf-2yp1" class="row hand" id="r5" style="top:480px"><span data-hf-id="hf-en1s">Pinky didi</span><b data-hf-id="hf-wjmn">₹320</b></div>
+ <div data-hf-id="hf-w8z8" class="row hand" id="r6" style="top:590px"><span data-hf-id="hf-3e9g">Ramesh Yadav</span><b data-hf-id="hf-l4yt">₹90</b></div>
+ <div data-hf-id="hf-ri6c" class="abs disp" id="a-q" data-layout-allow-overlap>?</div>
+</div>
+<div data-hf-id="hf-9pqo" class="l disp" id="a-l1" style="top:150px">Udhaar diya.</div>
+<div data-hf-id="hf-vamj" class="l disp" id="a-l2" style="top:370px">Likha?</div>
+<div data-hf-id="hf-0stk" class="l disp" id="a-l3" style="top:590px;color:#FF3B2F">Bhool gaye.</div>
+<div data-hf-id="hf-1m6g" class="abs hand" id="a-tag" style="left:104px;top:900px;font-size:44px">Fictional demo data</div>
+
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+function slam(id, hit, dur, from){ dur = dur || 0.28; tl.fromTo(id, Object.assign({y:90,opacity:0,scale:1.15,filter:'blur(14px)'}, from||{}), {y:0,x:0,opacity:1,scale:1,filter:'blur(0px)',duration:dur,ease:'power4.out'}, hit-dur); }
+function swapOut(id, t){ tl.to(id, {opacity:0, y:-30, filter:'blur(10px)', duration:0.18, ease:'power2.in'}, t); }
+function press(id, t){ tl.to(id,{scale:0.9,duration:0.07,ease:'power2.out'},t); tl.to(id,{scale:1,duration:0.2,ease:'power3.out'},t+0.07); }
+function ripple(id, t){ tl.fromTo(id,{opacity:1,scale:0.3},{opacity:0,scale:1.4,duration:0.4,ease:'power2.out',immediateRender:false},t); }
+
+gsap.set('#a-book',{rotation:-2,transformOrigin:'50% 50%'});
+slam('#a-l1',0.3,0.28); slam('#a-l2',2.0); slam('#a-l3',3.5);
+[0,0.6,1.2,1.8,2.4,3.0].forEach(function(t,i){ tl.fromTo('#r'+(i+1),{x:320,opacity:0,filter:'blur(10px)'},{x:0,opacity:1,filter:'blur(0px)',duration:0.3,ease:'power4.out'},t); });
+tl.fromTo('#a-q',{scale:2.6,rotation:-28,opacity:0},{scale:1,rotation:8,duration:0.32,ease:'power3.in'},3.88);
+tl.fromTo('#a-q',{opacity:0},{opacity:1,duration:0.1,ease:'none',immediateRender:false},3.88);
+tl.to('#a-book',{x:-8,duration:0.05},4.2); tl.to('#a-book',{x:0,duration:0.2,ease:'power3.out'},4.25);
+tl.to('#a-book',{y:-1400,rotation:14,duration:0.65,ease:'power3.in'},4.9);
+tl.to(['#a-l1','#a-l2','#a-l3','#a-tag'],{x:-900,opacity:0,filter:'blur(12px)',duration:0.45,ease:'power3.in',stagger:0.05},4.95);
+
+window.__timelines['a-hook'] = tl;
+</script>
+</template>

@@ -1,0 +1,304 @@
+[
+  {
+    "role": "whoosh-into-app",
+    "title": "Swipe Whoosh",
+    "creator": "qubodup",
+    "openverseId": "b7ae7822-8ec5-4a82-b6f8-d539b51caa61",
+    "landingUrl": "https://freesound.org/people/qubodup/sounds/60007",
+    "license": "cc0",
+    "file": "whoosh-into-app.mp3",
+    "peakOffsetMs": 59,
+    "placements": [
+      {
+        "role": "whoosh-into-app",
+        "hitSeconds": 5.45,
+        "peakOffsetSeconds": 0.059,
+        "startSeconds": 5.391,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "whoosh-into-app",
+        "hitSeconds": 25.95,
+        "peakOffsetSeconds": 0.059,
+        "startSeconds": 25.891,
+        "mediaStartSeconds": 0.0
+      }
+    ]
+  },
+  {
+    "role": "ui-tick-parchi",
+    "title": "SFX UI Button Click",
+    "creator": "suntemple",
+    "openverseId": "ea9dc47e-7f07-45dd-8aa6-8c9e25609251",
+    "landingUrl": "https://freesound.org/people/suntemple/sounds/253168",
+    "license": "cc0",
+    "file": "ui-tick-parchi.mp3",
+    "peakOffsetMs": 57,
+    "placements": [
+      {
+        "role": "ui-tick-parchi",
+        "hitSeconds": 8.5,
+        "peakOffsetSeconds": 0.057,
+        "startSeconds": 8.443,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-parchi",
+        "hitSeconds": 10.5,
+        "peakOffsetSeconds": 0.057,
+        "startSeconds": 10.443,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-parchi",
+        "hitSeconds": 18.6,
+        "peakOffsetSeconds": 0.057,
+        "startSeconds": 18.543,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-parchi",
+        "hitSeconds": 26.85,
+        "peakOffsetSeconds": 0.057,
+        "startSeconds": 26.793,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-parchi",
+        "hitSeconds": 30.35,
+        "peakOffsetSeconds": 0.057,
+        "startSeconds": 30.293,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-parchi",
+        "hitSeconds": 33.85,
+        "peakOffsetSeconds": 0.057,
+        "startSeconds": 33.793,
+        "mediaStartSeconds": 0.0
+      }
+    ]
+  },
+  {
+    "role": "ui-tick-tap",
+    "title": "UI Button Click",
+    "creator": "benzix2",
+    "openverseId": "d3ab488b-dee1-4c40-89ab-67837664b616",
+    "landingUrl": "https://freesound.org/people/benzix2/sounds/467951",
+    "license": "cc0",
+    "file": "ui-tick-tap.mp3",
+    "peakOffsetMs": 9,
+    "placements": [
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 0.3,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 0.291,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 2.0,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 1.991,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 3.5,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 3.491,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 4.2,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 4.191,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 13.62,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 13.611,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 16.4,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 16.391,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 20.42,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 20.411,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 24.72,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 24.711,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "ui-tick-tap",
+        "hitSeconds": 41.62,
+        "peakOffsetSeconds": 0.009,
+        "startSeconds": 41.611,
+        "mediaStartSeconds": 0.0
+      }
+    ]
+  },
+  {
+    "role": "stamp-thunk",
+    "title": "Medium Thud 1",
+    "creator": "sgrowe",
+    "openverseId": "cf6310c4-6e77-4f81-a946-89126065ece7",
+    "landingUrl": "https://freesound.org/people/sgrowe/sounds/342535",
+    "license": "cc0",
+    "file": "stamp-thunk.mp3",
+    "peakOffsetMs": 219,
+    "placements": [
+      {
+        "role": "stamp-thunk",
+        "hitSeconds": 14.0,
+        "peakOffsetSeconds": 0.219,
+        "startSeconds": 13.781,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "stamp-thunk",
+        "hitSeconds": 37.4,
+        "peakOffsetSeconds": 0.219,
+        "startSeconds": 37.181,
+        "mediaStartSeconds": 0.0
+      }
+    ]
+  },
+  {
+    "role": "whoosh-into-balance",
+    "title": "Swosh swoosh whoosh air sound, free, high quality",
+    "creator": "qubodup",
+    "openverseId": "f1dc6045-7965-41de-87f8-4731d2583fd2",
+    "landingUrl": "https://freesound.org/people/qubodup/sounds/60026",
+    "license": "cc0",
+    "file": "whoosh-into-balance.mp3",
+    "peakOffsetMs": 70,
+    "placements": [
+      {
+        "role": "whoosh-into-balance",
+        "hitSeconds": 5.95,
+        "peakOffsetSeconds": 0.07,
+        "startSeconds": 5.88,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "whoosh-into-balance",
+        "hitSeconds": 15.05,
+        "peakOffsetSeconds": 0.07,
+        "startSeconds": 14.98,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "whoosh-into-balance",
+        "hitSeconds": 35.55,
+        "peakOffsetSeconds": 0.07,
+        "startSeconds": 35.48,
+        "mediaStartSeconds": 0.0
+      }
+    ]
+  },
+  {
+    "role": "message-tick",
+    "title": "Plop Sound",
+    "creator": "BlueSiren",
+    "openverseId": "4dc00a5c-075a-4268-92ce-a527e13826fc",
+    "landingUrl": "https://freesound.org/people/BlueSiren/sounds/414383",
+    "license": "cc0",
+    "file": "message-tick.mp3",
+    "peakOffsetMs": 353,
+    "placements": [
+      {
+        "role": "message-tick",
+        "hitSeconds": 6.4,
+        "peakOffsetSeconds": 0.353,
+        "startSeconds": 6.047,
+        "mediaStartSeconds": 0.0
+      },
+      {
+        "role": "message-tick",
+        "hitSeconds": 21.1,
+        "peakOffsetSeconds": 0.353,
+        "startSeconds": 20.747,
+        "mediaStartSeconds": 0.0
+      }
+    ]
+  },
+  {
+    "role": "logo-sting",
+    "title": "Professional Logo 02.wav",
+    "creator": "MATRIXXX_",
+    "openverseId": "91cffc6f-02b1-436a-b6c4-966f07505188",
+    "landingUrl": "https://freesound.org/people/MATRIXXX_/sounds/659371",
+    "license": "cc0",
+    "file": "logo-sting.mp3",
+    "peakOffsetMs": 461,
+    "placements": [
+      {
+        "role": "logo-sting",
+        "hitSeconds": 37.0,
+        "peakOffsetSeconds": 0.461,
+        "startSeconds": 36.539,
+        "mediaStartSeconds": 0.0
+      }
+    ]
+  },
+  {
+    "role": "music-bed",
+    "title": "Upbeat loop",
+    "creator": "mistermender",
+    "openverseId": "12966e50-ea5e-4600-9359-892b35661602",
+    "landingUrl": "https://freesound.org/people/mistermender/sounds/512340/",
+    "license": "cc0",
+    "file": "../music/launch-bed-120bpm.mp3",
+    "edit": "atempo 0.96 (125 to 120 BPM), first 45 s, loudnorm -16 LUFS, 1.8 s fade-out; media start 0.05 s puts the kick grid on whole 0.5 s beats",
+    "placements": []
+  },
+  {
+    "role": "music-bed",
+    "title": "Upbeat loop",
+    "creator": "mistermender",
+    "openverseId": "12966e50-ea5e-4600-9359-892b35661602",
+    "landingUrl": "https://freesound.org/people/mistermender/sounds/512340/",
+    "license": "cc0",
+    "file": "../music/launch-bed-120bpm.mp3",
+    "edit": "atempo 0.96 (125 to 120 BPM), first 45 s, loudnorm -16 LUFS, 1.8 s fade-out; media start 0.05 s puts the kick grid on whole 0.5 s beats",
+    "placements": []
+  },
+  {
+    "role": "music-bed",
+    "title": "Upbeat loop",
+    "creator": "mistermender",
+    "openverseId": "12966e50-ea5e-4600-9359-892b35661602",
+    "landingUrl": "https://freesound.org/people/mistermender/sounds/512340/",
+    "license": "cc0",
+    "file": "../music/launch-bed-120bpm.mp3",
+    "edit": "atempo 0.96 (125 to 120 BPM), first 45 s, loudnorm -16 LUFS, 1.8 s fade-out; media start 0.05 s puts the kick grid on whole 0.5 s beats",
+    "placements": []
+  },
+  {
+    "role": "music-bed",
+    "title": "Upbeat loop",
+    "creator": "mistermender",
+    "openverseId": "12966e50-ea5e-4600-9359-892b35661602",
+    "landingUrl": "https://freesound.org/people/mistermender/sounds/512340/",
+    "license": "cc0",
+    "file": "../music/launch-bed-120bpm.mp3",
+    "edit": "atempo 0.96 (125 to 120 BPM), first 45 s, loudnorm -16 LUFS, 1.8 s fade-out; media start 0.05 s puts the kick grid on whole 0.5 s beats"
+  }
+]

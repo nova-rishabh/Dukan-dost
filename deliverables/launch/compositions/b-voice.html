@@ -1,0 +1,100 @@
+<template>
+<style>
+@font-face{font-family:'Yatra One';font-weight:400;src:url('assets/fonts/yatra-one-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Yatra One';font-weight:400;src:url('assets/fonts/yatra-one-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:400;src:url('assets/fonts/hind-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:400;src:url('assets/fonts/hind-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:600;src:url('assets/fonts/hind-latin-600-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:600;src:url('assets/fonts/hind-devanagari-600-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:700;src:url('assets/fonts/hind-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:700;src:url('assets/fonts/hind-devanagari-700-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Kalam';font-weight:400;src:url('assets/fonts/kalam-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Kalam';font-weight:400;src:url('assets/fonts/kalam-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Kalam';font-weight:700;src:url('assets/fonts/kalam-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Kalam';font-weight:700;src:url('assets/fonts/kalam-devanagari-700-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+
+#root{position:absolute;inset:0;overflow:hidden;font-family:'Hind',sans-serif;color:#16123A;--haldi:#FFC400;--sindoor:#FF3B2F;--neel:#2D46FF;--pista:#00C26A;--gulabi:#FF5CA8;--syahi:#16123A;--safed:#FFFFFF;--bahi:#FFE98A}
+#root *{box-sizing:border-box}
+#root .abs{position:absolute}
+#root .disp{font-family:'Yatra One','Hind',serif;font-weight:400;line-height:1.05;white-space:nowrap}
+#root .hand{font-family:'Kalam','Hind',cursive;white-space:nowrap}
+#root .card{background:#fff;border:4px solid #16123A;box-shadow:12px 12px 0 #16123A;border-radius:24px}
+#root .pill{border:4px solid #16123A;border-radius:999px;box-shadow:6px 6px 0 #16123A;font-weight:700;white-space:nowrap}
+#root .cursor{position:absolute;left:0;top:0;width:0;height:0}
+#root .cursor svg{position:absolute;left:-8px;top:-5px;width:72px;height:72px}
+#root .cursor .nm{position:absolute;left:44px;top:58px;padding:2px 18px;background:#16123A;color:#fff;border-radius:999px;font-size:28px;font-weight:700;white-space:nowrap}
+#root .ripple{position:absolute;width:150px;height:150px;margin:-75px 0 0 -75px;border:8px solid #16123A;border-radius:999px;opacity:0}
+
+#root #b-card{left:1046px;top:118px;width:708px;height:844px}
+#root #b-card img{position:absolute;left:0;top:0;width:708px}
+#root #b-stamp{right:36px;top:559px;padding:16px 32px;border:8px solid #FF3B2F;border-radius:16px;color:#FF3B2F;background:#fff;font-size:58px;line-height:1.2}
+#root #b-ink{position:absolute;left:-16px;top:-16px;right:-16px;bottom:-16px;border:4px solid #FF3B2F;border-radius:28px;opacity:.35}
+#root .t{position:absolute;left:110px;top:170px;font-size:215px}
+#root .s{position:absolute;left:114px;top:530px;font-size:58px}
+#root #b-mic{left:114px;top:730px;width:200px;height:200px;border-radius:999px;background:#2D46FF;border:5px solid #16123A;box-shadow:8px 8px 0 #16123A;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:42px}
+#root .ring{position:absolute;left:114px;top:730px;width:200px;height:200px;border:6px solid #2D46FF;border-radius:999px;opacity:0}
+
+</style>
+<div data-hf-id="hf-zfuk" id="root" data-composition-id="b-voice" data-width="1920" data-height="1080">
+
+<div data-hf-id="hf-w0k7" class="ring" id="b-rg1"></div><div data-hf-id="hf-ncoc" class="ring" id="b-rg2"></div><div data-hf-id="hf-o4c5" class="ring" id="b-rg3"></div>
+<div data-hf-id="hf-i17k" class="abs" id="b-mic">Bolo</div>
+<div data-hf-id="hf-mbog" class="t disp" id="b-t1">Bolo.</div>
+<div data-hf-id="hf-pwr6" class="t disp" id="b-t3" style="font-size:170px;top:120px">Parchi<br data-hf-id="hf-x5px">dikhegi.</div>
+<div data-hf-id="hf-gs9r" class="t disp" id="b-t4" style="font-size:170px;top:120px">Aap tap<br data-hf-id="hf-rsrt">karo.</div>
+<div data-hf-id="hf-v29x" class="t disp" id="b-t5" style="color:#FF3B2F;font-size:175px;top:170px">Likh<br data-hf-id="hf-szow">liya.</div>
+<div data-hf-id="hf-nwvh" class="s hand" id="b-s1">Jaise dukaan pe bolte ho.</div>
+<div data-hf-id="hf-6cx3" class="s hand" id="b-s3">Pehle parchi. Entry baad mein.</div>
+<div data-hf-id="hf-wkob" class="s hand" id="b-s4">Rupaye digits mein, shabdon mein.</div>
+<div data-hf-id="hf-mnuh" class="s hand" id="b-s5">Aapke tap ke baad hi.</div>
+<div data-hf-id="hf-1mbf" class="abs" id="b-card">
+  <img data-hf-id="hf-0qe0" id="b-before" src="assets/captures/parchi-before.png" alt="" />
+  <img data-hf-id="hf-isdj" id="b-after" src="assets/captures/parchi-after.png" alt="" style="opacity:0" />
+  <div data-hf-id="hf-ab5o" class="abs disp" id="b-stamp" style="opacity:0">लिख लिया<div data-hf-id="hf-tmw2" id="b-ink"></div></div>
+</div>
+<div data-hf-id="hf-ng0k" class="ripple" id="b-rip"></div>
+<div data-hf-id="hf-ki33" class="cursor" id="b-cur"><svg data-hf-id="hf-ulu9" viewBox="0 0 24 24"><path data-hf-id="hf-2ur4" d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.6 L11 13.2 L18 13 Z" fill="#FF5CA8" stroke="#16123A" stroke-width="1.6" stroke-linejoin="round"/></svg><div data-hf-id="hf-ec5n" class="nm">Aap</div></div>
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+function slam(id, hit, dur, from){ dur = dur || 0.28; tl.fromTo(id, Object.assign({y:90,opacity:0,scale:1.15,filter:'blur(14px)'}, from||{}), {y:0,x:0,opacity:1,scale:1,filter:'blur(0px)',duration:dur,ease:'power4.out'}, hit-dur); }
+function swapOut(id, t){ tl.to(id, {opacity:0, y:-30, filter:'blur(10px)', duration:0.18, ease:'power2.in'}, t); }
+function press(id, t){ tl.to(id,{scale:0.9,duration:0.07,ease:'power2.out'},t); tl.to(id,{scale:1,duration:0.2,ease:'power3.out'},t+0.07); }
+function ripple(id, t){ tl.fromTo(id,{opacity:1,scale:0.3},{opacity:0,scale:1.4,duration:0.4,ease:'power2.out',immediateRender:false},t); }
+
+const HIT = 8.5;
+gsap.set('#b-card',{transformOrigin:'50% 50%',scale:1.08});
+tl.fromTo('#b-card',{x:1100,rotation:8,opacity:0},{x:0,rotation:0,opacity:1,duration:0.55,ease:'power4.out'},0);
+// mic + rings
+tl.fromTo('#b-mic',{scale:0.2,opacity:0},{scale:1,opacity:1,duration:0.3,ease:'back.out(1.4)'},0.45);
+[0.9,1.5,2.1].forEach(function(t,i){ tl.fromTo('#b-rg'+(i+1),{opacity:0.9,scale:1},{opacity:0,scale:1.9,duration:0.7,ease:'power2.out'},t); });
+tl.to('#b-mic',{opacity:0,scale:0.4,filter:'blur(8px)',duration:0.25,ease:'power2.in'},2.8);
+slam('#b-t1',0.9); slam('#b-s1',1.6,0.3);
+swapOut('#b-t1',2.75); swapOut('#b-s1',2.75);
+slam('#b-t3',3.2); slam('#b-s3',3.7,0.3);
+swapOut('#b-t3',4.8); swapOut('#b-s3',4.8);
+slam('#b-t4',5.2); slam('#b-s4',5.7,0.3);
+swapOut('#b-t4',8.45); swapOut('#b-s4',8.45);
+// cursor to Likh do and tap
+tl.fromTo('#b-cur',{x:760,y:1180,opacity:0},{x:1193,y:883,opacity:1,duration:1.9,ease:'power3.inOut'},5.7);
+tl.to('#b-cur',{scale:0.85,duration:0.07,ease:'power2.out'},8.1); tl.to('#b-cur',{scale:1,duration:0.2,ease:'power3.out'},8.17);
+tl.set('#b-rip',{x:1193,y:883},0); ripple('#b-rip',8.12);
+// stamp slam (fastest at contact)
+tl.set('#b-stamp',{transformOrigin:'50% 50%'},0);
+tl.fromTo('#b-stamp',{scale:2.8,rotation:-32},{scale:1,rotation:-8,duration:HIT-8.24,ease:'power3.in'},8.24);
+tl.fromTo('#b-stamp',{opacity:0},{opacity:1,duration:0.1,ease:'none'},8.24);
+tl.to('#b-card',{scale:1.13,duration:HIT-8.24,ease:'power2.in'},8.24);
+tl.to('#b-card',{scale:1.08,duration:0.35,ease:'power3.out'},HIT);
+tl.set('#b-before',{opacity:0},HIT); tl.set('#b-after',{opacity:1},HIT);
+tl.to('#b-stamp',{scale:0.95,duration:0.05,ease:'power2.out'},HIT); tl.to('#b-stamp',{scale:1,duration:0.14,ease:'power2.out'},HIT+0.05);
+tl.fromTo('#b-ink',{scale:0.8,opacity:0},{scale:1,opacity:0.35,duration:0.45,ease:'power3.out'},HIT);
+tl.to('#b-card',{y:16,duration:0.05,ease:'power2.out'},HIT); tl.to('#b-card',{y:0,duration:0.25,ease:'power3.out'},HIT+0.05);
+slam('#b-t5',HIT+0.3,0.25); slam('#b-s5',HIT+0.6,0.3);
+tl.to('#b-cur',{opacity:0,duration:0.2},8.6);
+// exit: card leaves left as the next scene's phone arrives
+tl.to('#b-card',{x:-1500,rotation:-6,duration:0.6,ease:'power3.in'},9.2);
+swapOut('#b-t5',9.2); swapOut('#b-s5',9.2);
+
+window.__timelines['b-voice'] = tl;
+</script>
+</template>

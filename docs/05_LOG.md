@@ -122,3 +122,8 @@ Newest entries at the bottom. One line per event; link to the file that holds th
 - Headless390px livebrowserverification passed13checks: readiness/anonymousprotection, twoisolatedsamples, confirm-before-write, exactpaise, measuredstock ownership, CSV/dashboard, same-origin privatepayexample, nonceCSP/static-onlyofflinecache, realstaticartifacts, signup andnoJSerrors. Onlyfictionalvisitorstoreswerechangedandbothsamplesexited; no realaccount/OTP/reminder created/sent.
 - Visualinspection found activeDashboard white-on-white due unlayeredchipbackground overriding Tailwindutility; fixed using aria-current componentselector. SignupCAPTCHA now distinguishesloadingfromfailed and guards overlappingrefreshes. Addedrenderedcontrast and pending/failure/retry regressions.
 - Afterfixes `pnpm verify`: VERIFY-PASS (282unit/fixture,48daemon,59browser,26assets). Post-rolloutvisualevidence follows in docs/27_LIVE_VERIFICATION.md after publicdeploymentcheck.
+
+## 2026-11-01: 45-second launch film and limiter hop
+- Workbook (docs shared by owner) requires a 30-60 s video ad; the 20 s cut did not qualify. Built deliverables/launch (1920x1080, 30 fps, 45 s, HyperFrames): hook, voice-to-parchi, stamp at 14.000 s (measured peak), balance and reminder, three trust rules, end card with CTA. Real app captures, fictional demo data, no voiceover.
+- Music: CC0 loop (125 to 120 BPM). SFX: CC0 Openverse set re-placed by measured peak; credits in deliverables/launch/assets/sounds/CREDITS.json. Audio measured only (-18.4 LUFS, -1.9 dBFS peak); not listened to by a human.
+- render.yaml now sets TRUST_PROXY_HOPS=1 so each visitor gets their own limiter bucket on Render. Not yet verified live: confirm after deploy that two different IPs do not share one bucket.

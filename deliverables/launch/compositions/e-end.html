@@ -1,0 +1,72 @@
+<template>
+<style>
+@font-face{font-family:'Yatra One';font-weight:400;src:url('assets/fonts/yatra-one-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Yatra One';font-weight:400;src:url('assets/fonts/yatra-one-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:400;src:url('assets/fonts/hind-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:400;src:url('assets/fonts/hind-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:600;src:url('assets/fonts/hind-latin-600-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:600;src:url('assets/fonts/hind-devanagari-600-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Hind';font-weight:700;src:url('assets/fonts/hind-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Hind';font-weight:700;src:url('assets/fonts/hind-devanagari-700-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Kalam';font-weight:400;src:url('assets/fonts/kalam-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Kalam';font-weight:400;src:url('assets/fonts/kalam-devanagari-400-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+@font-face{font-family:'Kalam';font-weight:700;src:url('assets/fonts/kalam-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Kalam';font-weight:700;src:url('assets/fonts/kalam-devanagari-700-normal.woff2') format('woff2');unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF}
+
+#root{position:absolute;inset:0;overflow:hidden;font-family:'Hind',sans-serif;color:#16123A;--haldi:#FFC400;--sindoor:#FF3B2F;--neel:#2D46FF;--pista:#00C26A;--gulabi:#FF5CA8;--syahi:#16123A;--safed:#FFFFFF;--bahi:#FFE98A}
+#root *{box-sizing:border-box}
+#root .abs{position:absolute}
+#root .disp{font-family:'Yatra One','Hind',serif;font-weight:400;line-height:1.05;white-space:nowrap}
+#root .hand{font-family:'Kalam','Hind',cursive;white-space:nowrap}
+#root .card{background:#fff;border:4px solid #16123A;box-shadow:12px 12px 0 #16123A;border-radius:24px}
+#root .pill{border:4px solid #16123A;border-radius:999px;box-shadow:6px 6px 0 #16123A;font-weight:700;white-space:nowrap}
+#root .cursor{position:absolute;left:0;top:0;width:0;height:0}
+#root .cursor svg{position:absolute;left:-8px;top:-5px;width:72px;height:72px}
+#root .cursor .nm{position:absolute;left:44px;top:58px;padding:2px 18px;background:#16123A;color:#fff;border-radius:999px;font-size:28px;font-weight:700;white-space:nowrap}
+#root .ripple{position:absolute;width:150px;height:150px;margin:-75px 0 0 -75px;border:8px solid #16123A;border-radius:999px;opacity:0}
+
+#root #e-bg{position:absolute;inset:0;background:#FFC400}
+#root #e-logo{left:100px;top:170px;font-size:236px}
+#root #e-tag{left:108px;top:460px;font-size:86px}
+#root #e-cta{left:108px;top:620px;width:820px;height:150px;background:#2D46FF;color:#fff;font-size:68px;display:flex;align-items:center;justify-content:center}
+#root #e-url{left:108px;top:810px;padding:6px 34px;background:#fff;font-size:50px}
+#root #e-st{left:1180px;top:540px;padding:22px 52px;border:14px solid #FF3B2F;border-radius:26px;color:#FF3B2F;background:#fff;font-size:150px;line-height:1.2;box-shadow:14px 14px 0 #16123A}
+#root #e-note{left:112px;top:925px;font-size:36px;font-weight:600}
+
+</style>
+<div data-hf-id="hf-cmcm" id="root" data-composition-id="e-end" data-width="1920" data-height="1080">
+
+<div data-hf-id="hf-mqt2" id="e-bg"></div>
+<div data-hf-id="hf-chfp" class="abs disp" id="e-logo">Dukaan Dost</div>
+<div data-hf-id="hf-81zm" class="abs disp" id="e-st">लिख लिया</div>
+<div data-hf-id="hf-xoep" class="abs hand" id="e-tag">Bolo. Parchi dekho. Tap karo.</div>
+<div data-hf-id="hf-8p90" class="abs pill" id="e-cta">Sample dukaan kholo</div>
+<div data-hf-id="hf-81zn" class="abs pill" id="e-url">dukaan-dost.onrender.com</div>
+<div data-hf-id="hf-40gt" class="abs" id="e-note">Sample dukaan: sab data fictional hai.</div>
+<div data-hf-id="hf-8bhv" class="ripple" id="e-rip"></div>
+<div data-hf-id="hf-caxc" class="cursor" id="e-cur"><svg data-hf-id="hf-ulu9" viewBox="0 0 24 24"><path data-hf-id="hf-2ur4" d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.6 L11 13.2 L18 13 Z" fill="#FF5CA8" stroke="#16123A" stroke-width="1.6" stroke-linejoin="round"/></svg><div data-hf-id="hf-ec5n" class="nm">Aap</div></div>
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+function slam(id, hit, dur, from){ dur = dur || 0.28; tl.fromTo(id, Object.assign({y:90,opacity:0,scale:1.15,filter:'blur(14px)'}, from||{}), {y:0,x:0,opacity:1,scale:1,filter:'blur(0px)',duration:dur,ease:'power4.out'}, hit-dur); }
+function swapOut(id, t){ tl.to(id, {opacity:0, y:-30, filter:'blur(10px)', duration:0.18, ease:'power2.in'}, t); }
+function press(id, t){ tl.to(id,{scale:0.9,duration:0.07,ease:'power2.out'},t); tl.to(id,{scale:1,duration:0.2,ease:'power3.out'},t+0.07); }
+function ripple(id, t){ tl.fromTo(id,{opacity:1,scale:0.3},{opacity:0,scale:1.4,duration:0.4,ease:'power2.out',immediateRender:false},t); }
+
+tl.fromTo('#e-bg',{clipPath:'circle(0px at 960px 540px)'},{clipPath:'circle(1700px at 960px 540px)',duration:0.7,ease:'power3.in'},0);
+slam('#e-logo',1.0,0.3,{y:0,scale:1.5});
+tl.set('#e-st',{transformOrigin:'50% 50%'},0);
+tl.fromTo('#e-st',{scale:3,rotation:-30,opacity:0},{scale:1,rotation:-9,opacity:1,duration:0.4,ease:'power3.in'},1.2);
+tl.to('#e-logo',{y:10,duration:0.05},1.6); tl.to('#e-logo',{y:0,duration:0.25,ease:'power3.out'},1.65);
+slam('#e-tag',2.4,0.3);
+tl.fromTo('#e-cta',{x:-300,opacity:0},{x:0,opacity:1,duration:0.45,ease:'power4.out'},2.9);
+slam('#e-url',3.6,0.3,{y:40}); slam('#e-note',3.9,0.3,{y:20});
+tl.fromTo('#e-cur',{x:1700,y:1040,opacity:0},{x:560,y:695,opacity:1,duration:1.2,ease:'power3.inOut'},4.4);
+tl.set('#e-rip',{x:560,y:695},0);
+tl.set('#e-cta',{transformOrigin:'50% 50%'},0);
+press('#e-cta',5.6); ripple('#e-rip',5.62);
+tl.to('#e-cur',{scale:0.85,duration:0.07},5.6); tl.to('#e-cur',{scale:1,duration:0.2},5.67);
+
+window.__timelines['e-end'] = tl;
+</script>
+</template>

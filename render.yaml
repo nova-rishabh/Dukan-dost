@@ -26,6 +26,8 @@ services:
         value: /var/data/dukaan.sqlite
       - key: PROPOSAL_SECRET
         generateValue: true
+      - key: TRUST_PROXY_HOPS # Render's edge appends the caller's address; one trusted hop gives each visitor their own limiter bucket
+        value: "1"
       - key: NEXT_PUBLIC_APP_URL
         sync: false # your onrender.com address, e.g. https://dukaan-dost.onrender.com
       - key: DEMO_UPI_VPA
