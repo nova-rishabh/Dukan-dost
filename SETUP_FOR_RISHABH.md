@@ -76,7 +76,9 @@ The remote is already set to `https://github.com/nova-rishabh/Dukan-dost.git`. N
 
 ## Step 11 [you]: where the public demo lives
 
-The deployed link for jurors should be the **open demo** (no `DUKAAN_DB_FILE`, no WhatsApp service). Vercel's serverless disk cannot keep a SQLite file or run the WhatsApp service, so your real shop stays on this computer (or a small server you control). Replace `{{APP_URL}}` in the posts, captions, deck and ad after you have the public URL (see `docs/15_TODO.md`).
+The deployed link for jurors should be the **open demo** (no `DUKAAN_DB_FILE`, no WhatsApp service). Vercel's serverless disk cannot keep a SQLite file or run the WhatsApp service, so your real shop stays on this computer (or a small server you control).
+
+**Render, for the open demo:** a Web Service with Node 22.13 or newer (set `NODE_VERSION=24`), build command `pnpm install --frozen-lockfile && pnpm build`, start command `pnpm start` (Render supplies `PORT`). Leave `DUKAAN_DB_FILE` and the `WA_*` variables out. Set `NEXT_PUBLIC_APP_URL` to the Render URL. Add `ELEVENLABS_API_KEY` and `GEMINI_API_KEY` only if you want live voice and Gemini on the public demo (each visitor then spends your credits; the per-IP limits are modest). A real shop on Render needs a paid persistent disk for the SQLite file and a second private service for the WhatsApp service, and still no login for staff; keep it on your own machine for now. Replace `{{APP_URL}}` in the posts, captions, deck and ad after you have the public URL (see `docs/15_TODO.md`).
 
 ## Step 12 [you]: submit the five links
 

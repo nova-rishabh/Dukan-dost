@@ -160,7 +160,7 @@ export class BerryAdapter extends EventEmitter {
             simDataUrl = await qrcode.toDataURL(simRaw, {
               width: 320,
               margin: 2,
-              color: { dark: '#0f172a', light: '#ffffff' }
+              color: { dark: '#16123A', light: '#ffffff' }
             });
           } catch {}
         }
@@ -211,7 +211,7 @@ export class BerryAdapter extends EventEmitter {
           fallbackDataUrl = await qrcode.toDataURL(fallbackRaw, {
             width: 320,
             margin: 2,
-            color: { dark: '#0f172a', light: '#ffffff' }
+            color: { dark: '#16123A', light: '#ffffff' }
           });
         } catch {}
       }
@@ -234,7 +234,7 @@ export class BerryAdapter extends EventEmitter {
           dataUrl = await qrcodeLib.toDataURL(value, {
             width: 320,
             margin: 2,
-            color: { dark: '#0f172a', light: '#ffffff' }
+            color: { dark: '#16123A', light: '#ffffff' }
           });
         }
 
