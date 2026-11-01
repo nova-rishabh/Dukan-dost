@@ -1,5 +1,8 @@
 # Submission package and rehearsal
 
+> Superseded 2026-11-01: the final package is the 45-second film, the 11-slide deck and the rebuilt posts. See [28_PITCH_SCRIPT.md](28_PITCH_SCRIPT.md) and [29_PRODUCT_GUIDE.md](29_PRODUCT_GUIDE.md). Mentions of the eight-slide deck and 20-second ad below are historical.
+
+
 Prepared 2026-11-01. The owner authorized the remaining roadmap and packaging work. Local files were refreshed and exported; this document does not establish that the updated deployment or remote files are already published. Do not submit a link that still requires login or points to a missing upload.
 
 ## Five submission slots
