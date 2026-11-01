@@ -8,6 +8,7 @@ This folder is a copy of the WA-USERAUTH service the owner supplied (MIT licence
 - Added `src/routes/messageRoutes.js` (`POST /api/v1/messages/send`, guarded by the app key and secret, 1000-character limit, 20 per minute) and `tests/messages.test.js`.
 - Ran `npm audit fix` (Express body-parser and qs advisories).
 - Replaced the dark navy-and-neon admin page with our own (`public/admin/index.html`, Dukaan Dost palette and fonts, Hinglish), and recoloured the CAPTCHA image, the pairing QR and the default OTP message to match. None of the zip's visual theme is used.
+- `src/messaging/berryAdapter.js`: the reconnect after a close now backs off (2.5 s, 5 s, 10 s, 20 s, 40 s, 60 s) instead of always restarting after 2.5 s, which could make a new pairing QR every 3 seconds; it also logs the close reason. Regression test: `tests/reconnectBackoff.test.js`.
 - `src/config.js` now refuses to start in production on the default admin password, session secret or demo app credentials; its `.env.example` binds `127.0.0.1` and uses placeholders.
 
 ## How it runs here
