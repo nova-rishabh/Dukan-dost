@@ -81,6 +81,18 @@ check("ad sounds CREDITS.json (cc0 only, stamp peak-aligned)", () => {
   if (Math.abs(expected - (stamp.startMs as number)) > 1) throw new Error(`stamp startMs ${stamp.startMs} != hit - peak (${expected})`);
   return `${list.length} cc0 clips; stamp hit ${stamp.hitTimeMs} ms, peak offset ${stamp.peakOffsetMs} ms, start ${stamp.startMs} ms`;
 });
+check("ad voice-over (7 lines, each mounted, none over the stamp)", () => {
+  const meta = JSON.parse(readFileSync(need("deliverables/ad/assets/vo/VO.json"), "utf8")) as Array<{ file: string; voice: string; start: number; end: number }>;
+  if (meta.length < 6) throw new Error(`expected at least 6 voice lines, found ${meta.length}`);
+  const html = readFileSync(need("deliverables/ad/index.html"), "utf8");
+  for (const m of meta) {
+    need(`deliverables/ad/assets/vo/${m.file}.mp3`);
+    if (!html.includes(`src="assets/vo/${m.file}.mp3"`)) throw new Error(`${m.file} is not mounted in index.html`);
+    if (m.start < 15.3 && m.end > 15.3 && m.start < 16.0) throw new Error(`${m.file} runs over the stamp hit (15.6 s)`);
+    if (m.end > 30) throw new Error(`${m.file} runs past the end of the ad`);
+  }
+  return `${meta.length} lines, voices: ${[...new Set(meta.map((m) => m.voice))].join(" and ")}`;
+});
 check("ad FLOWS_PROMPTS.md", () => {
   const t = readFileSync(need("deliverables/ad/FLOWS_PROMPTS.md"), "utf8");
   if (!/shot1\.mp4/.test(t) || !/shot2\.mp4/.test(t)) throw new Error("must name assets/clips/shot1.mp4 and shot2.mp4");

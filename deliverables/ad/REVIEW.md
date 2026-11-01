@@ -49,3 +49,9 @@ Output: `out/dukaan-dost-ad-vertical.mp4` (render with `pnpm ad:render`). Compos
 
 ## Weakest shot and what to change
 Shot 1 is now the softest (upscaled footage, rack-focus end). If Flows can export 1080x1920, swap the files in place; nothing else changes.
+
+## Voice-over (added 2026-11-01)
+- Seven Hindi lines made with ElevenLabs text-to-speech (`scripts/ad-vo.ts`, model `eleven_multilingual_v2`, stock professional voices only: Kishan narrates, Raju speaks the shopkeeper's line in shot 2; no cloned voices). Every line is trimmed, loudness-matched to -16 LUFS and mounted in `index.html` in a gap between the sound effects (`assets/vo/VO.json` holds the times).
+- Timeline: 0.7 s "haath bhare hain... aur khata door"; 5.0 s "Sharma ji ne paanch sau udhaar liye"; 9.5 s "bolo, ya type karo"; 12.45 s "pehle parchi dikhti hai"; 16.05 s "aap likh do dabao, tab likhta hai"; 18.75 s "baaki raqam update, yaad dilao, send aap dabao"; 24.85 s "bolo, likho mat. Dukaan Dost".
+- Checked without listening: each line was transcribed back with Scribe, and the finished mix was transcribed again; all seven lines came back in full at the intended times (only Latin-letter spellings of "500", "type", "send", "update" differ). Mix: -16.7 LUFS, true peak -1.7 dBFS, every line at about -19 dB mean against silence between lines, stamp loudest sample still at 15.6001 s.
+- Not verified: nobody has listened to it. Delivery, accent, pacing and whether the man's lips match "Sharma ji ne paanch sau udhaar liye" in shot 2 are judgments for a human ear and eye. Scribe once heard "aap" as "ab" in the stand-alone line 5, so listen to that one in particular.

@@ -1,0 +1,78 @@
+[
+  {
+    "file": "vo-1-hands",
+    "voice": "Kishan",
+    "start": 0.7,
+    "end": 2.92,
+    "duration": 2.22,
+    "text": "हाथ भरे हैं… और खाता दूर।",
+    "heard": "हाथ भरे हैं और खाता दूर",
+    "missingWords": []
+  },
+  {
+    "file": "vo-2-says",
+    "voice": "Raju",
+    "start": 5,
+    "end": 6.27,
+    "duration": 1.27,
+    "text": "शर्मा जी ने पाँच सौ उधार लिए।",
+    "heard": "शर्मा जी ने 500 उधार",
+    "missingWords": [
+      "सौ"
+    ]
+  },
+  {
+    "file": "vo-3a-bolo",
+    "voice": "Kishan",
+    "start": 9.5,
+    "end": 11.08,
+    "duration": 1.58,
+    "text": "बोलो, या टाइप करो।",
+    "heard": "बोलो या type करो",
+    "missingWords": [
+      "टाइप"
+    ]
+  },
+  {
+    "file": "vo-3b-parchi",
+    "voice": "Kishan",
+    "start": 12.45,
+    "end": 13.7,
+    "duration": 1.25,
+    "text": "पहले पर्ची दिखती है।",
+    "heard": "पहले पर्ची दिखती है।",
+    "missingWords": []
+  },
+  {
+    "file": "vo-4-likhdo",
+    "voice": "Kishan",
+    "start": 16.05,
+    "end": 17.86,
+    "duration": 1.81,
+    "text": "आप लिख दो दबाओ, तब लिखता है।",
+    "heard": "आप लिख दो दबाओ तब लिखता है।",
+    "missingWords": []
+  },
+  {
+    "file": "vo-5-remind",
+    "voice": "Kishan",
+    "start": 18.75,
+    "end": 22.36,
+    "duration": 3.61,
+    "text": "बाक़ी रक़म अपडेट। याद दिलाओ, सेंड आप दबाओ।",
+    "heard": "बाकी रकम update याद दिलाओ send अब दबाओ",
+    "missingWords": [
+      "सेंड"
+    ]
+  },
+  {
+    "file": "vo-6-close",
+    "voice": "Kishan",
+    "start": 24.85,
+    "end": 26.98,
+    "duration": 2.13,
+    "text": "बोलो, लिखो मत। दुकान दोस्त।",
+    "heard": "बोलो लिखो मत दुकान दोस्त",
+    "missingWords": []
+  }
+]
